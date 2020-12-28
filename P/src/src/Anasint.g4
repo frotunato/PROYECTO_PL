@@ -29,18 +29,19 @@ instruccion_retorno: RETORNO evaluacion_variable PyC;
 
 
 //variable_global: evaluacion_variable | (PA variable_global PC);
-predicado: (NO evaluacion_variable | evaluacion_variable) | (evaluacion_variable operador_condicion_2_ario (predicado | (PA predicado PC)));
+predicado: evaluacion_variable | (evaluacion_variable operador_condicion_2_ario (predicado | (PA predicado PC)));
 evaluacion_variable: operacion_logica | operacion_aritmetica | variable_acceso | ultima_posicion | vacia;
 //variable_operacion: ((PA (IDENT | NUMERO) PC) | (IDENT | NUMERO)) operador_logico variable | (PA variable PC);
 
-operacion_logica: ((PA operacion_logica PC) | operando_logico) (operador_2_ario operacion_logica)*;
+operacion_logica: (NO? (PA operacion_logica PC) | NO? operando_logico) (operador_2_ario NO? operacion_logica)*;
 operacion_aritmetica: ((PA operacion_aritmetica PC) | operando_aritmetico) (operador_2_ario operacion_aritmetica)*;
 //variable_operacion: (IDENT | NUMERO) (MAS | MENOS) (variable | (PA variable PC));
 //variable_unitaria: (IDENT | NUMERO | TRUE | FALSE);
 variable_acceso: IDENT CA operando_aritmetico CC;
 
-operando_universal: IDENT | variable_acceso | ultima_posicion;
-operando_aritmetico: operando_universal | NUMERO;
+//esto se deberia arreglar, realmente operandos deberian ser de cualquier tipo... eso es del semantico!
+operando_universal: IDENT | NUMERO | variable_acceso | ultima_posicion;
+operando_aritmetico: operando_universal;
 operando_logico: TRUE | FALSE | operando_universal | vacia;
 
 operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
