@@ -1,0 +1,37 @@
+/*
+FUNCION mayor(SEQ(NUM) s) dev (NUM i, NUM max)
+VARIABLES
+    i,max,min:NUM;
+    s:SEQ(NUM);
+    k:SEQ(LOG);
+INSTRUCCIONES
+    j=0;
+    max=s[j+1];
+    mientras(j<=ultima_posicion(s)) hacer
+        si (s[j]>max && j<l || (l>s[q] && (a>(a<c))) entonces
+            si (i<j) entonces
+                j=k;
+            sino
+                k=j;
+            fsi
+            max=s[j];
+            i=j;
+        fsi
+        j=j+1;) entonces
+        dev T;
+    fmientras
+FFUNCION
+
+
+
+*/
+FUNCION mayor_que_5(NUM x) dev (LOG r)
+VARIABLES
+INSTRUCCIONES
+    //a= (s[k])>(a<(b<a));
+    //b = ultima_posicion(s)-(k+(c-(b*a)));
+    c = (k+2+3+5) + (k*25);
+    si ((a<((k+2+3+5) * (k*25))) && (b<c)) entonces
+        a = b;
+    fsi
+FFUNCION

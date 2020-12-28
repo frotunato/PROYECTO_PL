@@ -1,0 +1,13 @@
+//(resultado == i Y i<test)
+//(resultado > i O test+3+3 == 2)
+//(f(test(i+3)) > i)
+//PARATODO x,y:(p(f(x)+2-3*5) O r(x,y) => EXISTE z:(z+2 == 15))
+//PARATODO x,y:(r(x,y) O p(f(x)+2-3*5) => EXISTE z:(z+2 == 15))
+//(f(x)+2-3*5 == 2)
+
+//(test == 4)
+//(2+3+4+5 == 2)
+//(f(x)+2-3*5 == 2)
+//(p(f(x)+2-3*5) == 2 O f(x) + 2 < 0)
+PARATODO x,y:(r(x,y) O p(f(x)+2-3*5) => EXISTE z:(z+2 == 15))
+PARATODO x,y:(p(x) Y NO r(x,y) => z == x)
