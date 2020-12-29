@@ -22,28 +22,31 @@ public class Anasint extends Parser {
 		PROCEDIMIENTO=13, FPROCEDIMIENTO=14, RETORNO=15, OR=16, AND=17, UL_POS=18, 
 		VACIA=19, NO=20, SEQUENCE=21, NUMERO=22, PA=23, CA=24, CC=25, MIENTRAS=26, 
 		FMIENTRAS=27, SI=28, SINO=29, FSI=30, ENTONCES=31, HACER=32, DP=33, PC=34, 
-		PyC=35, COMA=36, IGUAL=37, ASIG=38, MEIGUAL=39, MAIGUAL=40, MAYOR=41, 
-		MENOR=42, MAS=43, MENOS=44, MULT=45, DIV=46, IDENT=47, COMENTARIO_BLOQUE=48;
+		PyC=35, COMA=36, IGUAL=37, DIGUAL=38, CIERTO=39, FALSO=40, ASIG=41, MEIGUAL=42, 
+		MAIGUAL=43, MAYOR=44, MENOR=45, MAS=46, MENOS=47, MULT=48, DIV=49, IDENT=50, 
+		COMENTARIO_BLOQUE=51, COMENTARIO_LINEA=52;
 	public static final int
 		RULE_sentencia = 0, RULE_bloque_variables = 1, RULE_declaracion_variable = 2, 
 		RULE_lista_variables = 3, RULE_lista_variables_tipadas = 4, RULE_tipo = 5, 
 		RULE_tipo_no_elemental = 6, RULE_tipo_elemental = 7, RULE_bloque_funcion = 8, 
 		RULE_bloque_instrucciones = 9, RULE_instruccion = 10, RULE_instruccion_bucle = 11, 
 		RULE_instruccion_control = 12, RULE_instruccion_asig = 13, RULE_instruccion_retorno = 14, 
-		RULE_predicado_global = 15, RULE_lista_predicados = 16, RULE_predicado = 17, 
-		RULE_evaluacion_variable = 18, RULE_operacion_logica = 19, RULE_operacion_aritmetica = 20, 
-		RULE_variable_acceso = 21, RULE_operando_aritmetico = 22, RULE_operando_logico = 23, 
-		RULE_operador_aritmetico = 24, RULE_operador_logico = 25, RULE_ultima_posicion = 26, 
-		RULE_vacia = 27;
+		RULE_predicado = 15, RULE_evaluacion_variable = 16, RULE_operacion_logica = 17, 
+		RULE_operacion_aritmetica = 18, RULE_variable_acceso = 19, RULE_operando_universal = 20, 
+		RULE_operando_aritmetico = 21, RULE_operando_logico = 22, RULE_operador_2_ario = 23, 
+		RULE_operador_aritmetico_2_ario = 24, RULE_operador_logico_2_ario = 25, 
+		RULE_operador_condicion_2_ario = 26, RULE_operador_condicion_1_ario = 27, 
+		RULE_ultima_posicion = 28, RULE_vacia = 29;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"sentencia", "bloque_variables", "declaracion_variable", "lista_variables", 
 			"lista_variables_tipadas", "tipo", "tipo_no_elemental", "tipo_elemental", 
 			"bloque_funcion", "bloque_instrucciones", "instruccion", "instruccion_bucle", 
-			"instruccion_control", "instruccion_asig", "instruccion_retorno", "predicado_global", 
-			"lista_predicados", "predicado", "evaluacion_variable", "operacion_logica", 
-			"operacion_aritmetica", "variable_acceso", "operando_aritmetico", "operando_logico", 
-			"operador_aritmetico", "operador_logico", "ultima_posicion", "vacia"
+			"instruccion_control", "instruccion_asig", "instruccion_retorno", "predicado", 
+			"evaluacion_variable", "operacion_logica", "operacion_aritmetica", "variable_acceso", 
+			"operando_universal", "operando_aritmetico", "operando_logico", "operador_2_ario", 
+			"operador_aritmetico_2_ario", "operador_logico_2_ario", "operador_condicion_2_ario", 
+			"operador_condicion_1_ario", "ultima_posicion", "vacia"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -55,8 +58,8 @@ public class Anasint extends Parser {
 			"'FPROCEDIMIENTO'", "'dev'", "'||'", "'&&'", "'ultima_posicion'", "'vacia'", 
 			"'!'", "'SEQ'", null, "'('", "'['", "']'", "'mientras'", "'fmientras'", 
 			"'si'", "'sino'", "'fsi'", "'entonces'", "'hacer'", "':'", "')'", "';'", 
-			"','", "'=='", "'='", "'<='", "'>='", "'>'", "'<'", "'+'", "'-'", "'*'", 
-			"'/'"
+			"','", "'=='", "'!='", "'cierto'", "'falso'", "'='", "'<='", "'>='", 
+			"'>'", "'<'", "'+'", "'-'", "'*'", "'/'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -67,8 +70,9 @@ public class Anasint extends Parser {
 			"PROCEDIMIENTO", "FPROCEDIMIENTO", "RETORNO", "OR", "AND", "UL_POS", 
 			"VACIA", "NO", "SEQUENCE", "NUMERO", "PA", "CA", "CC", "MIENTRAS", "FMIENTRAS", 
 			"SI", "SINO", "FSI", "ENTONCES", "HACER", "DP", "PC", "PyC", "COMA", 
-			"IGUAL", "ASIG", "MEIGUAL", "MAIGUAL", "MAYOR", "MENOR", "MAS", "MENOS", 
-			"MULT", "DIV", "IDENT", "COMENTARIO_BLOQUE"
+			"IGUAL", "DIGUAL", "CIERTO", "FALSO", "ASIG", "MEIGUAL", "MAIGUAL", "MAYOR", 
+			"MENOR", "MAS", "MENOS", "MULT", "DIV", "IDENT", "COMENTARIO_BLOQUE", 
+			"COMENTARIO_LINEA"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -167,29 +171,29 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(61);
+			setState(65);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VARIABLES) | (1L << INSTRUCCIONES) | (1L << FUNCION))) != 0)) {
 				{
-				setState(59);
+				setState(63);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case VARIABLES:
 					{
-					setState(56);
+					setState(60);
 					bloque_variables();
 					}
 					break;
 				case FUNCION:
 					{
-					setState(57);
+					setState(61);
 					bloque_funcion();
 					}
 					break;
 				case INSTRUCCIONES:
 					{
-					setState(58);
+					setState(62);
 					bloque_instrucciones();
 					}
 					break;
@@ -197,7 +201,7 @@ public class Anasint extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				setState(63);
+				setState(67);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -253,40 +257,40 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(64);
-			match(VARIABLES);
 			setState(68);
+			match(VARIABLES);
+			setState(72);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==IDENT) {
 				{
 				{
-				setState(65);
+				setState(69);
 				declaracion_variable();
 				}
 				}
-				setState(70);
+				setState(74);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(74);
+			setState(78);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case EOF:
 				{
-				setState(71);
+				setState(75);
 				match(EOF);
 				}
 				break;
 			case SUBPROGRAMAS:
 				{
-				setState(72);
+				setState(76);
 				match(SUBPROGRAMAS);
 				}
 				break;
 			case INSTRUCCIONES:
 				{
-				setState(73);
+				setState(77);
 				bloque_instrucciones();
 				}
 				break;
@@ -340,13 +344,13 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(76);
+			setState(80);
 			lista_variables();
-			setState(77);
+			setState(81);
 			match(DP);
-			setState(78);
+			setState(82);
 			tipo();
-			setState(79);
+			setState(83);
 			match(PyC);
 			}
 		}
@@ -396,25 +400,25 @@ public class Anasint extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(85);
+			setState(89);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(81);
+					setState(85);
 					match(IDENT);
-					setState(82);
+					setState(86);
 					match(COMA);
 					}
 					} 
 				}
-				setState(87);
+				setState(91);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
 			}
-			setState(88);
+			setState(92);
 			match(IDENT);
 			}
 		}
@@ -470,29 +474,29 @@ public class Anasint extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(96);
+			setState(100);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(90);
+					setState(94);
 					tipo();
-					setState(91);
+					setState(95);
 					match(IDENT);
-					setState(92);
+					setState(96);
 					match(COMA);
 					}
 					} 
 				}
-				setState(98);
+				setState(102);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			}
-			setState(99);
+			setState(103);
 			tipo();
-			setState(100);
+			setState(104);
 			match(IDENT);
 			}
 		}
@@ -537,21 +541,21 @@ public class Anasint extends Parser {
 		TipoContext _localctx = new TipoContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_tipo);
 		try {
-			setState(104);
+			setState(108);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INTEGER:
 			case BOOLEAN:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(102);
+				setState(106);
 				tipo_elemental();
 				}
 				break;
 			case SEQUENCE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(103);
+				setState(107);
 				tipo_no_elemental();
 				}
 				break;
@@ -602,13 +606,13 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(106);
+			setState(110);
 			match(SEQUENCE);
-			setState(107);
+			setState(111);
 			match(PA);
-			setState(108);
+			setState(112);
 			tipo_elemental();
-			setState(109);
+			setState(113);
 			match(PC);
 			}
 		}
@@ -652,7 +656,7 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(111);
+			setState(115);
 			_la = _input.LA(1);
 			if ( !(_la==INTEGER || _la==BOOLEAN) ) {
 			_errHandler.recoverInline(this);
@@ -725,42 +729,42 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(113);
-			match(FUNCION);
-			setState(114);
-			match(IDENT);
-			setState(115);
-			match(PA);
-			setState(116);
-			lista_variables_tipadas();
 			setState(117);
-			match(PC);
+			match(FUNCION);
 			setState(118);
-			match(RETORNO);
+			match(IDENT);
 			setState(119);
 			match(PA);
 			setState(120);
 			lista_variables_tipadas();
 			setState(121);
 			match(PC);
+			setState(122);
+			match(RETORNO);
+			setState(123);
+			match(PA);
+			setState(124);
+			lista_variables_tipadas();
 			setState(125);
+			match(PC);
+			setState(129);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case EOF:
 				{
-				setState(122);
+				setState(126);
 				match(EOF);
 				}
 				break;
 			case INSTRUCCIONES:
 				{
-				setState(123);
+				setState(127);
 				bloque_instrucciones();
 				}
 				break;
 			case VARIABLES:
 				{
-				setState(124);
+				setState(128);
 				bloque_variables();
 				}
 				break;
@@ -817,23 +821,23 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(127);
+			setState(131);
 			match(INSTRUCCIONES);
-			setState(129); 
+			setState(133); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(128);
+				setState(132);
 				instruccion();
 				}
 				}
-				setState(131); 
+				setState(135); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETORNO) | (1L << MIENTRAS) | (1L << SI) | (1L << IDENT))) != 0) );
-			setState(133);
+			setState(137);
 			_la = _input.LA(1);
 			if ( !(((((_la - -1)) & ~0x3f) == 0 && ((1L << (_la - -1)) & ((1L << (EOF - -1)) | (1L << (FFUNCION - -1)) | (1L << (FPROCEDIMIENTO - -1)))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -892,34 +896,34 @@ public class Anasint extends Parser {
 		InstruccionContext _localctx = new InstruccionContext(_ctx, getState());
 		enterRule(_localctx, 20, RULE_instruccion);
 		try {
-			setState(139);
+			setState(143);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case IDENT:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(135);
+				setState(139);
 				instruccion_asig();
 				}
 				break;
 			case MIENTRAS:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(136);
+				setState(140);
 				instruccion_bucle();
 				}
 				break;
 			case SI:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(137);
+				setState(141);
 				instruccion_control();
 				}
 				break;
 			case RETORNO:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(138);
+				setState(142);
 				instruccion_retorno();
 				}
 				break;
@@ -979,31 +983,31 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(141);
-			match(MIENTRAS);
-			setState(142);
-			match(PA);
-			setState(143);
-			predicado();
-			setState(144);
-			match(PC);
 			setState(145);
+			match(MIENTRAS);
+			setState(146);
+			match(PA);
+			setState(147);
+			predicado();
+			setState(148);
+			match(PC);
+			setState(149);
 			match(HACER);
-			setState(147); 
+			setState(151); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(146);
+				setState(150);
 				instruccion();
 				}
 				}
-				setState(149); 
+				setState(153); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETORNO) | (1L << MIENTRAS) | (1L << SI) | (1L << IDENT))) != 0) );
-			setState(151);
+			setState(155);
 			match(FMIENTRAS);
 			}
 		}
@@ -1021,8 +1025,8 @@ public class Anasint extends Parser {
 	public static class Instruccion_controlContext extends ParserRuleContext {
 		public TerminalNode SI() { return getToken(Anasint.SI, 0); }
 		public TerminalNode PA() { return getToken(Anasint.PA, 0); }
-		public Predicado_globalContext predicado_global() {
-			return getRuleContext(Predicado_globalContext.class,0);
+		public PredicadoContext predicado() {
+			return getRuleContext(PredicadoContext.class,0);
 		}
 		public TerminalNode PC() { return getToken(Anasint.PC, 0); }
 		public TerminalNode ENTONCES() { return getToken(Anasint.ENTONCES, 0); }
@@ -1063,59 +1067,59 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(153);
-			match(SI);
-			setState(154);
-			match(PA);
-			setState(155);
-			predicado_global();
-			setState(156);
-			match(PC);
 			setState(157);
+			match(SI);
+			setState(158);
+			match(PA);
+			setState(159);
+			predicado();
+			setState(160);
+			match(PC);
+			setState(161);
 			match(ENTONCES);
-			setState(159); 
+			setState(163); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(158);
+				setState(162);
 				instruccion();
 				}
 				}
-				setState(161); 
+				setState(165); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETORNO) | (1L << MIENTRAS) | (1L << SI) | (1L << IDENT))) != 0) );
-			setState(171);
+			setState(175);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==SINO) {
 				{
 				{
-				setState(163);
+				setState(167);
 				match(SINO);
-				setState(165); 
+				setState(169); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				do {
 					{
 					{
-					setState(164);
+					setState(168);
 					instruccion();
 					}
 					}
-					setState(167); 
+					setState(171); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETORNO) | (1L << MIENTRAS) | (1L << SI) | (1L << IDENT))) != 0) );
 				}
 				}
-				setState(173);
+				setState(177);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(174);
+			setState(178);
 			match(FSI);
 			}
 		}
@@ -1162,13 +1166,13 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(176);
+			setState(180);
 			match(IDENT);
-			setState(177);
+			setState(181);
 			match(ASIG);
-			setState(178);
+			setState(182);
 			evaluacion_variable();
-			setState(179);
+			setState(183);
 			match(PyC);
 			}
 		}
@@ -1214,11 +1218,11 @@ public class Anasint extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(181);
+			setState(185);
 			match(RETORNO);
-			setState(182);
+			setState(186);
 			evaluacion_variable();
-			setState(183);
+			setState(187);
 			match(PyC);
 			}
 		}
@@ -1233,191 +1237,30 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
-	public static class Predicado_globalContext extends ParserRuleContext {
-		public Lista_predicadosContext lista_predicados() {
-			return getRuleContext(Lista_predicadosContext.class,0);
+	public static class PredicadoContext extends ParserRuleContext {
+		public Operacion_logicaContext operacion_logica() {
+			return getRuleContext(Operacion_logicaContext.class,0);
 		}
-		public Predicado_globalContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
+		public List<Operador_condicion_2_arioContext> operador_condicion_2_ario() {
+			return getRuleContexts(Operador_condicion_2_arioContext.class);
 		}
-		@Override public int getRuleIndex() { return RULE_predicado_global; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterPredicado_global(this);
+		public Operador_condicion_2_arioContext operador_condicion_2_ario(int i) {
+			return getRuleContext(Operador_condicion_2_arioContext.class,i);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitPredicado_global(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitPredicado_global(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final Predicado_globalContext predicado_global() throws RecognitionException {
-		Predicado_globalContext _localctx = new Predicado_globalContext(_ctx, getState());
-		enterRule(_localctx, 30, RULE_predicado_global);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(185);
-			lista_predicados();
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class Lista_predicadosContext extends ParserRuleContext {
 		public List<PredicadoContext> predicado() {
 			return getRuleContexts(PredicadoContext.class);
 		}
 		public PredicadoContext predicado(int i) {
 			return getRuleContext(PredicadoContext.class,i);
 		}
-		public Lista_predicadosContext lista_predicados() {
-			return getRuleContext(Lista_predicadosContext.class,0);
+		public List<TerminalNode> PA() { return getTokens(Anasint.PA); }
+		public TerminalNode PA(int i) {
+			return getToken(Anasint.PA, i);
 		}
-		public List<TerminalNode> AND() { return getTokens(Anasint.AND); }
-		public TerminalNode AND(int i) {
-			return getToken(Anasint.AND, i);
+		public List<TerminalNode> PC() { return getTokens(Anasint.PC); }
+		public TerminalNode PC(int i) {
+			return getToken(Anasint.PC, i);
 		}
-		public List<TerminalNode> OR() { return getTokens(Anasint.OR); }
-		public TerminalNode OR(int i) {
-			return getToken(Anasint.OR, i);
-		}
-		public TerminalNode PA() { return getToken(Anasint.PA, 0); }
-		public TerminalNode PC() { return getToken(Anasint.PC, 0); }
-		public Lista_predicadosContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_lista_predicados; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterLista_predicados(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitLista_predicados(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitLista_predicados(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final Lista_predicadosContext lista_predicados() throws RecognitionException {
-		Lista_predicadosContext _localctx = new Lista_predicadosContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_lista_predicados);
-		int _la;
-		try {
-			int _alt;
-			setState(202);
-			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(187);
-				predicado();
-				}
-				break;
-			case 2:
-				enterOuterAlt(_localctx, 2);
-				{
-				{
-				setState(191); 
-				_errHandler.sync(this);
-				_alt = 1;
-				do {
-					switch (_alt) {
-					case 1:
-						{
-						{
-						setState(188);
-						predicado();
-						setState(189);
-						_la = _input.LA(1);
-						if ( !(_la==OR || _la==AND) ) {
-						_errHandler.recoverInline(this);
-						}
-						else {
-							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-							_errHandler.reportMatch(this);
-							consume();
-						}
-						}
-						}
-						break;
-					default:
-						throw new NoViableAltException(this);
-					}
-					setState(193); 
-					_errHandler.sync(this);
-					_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
-				} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
-				setState(200);
-				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,15,_ctx) ) {
-				case 1:
-					{
-					setState(195);
-					lista_predicados();
-					}
-					break;
-				case 2:
-					{
-					{
-					setState(196);
-					match(PA);
-					setState(197);
-					lista_predicados();
-					setState(198);
-					match(PC);
-					}
-					}
-					break;
-				}
-				}
-				}
-				break;
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class PredicadoContext extends ParserRuleContext {
-		public Evaluacion_variableContext evaluacion_variable() {
-			return getRuleContext(Evaluacion_variableContext.class,0);
-		}
-		public TerminalNode IGUAL() { return getToken(Anasint.IGUAL, 0); }
-		public TerminalNode MAYOR() { return getToken(Anasint.MAYOR, 0); }
-		public TerminalNode MENOR() { return getToken(Anasint.MENOR, 0); }
-		public TerminalNode MAIGUAL() { return getToken(Anasint.MAIGUAL, 0); }
-		public TerminalNode MEIGUAL() { return getToken(Anasint.MEIGUAL, 0); }
-		public PredicadoContext predicado() {
-			return getRuleContext(PredicadoContext.class,0);
-		}
-		public TerminalNode PA() { return getToken(Anasint.PA, 0); }
-		public TerminalNode PC() { return getToken(Anasint.PC, 0); }
 		public PredicadoContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1439,60 +1282,51 @@ public class Anasint extends Parser {
 
 	public final PredicadoContext predicado() throws RecognitionException {
 		PredicadoContext _localctx = new PredicadoContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_predicado);
-		int _la;
+		enterRule(_localctx, 30, RULE_predicado);
 		try {
-			setState(214);
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(189);
+			operacion_logica();
+			setState(200);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,18,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(204);
-				evaluacion_variable();
+			_alt = getInterpreter().adaptivePredict(_input,15,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					{
+					{
+					setState(190);
+					operador_condicion_2_ario();
+					setState(196);
+					_errHandler.sync(this);
+					switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
+					case 1:
+						{
+						setState(191);
+						predicado();
+						}
+						break;
+					case 2:
+						{
+						{
+						setState(192);
+						match(PA);
+						setState(193);
+						predicado();
+						setState(194);
+						match(PC);
+						}
+						}
+						break;
+					}
+					}
+					} 
 				}
-				break;
-			case 2:
-				enterOuterAlt(_localctx, 2);
-				{
-				{
-				setState(205);
-				evaluacion_variable();
-				setState(206);
-				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IGUAL) | (1L << MEIGUAL) | (1L << MAIGUAL) | (1L << MAYOR) | (1L << MENOR))) != 0)) ) {
-				_errHandler.recoverInline(this);
-				}
-				else {
-					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-					_errHandler.reportMatch(this);
-					consume();
-				}
-				setState(212);
+				setState(202);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
-				case 1:
-					{
-					setState(207);
-					predicado();
-					}
-					break;
-				case 2:
-					{
-					{
-					setState(208);
-					match(PA);
-					setState(209);
-					predicado();
-					setState(210);
-					match(PC);
-					}
-					}
-					break;
-				}
-				}
-				}
-				break;
+				_alt = getInterpreter().adaptivePredict(_input,15,_ctx);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -1507,9 +1341,10 @@ public class Anasint extends Parser {
 	}
 
 	public static class Evaluacion_variableContext extends ParserRuleContext {
-		public Operacion_logicaContext operacion_logica() {
-			return getRuleContext(Operacion_logicaContext.class,0);
+		public PredicadoContext predicado() {
+			return getRuleContext(PredicadoContext.class,0);
 		}
+		public TerminalNode NO() { return getToken(Anasint.NO, 0); }
 		public Operacion_aritmeticaContext operacion_aritmetica() {
 			return getRuleContext(Operacion_aritmeticaContext.class,0);
 		}
@@ -1543,43 +1378,64 @@ public class Anasint extends Parser {
 
 	public final Evaluacion_variableContext evaluacion_variable() throws RecognitionException {
 		Evaluacion_variableContext _localctx = new Evaluacion_variableContext(_ctx, getState());
-		enterRule(_localctx, 36, RULE_evaluacion_variable);
+		enterRule(_localctx, 32, RULE_evaluacion_variable);
+		int _la;
 		try {
-			setState(221);
+			setState(214);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,19,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,18,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(216);
-				operacion_logica();
+				setState(204);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==NO) {
+					{
+					setState(203);
+					match(NO);
+					}
+				}
+
+				setState(206);
+				predicado();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(217);
+				setState(207);
 				operacion_aritmetica();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(218);
+				setState(208);
 				variable_acceso();
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(219);
+				setState(209);
 				ultima_posicion();
 				}
 				break;
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(220);
+				setState(211);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==NO) {
+					{
+					setState(210);
+					match(NO);
+					}
+				}
+
+				setState(213);
 				vacia();
 				}
 				break;
@@ -1600,19 +1456,22 @@ public class Anasint extends Parser {
 		public Operando_logicoContext operando_logico() {
 			return getRuleContext(Operando_logicoContext.class,0);
 		}
-		public List<Operador_logicoContext> operador_logico() {
-			return getRuleContexts(Operador_logicoContext.class);
+		public List<Operador_logico_2_arioContext> operador_logico_2_ario() {
+			return getRuleContexts(Operador_logico_2_arioContext.class);
 		}
-		public Operador_logicoContext operador_logico(int i) {
-			return getRuleContext(Operador_logicoContext.class,i);
+		public Operador_logico_2_arioContext operador_logico_2_ario(int i) {
+			return getRuleContext(Operador_logico_2_arioContext.class,i);
 		}
-		public List<Operacion_logicaContext> operacion_logica() {
-			return getRuleContexts(Operacion_logicaContext.class);
+		public List<Evaluacion_variableContext> evaluacion_variable() {
+			return getRuleContexts(Evaluacion_variableContext.class);
 		}
-		public Operacion_logicaContext operacion_logica(int i) {
-			return getRuleContext(Operacion_logicaContext.class,i);
+		public Evaluacion_variableContext evaluacion_variable(int i) {
+			return getRuleContext(Evaluacion_variableContext.class,i);
 		}
 		public TerminalNode PA() { return getToken(Anasint.PA, 0); }
+		public Operacion_logicaContext operacion_logica() {
+			return getRuleContext(Operacion_logicaContext.class,0);
+		}
 		public TerminalNode PC() { return getToken(Anasint.PC, 0); }
 		public Operacion_logicaContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1635,22 +1494,22 @@ public class Anasint extends Parser {
 
 	public final Operacion_logicaContext operacion_logica() throws RecognitionException {
 		Operacion_logicaContext _localctx = new Operacion_logicaContext(_ctx, getState());
-		enterRule(_localctx, 38, RULE_operacion_logica);
+		enterRule(_localctx, 34, RULE_operacion_logica);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(228);
+			setState(221);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case PA:
 				{
 				{
-				setState(223);
+				setState(216);
 				match(PA);
-				setState(224);
+				setState(217);
 				operacion_logica();
-				setState(225);
+				setState(218);
 				match(PC);
 				}
 				}
@@ -1659,32 +1518,33 @@ public class Anasint extends Parser {
 			case FALSE:
 			case UL_POS:
 			case VACIA:
+			case NUMERO:
 			case IDENT:
 				{
-				setState(227);
+				setState(220);
 				operando_logico();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			setState(235);
+			setState(228);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,21,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,20,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(230);
-					operador_logico();
-					setState(231);
-					operacion_logica();
+					setState(223);
+					operador_logico_2_ario();
+					setState(224);
+					evaluacion_variable();
 					}
 					} 
 				}
-				setState(237);
+				setState(230);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,21,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,20,_ctx);
 			}
 			}
 		}
@@ -1703,11 +1563,11 @@ public class Anasint extends Parser {
 		public Operando_aritmeticoContext operando_aritmetico() {
 			return getRuleContext(Operando_aritmeticoContext.class,0);
 		}
-		public List<Operador_aritmeticoContext> operador_aritmetico() {
-			return getRuleContexts(Operador_aritmeticoContext.class);
+		public List<Operador_aritmetico_2_arioContext> operador_aritmetico_2_ario() {
+			return getRuleContexts(Operador_aritmetico_2_arioContext.class);
 		}
-		public Operador_aritmeticoContext operador_aritmetico(int i) {
-			return getRuleContext(Operador_aritmeticoContext.class,i);
+		public Operador_aritmetico_2_arioContext operador_aritmetico_2_ario(int i) {
+			return getRuleContext(Operador_aritmetico_2_arioContext.class,i);
 		}
 		public List<Operacion_aritmeticaContext> operacion_aritmetica() {
 			return getRuleContexts(Operacion_aritmeticaContext.class);
@@ -1738,22 +1598,22 @@ public class Anasint extends Parser {
 
 	public final Operacion_aritmeticaContext operacion_aritmetica() throws RecognitionException {
 		Operacion_aritmeticaContext _localctx = new Operacion_aritmeticaContext(_ctx, getState());
-		enterRule(_localctx, 40, RULE_operacion_aritmetica);
+		enterRule(_localctx, 36, RULE_operacion_aritmetica);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(243);
+			setState(236);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case PA:
 				{
 				{
-				setState(238);
+				setState(231);
 				match(PA);
-				setState(239);
+				setState(232);
 				operacion_aritmetica();
-				setState(240);
+				setState(233);
 				match(PC);
 				}
 				}
@@ -1762,30 +1622,30 @@ public class Anasint extends Parser {
 			case NUMERO:
 			case IDENT:
 				{
-				setState(242);
+				setState(235);
 				operando_aritmetico();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			setState(250);
+			setState(243);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,23,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,22,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(245);
-					operador_aritmetico();
-					setState(246);
+					setState(238);
+					operador_aritmetico_2_ario();
+					setState(239);
 					operacion_aritmetica();
 					}
 					} 
 				}
-				setState(252);
+				setState(245);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,23,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,22,_ctx);
 			}
 			}
 		}
@@ -1828,17 +1688,17 @@ public class Anasint extends Parser {
 
 	public final Variable_accesoContext variable_acceso() throws RecognitionException {
 		Variable_accesoContext _localctx = new Variable_accesoContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_variable_acceso);
+		enterRule(_localctx, 38, RULE_variable_acceso);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(253);
+			setState(246);
 			match(IDENT);
-			setState(254);
+			setState(247);
 			match(CA);
-			setState(255);
+			setState(248);
 			operando_aritmetico();
-			setState(256);
+			setState(249);
 			match(CC);
 			}
 		}
@@ -1853,7 +1713,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
-	public static class Operando_aritmeticoContext extends ParserRuleContext {
+	public static class Operando_universalContext extends ParserRuleContext {
 		public TerminalNode IDENT() { return getToken(Anasint.IDENT, 0); }
 		public TerminalNode NUMERO() { return getToken(Anasint.NUMERO, 0); }
 		public Variable_accesoContext variable_acceso() {
@@ -1861,6 +1721,77 @@ public class Anasint extends Parser {
 		}
 		public Ultima_posicionContext ultima_posicion() {
 			return getRuleContext(Ultima_posicionContext.class,0);
+		}
+		public Operando_universalContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_operando_universal; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterOperando_universal(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitOperando_universal(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitOperando_universal(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final Operando_universalContext operando_universal() throws RecognitionException {
+		Operando_universalContext _localctx = new Operando_universalContext(_ctx, getState());
+		enterRule(_localctx, 40, RULE_operando_universal);
+		try {
+			setState(255);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,23,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(251);
+				match(IDENT);
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(252);
+				match(NUMERO);
+				}
+				break;
+			case 3:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(253);
+				variable_acceso();
+				}
+				break;
+			case 4:
+				enterOuterAlt(_localctx, 4);
+				{
+				setState(254);
+				ultima_posicion();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class Operando_aritmeticoContext extends ParserRuleContext {
+		public Operando_universalContext operando_universal() {
+			return getRuleContext(Operando_universalContext.class,0);
 		}
 		public Operando_aritmeticoContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1883,39 +1814,12 @@ public class Anasint extends Parser {
 
 	public final Operando_aritmeticoContext operando_aritmetico() throws RecognitionException {
 		Operando_aritmeticoContext _localctx = new Operando_aritmeticoContext(_ctx, getState());
-		enterRule(_localctx, 44, RULE_operando_aritmetico);
+		enterRule(_localctx, 42, RULE_operando_aritmetico);
 		try {
-			setState(262);
-			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,24,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(258);
-				match(IDENT);
-				}
-				break;
-			case 2:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(259);
-				match(NUMERO);
-				}
-				break;
-			case 3:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(260);
-				variable_acceso();
-				}
-				break;
-			case 4:
-				enterOuterAlt(_localctx, 4);
-				{
-				setState(261);
-				ultima_posicion();
-				}
-				break;
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(257);
+			operando_universal();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1932,15 +1836,11 @@ public class Anasint extends Parser {
 	public static class Operando_logicoContext extends ParserRuleContext {
 		public TerminalNode TRUE() { return getToken(Anasint.TRUE, 0); }
 		public TerminalNode FALSE() { return getToken(Anasint.FALSE, 0); }
-		public TerminalNode IDENT() { return getToken(Anasint.IDENT, 0); }
-		public Variable_accesoContext variable_acceso() {
-			return getRuleContext(Variable_accesoContext.class,0);
+		public Operando_universalContext operando_universal() {
+			return getRuleContext(Operando_universalContext.class,0);
 		}
 		public VaciaContext vacia() {
 			return getRuleContext(VaciaContext.class,0);
-		}
-		public Ultima_posicionContext ultima_posicion() {
-			return getRuleContext(Ultima_posicionContext.class,0);
 		}
 		public Operando_logicoContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1963,53 +1863,43 @@ public class Anasint extends Parser {
 
 	public final Operando_logicoContext operando_logico() throws RecognitionException {
 		Operando_logicoContext _localctx = new Operando_logicoContext(_ctx, getState());
-		enterRule(_localctx, 46, RULE_operando_logico);
+		enterRule(_localctx, 44, RULE_operando_logico);
 		try {
-			setState(270);
+			setState(263);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,25,_ctx) ) {
-			case 1:
+			switch (_input.LA(1)) {
+			case TRUE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(264);
+				setState(259);
 				match(TRUE);
 				}
 				break;
-			case 2:
+			case FALSE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(265);
+				setState(260);
 				match(FALSE);
 				}
 				break;
-			case 3:
+			case UL_POS:
+			case NUMERO:
+			case IDENT:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(266);
-				match(IDENT);
+				setState(261);
+				operando_universal();
 				}
 				break;
-			case 4:
+			case VACIA:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(267);
-				variable_acceso();
-				}
-				break;
-			case 5:
-				enterOuterAlt(_localctx, 5);
-				{
-				setState(268);
+				setState(262);
 				vacia();
 				}
 				break;
-			case 6:
-				enterOuterAlt(_localctx, 6);
-				{
-				setState(269);
-				ultima_posicion();
-				}
-				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2023,37 +1913,106 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
-	public static class Operador_aritmeticoContext extends ParserRuleContext {
-		public TerminalNode MAS() { return getToken(Anasint.MAS, 0); }
-		public TerminalNode MENOS() { return getToken(Anasint.MENOS, 0); }
-		public TerminalNode MULT() { return getToken(Anasint.MULT, 0); }
-		public Operador_aritmeticoContext(ParserRuleContext parent, int invokingState) {
+	public static class Operador_2_arioContext extends ParserRuleContext {
+		public Operador_aritmetico_2_arioContext operador_aritmetico_2_ario() {
+			return getRuleContext(Operador_aritmetico_2_arioContext.class,0);
+		}
+		public Operador_logico_2_arioContext operador_logico_2_ario() {
+			return getRuleContext(Operador_logico_2_arioContext.class,0);
+		}
+		public Operador_2_arioContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_operador_aritmetico; }
+		@Override public int getRuleIndex() { return RULE_operador_2_ario; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterOperador_aritmetico(this);
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterOperador_2_ario(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitOperador_aritmetico(this);
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitOperador_2_ario(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitOperador_aritmetico(this);
+			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitOperador_2_ario(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Operador_aritmeticoContext operador_aritmetico() throws RecognitionException {
-		Operador_aritmeticoContext _localctx = new Operador_aritmeticoContext(_ctx, getState());
-		enterRule(_localctx, 48, RULE_operador_aritmetico);
+	public final Operador_2_arioContext operador_2_ario() throws RecognitionException {
+		Operador_2_arioContext _localctx = new Operador_2_arioContext(_ctx, getState());
+		enterRule(_localctx, 46, RULE_operador_2_ario);
+		try {
+			setState(267);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case MAS:
+			case MENOS:
+			case MULT:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(265);
+				operador_aritmetico_2_ario();
+				}
+				break;
+			case IGUAL:
+			case DIGUAL:
+			case MEIGUAL:
+			case MAIGUAL:
+			case MAYOR:
+			case MENOR:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(266);
+				operador_logico_2_ario();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class Operador_aritmetico_2_arioContext extends ParserRuleContext {
+		public TerminalNode MAS() { return getToken(Anasint.MAS, 0); }
+		public TerminalNode MENOS() { return getToken(Anasint.MENOS, 0); }
+		public TerminalNode MULT() { return getToken(Anasint.MULT, 0); }
+		public Operador_aritmetico_2_arioContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_operador_aritmetico_2_ario; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterOperador_aritmetico_2_ario(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitOperador_aritmetico_2_ario(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitOperador_aritmetico_2_ario(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final Operador_aritmetico_2_arioContext operador_aritmetico_2_ario() throws RecognitionException {
+		Operador_aritmetico_2_arioContext _localctx = new Operador_aritmetico_2_arioContext(_ctx, getState());
+		enterRule(_localctx, 48, RULE_operador_aritmetico_2_ario);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(272);
+			setState(269);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MAS) | (1L << MENOS) | (1L << MULT))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -2076,42 +2035,42 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
-	public static class Operador_logicoContext extends ParserRuleContext {
-		public TerminalNode NO() { return getToken(Anasint.NO, 0); }
+	public static class Operador_logico_2_arioContext extends ParserRuleContext {
 		public TerminalNode IGUAL() { return getToken(Anasint.IGUAL, 0); }
+		public TerminalNode DIGUAL() { return getToken(Anasint.DIGUAL, 0); }
 		public TerminalNode MAYOR() { return getToken(Anasint.MAYOR, 0); }
 		public TerminalNode MENOR() { return getToken(Anasint.MENOR, 0); }
 		public TerminalNode MAIGUAL() { return getToken(Anasint.MAIGUAL, 0); }
 		public TerminalNode MEIGUAL() { return getToken(Anasint.MEIGUAL, 0); }
-		public Operador_logicoContext(ParserRuleContext parent, int invokingState) {
+		public Operador_logico_2_arioContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_operador_logico; }
+		@Override public int getRuleIndex() { return RULE_operador_logico_2_ario; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterOperador_logico(this);
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterOperador_logico_2_ario(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitOperador_logico(this);
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitOperador_logico_2_ario(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitOperador_logico(this);
+			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitOperador_logico_2_ario(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Operador_logicoContext operador_logico() throws RecognitionException {
-		Operador_logicoContext _localctx = new Operador_logicoContext(_ctx, getState());
-		enterRule(_localctx, 50, RULE_operador_logico);
+	public final Operador_logico_2_arioContext operador_logico_2_ario() throws RecognitionException {
+		Operador_logico_2_arioContext _localctx = new Operador_logico_2_arioContext(_ctx, getState());
+		enterRule(_localctx, 50, RULE_operador_logico_2_ario);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(274);
+			setState(271);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << NO) | (1L << IGUAL) | (1L << MEIGUAL) | (1L << MAIGUAL) | (1L << MAYOR) | (1L << MENOR))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IGUAL) | (1L << DIGUAL) | (1L << MEIGUAL) | (1L << MAIGUAL) | (1L << MAYOR) | (1L << MENOR))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -2119,6 +2078,121 @@ public class Anasint extends Parser {
 				_errHandler.reportMatch(this);
 				consume();
 			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class Operador_condicion_2_arioContext extends ParserRuleContext {
+		public Operador_logico_2_arioContext operador_logico_2_ario() {
+			return getRuleContext(Operador_logico_2_arioContext.class,0);
+		}
+		public TerminalNode AND() { return getToken(Anasint.AND, 0); }
+		public TerminalNode OR() { return getToken(Anasint.OR, 0); }
+		public Operador_condicion_2_arioContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_operador_condicion_2_ario; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterOperador_condicion_2_ario(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitOperador_condicion_2_ario(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitOperador_condicion_2_ario(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final Operador_condicion_2_arioContext operador_condicion_2_ario() throws RecognitionException {
+		Operador_condicion_2_arioContext _localctx = new Operador_condicion_2_arioContext(_ctx, getState());
+		enterRule(_localctx, 52, RULE_operador_condicion_2_ario);
+		try {
+			setState(276);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case IGUAL:
+			case DIGUAL:
+			case MEIGUAL:
+			case MAIGUAL:
+			case MAYOR:
+			case MENOR:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(273);
+				operador_logico_2_ario();
+				}
+				break;
+			case AND:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(274);
+				match(AND);
+				}
+				break;
+			case OR:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(275);
+				match(OR);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class Operador_condicion_1_arioContext extends ParserRuleContext {
+		public TerminalNode NO() { return getToken(Anasint.NO, 0); }
+		public Operador_condicion_1_arioContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_operador_condicion_1_ario; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).enterOperador_condicion_1_ario(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof AnasintListener ) ((AnasintListener)listener).exitOperador_condicion_1_ario(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof AnasintVisitor ) return ((AnasintVisitor<? extends T>)visitor).visitOperador_condicion_1_ario(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final Operador_condicion_1_arioContext operador_condicion_1_ario() throws RecognitionException {
+		Operador_condicion_1_arioContext _localctx = new Operador_condicion_1_arioContext(_ctx, getState());
+		enterRule(_localctx, 54, RULE_operador_condicion_1_ario);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(278);
+			match(NO);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2158,17 +2232,17 @@ public class Anasint extends Parser {
 
 	public final Ultima_posicionContext ultima_posicion() throws RecognitionException {
 		Ultima_posicionContext _localctx = new Ultima_posicionContext(_ctx, getState());
-		enterRule(_localctx, 52, RULE_ultima_posicion);
+		enterRule(_localctx, 56, RULE_ultima_posicion);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(276);
+			setState(280);
 			match(UL_POS);
-			setState(277);
+			setState(281);
 			match(PA);
-			setState(278);
+			setState(282);
 			match(IDENT);
-			setState(279);
+			setState(283);
 			match(PC);
 			}
 		}
@@ -2209,17 +2283,17 @@ public class Anasint extends Parser {
 
 	public final VaciaContext vacia() throws RecognitionException {
 		VaciaContext _localctx = new VaciaContext(_ctx, getState());
-		enterRule(_localctx, 54, RULE_vacia);
+		enterRule(_localctx, 58, RULE_vacia);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(281);
+			setState(285);
 			match(VACIA);
-			setState(282);
+			setState(286);
 			match(PA);
-			setState(283);
+			setState(287);
 			match(IDENT);
-			setState(284);
+			setState(288);
 			match(PC);
 			}
 		}
@@ -2235,104 +2309,105 @@ public class Anasint extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\62\u0121\4\2\t\2"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\66\u0125\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
-		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\3\2\3\2\3\2\7\2>\n\2\f\2\16\2"+
-		"A\13\2\3\3\3\3\7\3E\n\3\f\3\16\3H\13\3\3\3\3\3\3\3\5\3M\n\3\3\4\3\4\3"+
-		"\4\3\4\3\4\3\5\3\5\7\5V\n\5\f\5\16\5Y\13\5\3\5\3\5\3\6\3\6\3\6\3\6\7\6"+
-		"a\n\6\f\6\16\6d\13\6\3\6\3\6\3\6\3\7\3\7\5\7k\n\7\3\b\3\b\3\b\3\b\3\b"+
-		"\3\t\3\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\5\n\u0080\n\n"+
-		"\3\13\3\13\6\13\u0084\n\13\r\13\16\13\u0085\3\13\3\13\3\f\3\f\3\f\3\f"+
-		"\5\f\u008e\n\f\3\r\3\r\3\r\3\r\3\r\3\r\6\r\u0096\n\r\r\r\16\r\u0097\3"+
-		"\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\6\16\u00a2\n\16\r\16\16\16\u00a3"+
-		"\3\16\3\16\6\16\u00a8\n\16\r\16\16\16\u00a9\7\16\u00ac\n\16\f\16\16\16"+
-		"\u00af\13\16\3\16\3\16\3\17\3\17\3\17\3\17\3\17\3\20\3\20\3\20\3\20\3"+
-		"\21\3\21\3\22\3\22\3\22\3\22\6\22\u00c2\n\22\r\22\16\22\u00c3\3\22\3\22"+
-		"\3\22\3\22\3\22\5\22\u00cb\n\22\5\22\u00cd\n\22\3\23\3\23\3\23\3\23\3"+
-		"\23\3\23\3\23\3\23\5\23\u00d7\n\23\5\23\u00d9\n\23\3\24\3\24\3\24\3\24"+
-		"\3\24\5\24\u00e0\n\24\3\25\3\25\3\25\3\25\3\25\5\25\u00e7\n\25\3\25\3"+
-		"\25\3\25\7\25\u00ec\n\25\f\25\16\25\u00ef\13\25\3\26\3\26\3\26\3\26\3"+
-		"\26\5\26\u00f6\n\26\3\26\3\26\3\26\7\26\u00fb\n\26\f\26\16\26\u00fe\13"+
-		"\26\3\27\3\27\3\27\3\27\3\27\3\30\3\30\3\30\3\30\5\30\u0109\n\30\3\31"+
-		"\3\31\3\31\3\31\3\31\3\31\5\31\u0111\n\31\3\32\3\32\3\33\3\33\3\34\3\34"+
-		"\3\34\3\34\3\34\3\35\3\35\3\35\3\35\3\35\3\35\2\2\36\2\4\6\b\n\f\16\20"+
-		"\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668\2\b\3\2\b\t\4\3\16\16\20\20"+
-		"\3\2\22\23\4\2\'\'),\3\2-/\5\2\26\26\'\'),\2\u012c\2?\3\2\2\2\4B\3\2\2"+
-		"\2\6N\3\2\2\2\bW\3\2\2\2\nb\3\2\2\2\fj\3\2\2\2\16l\3\2\2\2\20q\3\2\2\2"+
-		"\22s\3\2\2\2\24\u0081\3\2\2\2\26\u008d\3\2\2\2\30\u008f\3\2\2\2\32\u009b"+
-		"\3\2\2\2\34\u00b2\3\2\2\2\36\u00b7\3\2\2\2 \u00bb\3\2\2\2\"\u00cc\3\2"+
-		"\2\2$\u00d8\3\2\2\2&\u00df\3\2\2\2(\u00e6\3\2\2\2*\u00f5\3\2\2\2,\u00ff"+
-		"\3\2\2\2.\u0108\3\2\2\2\60\u0110\3\2\2\2\62\u0112\3\2\2\2\64\u0114\3\2"+
-		"\2\2\66\u0116\3\2\2\28\u011b\3\2\2\2:>\5\4\3\2;>\5\22\n\2<>\5\24\13\2"+
-		"=:\3\2\2\2=;\3\2\2\2=<\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2@\3\3\2\2"+
-		"\2A?\3\2\2\2BF\7\n\2\2CE\5\6\4\2DC\3\2\2\2EH\3\2\2\2FD\3\2\2\2FG\3\2\2"+
-		"\2GL\3\2\2\2HF\3\2\2\2IM\7\2\2\3JM\7\13\2\2KM\5\24\13\2LI\3\2\2\2LJ\3"+
-		"\2\2\2LK\3\2\2\2M\5\3\2\2\2NO\5\b\5\2OP\7#\2\2PQ\5\f\7\2QR\7%\2\2R\7\3"+
-		"\2\2\2ST\7\61\2\2TV\7&\2\2US\3\2\2\2VY\3\2\2\2WU\3\2\2\2WX\3\2\2\2XZ\3"+
-		"\2\2\2YW\3\2\2\2Z[\7\61\2\2[\t\3\2\2\2\\]\5\f\7\2]^\7\61\2\2^_\7&\2\2"+
-		"_a\3\2\2\2`\\\3\2\2\2ad\3\2\2\2b`\3\2\2\2bc\3\2\2\2ce\3\2\2\2db\3\2\2"+
-		"\2ef\5\f\7\2fg\7\61\2\2g\13\3\2\2\2hk\5\20\t\2ik\5\16\b\2jh\3\2\2\2ji"+
-		"\3\2\2\2k\r\3\2\2\2lm\7\27\2\2mn\7\31\2\2no\5\20\t\2op\7$\2\2p\17\3\2"+
-		"\2\2qr\t\2\2\2r\21\3\2\2\2st\7\r\2\2tu\7\61\2\2uv\7\31\2\2vw\5\n\6\2w"+
-		"x\7$\2\2xy\7\21\2\2yz\7\31\2\2z{\5\n\6\2{\177\7$\2\2|\u0080\7\2\2\3}\u0080"+
-		"\5\24\13\2~\u0080\5\4\3\2\177|\3\2\2\2\177}\3\2\2\2\177~\3\2\2\2\u0080"+
-		"\23\3\2\2\2\u0081\u0083\7\f\2\2\u0082\u0084\5\26\f\2\u0083\u0082\3\2\2"+
-		"\2\u0084\u0085\3\2\2\2\u0085\u0083\3\2\2\2\u0085\u0086\3\2\2\2\u0086\u0087"+
-		"\3\2\2\2\u0087\u0088\t\3\2\2\u0088\25\3\2\2\2\u0089\u008e\5\34\17\2\u008a"+
-		"\u008e\5\30\r\2\u008b\u008e\5\32\16\2\u008c\u008e\5\36\20\2\u008d\u0089"+
-		"\3\2\2\2\u008d\u008a\3\2\2\2\u008d\u008b\3\2\2\2\u008d\u008c\3\2\2\2\u008e"+
-		"\27\3\2\2\2\u008f\u0090\7\34\2\2\u0090\u0091\7\31\2\2\u0091\u0092\5$\23"+
-		"\2\u0092\u0093\7$\2\2\u0093\u0095\7\"\2\2\u0094\u0096\5\26\f\2\u0095\u0094"+
-		"\3\2\2\2\u0096\u0097\3\2\2\2\u0097\u0095\3\2\2\2\u0097\u0098\3\2\2\2\u0098"+
-		"\u0099\3\2\2\2\u0099\u009a\7\35\2\2\u009a\31\3\2\2\2\u009b\u009c\7\36"+
-		"\2\2\u009c\u009d\7\31\2\2\u009d\u009e\5 \21\2\u009e\u009f\7$\2\2\u009f"+
-		"\u00a1\7!\2\2\u00a0\u00a2\5\26\f\2\u00a1\u00a0\3\2\2\2\u00a2\u00a3\3\2"+
-		"\2\2\u00a3\u00a1\3\2\2\2\u00a3\u00a4\3\2\2\2\u00a4\u00ad\3\2\2\2\u00a5"+
-		"\u00a7\7\37\2\2\u00a6\u00a8\5\26\f\2\u00a7\u00a6\3\2\2\2\u00a8\u00a9\3"+
-		"\2\2\2\u00a9\u00a7\3\2\2\2\u00a9\u00aa\3\2\2\2\u00aa\u00ac\3\2\2\2\u00ab"+
-		"\u00a5\3\2\2\2\u00ac\u00af\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ae\3\2"+
-		"\2\2\u00ae\u00b0\3\2\2\2\u00af\u00ad\3\2\2\2\u00b0\u00b1\7 \2\2\u00b1"+
-		"\33\3\2\2\2\u00b2\u00b3\7\61\2\2\u00b3\u00b4\7(\2\2\u00b4\u00b5\5&\24"+
-		"\2\u00b5\u00b6\7%\2\2\u00b6\35\3\2\2\2\u00b7\u00b8\7\21\2\2\u00b8\u00b9"+
-		"\5&\24\2\u00b9\u00ba\7%\2\2\u00ba\37\3\2\2\2\u00bb\u00bc\5\"\22\2\u00bc"+
-		"!\3\2\2\2\u00bd\u00cd\5$\23\2\u00be\u00bf\5$\23\2\u00bf\u00c0\t\4\2\2"+
-		"\u00c0\u00c2\3\2\2\2\u00c1\u00be\3\2\2\2\u00c2\u00c3\3\2\2\2\u00c3\u00c1"+
-		"\3\2\2\2\u00c3\u00c4\3\2\2\2\u00c4\u00ca\3\2\2\2\u00c5\u00cb\5\"\22\2"+
-		"\u00c6\u00c7\7\31\2\2\u00c7\u00c8\5\"\22\2\u00c8\u00c9\7$\2\2\u00c9\u00cb"+
-		"\3\2\2\2\u00ca\u00c5\3\2\2\2\u00ca\u00c6\3\2\2\2\u00cb\u00cd\3\2\2\2\u00cc"+
-		"\u00bd\3\2\2\2\u00cc\u00c1\3\2\2\2\u00cd#\3\2\2\2\u00ce\u00d9\5&\24\2"+
-		"\u00cf\u00d0\5&\24\2\u00d0\u00d6\t\5\2\2\u00d1\u00d7\5$\23\2\u00d2\u00d3"+
-		"\7\31\2\2\u00d3\u00d4\5$\23\2\u00d4\u00d5\7$\2\2\u00d5\u00d7\3\2\2\2\u00d6"+
-		"\u00d1\3\2\2\2\u00d6\u00d2\3\2\2\2\u00d7\u00d9\3\2\2\2\u00d8\u00ce\3\2"+
-		"\2\2\u00d8\u00cf\3\2\2\2\u00d9%\3\2\2\2\u00da\u00e0\5(\25\2\u00db\u00e0"+
-		"\5*\26\2\u00dc\u00e0\5,\27\2\u00dd\u00e0\5\66\34\2\u00de\u00e0\58\35\2"+
-		"\u00df\u00da\3\2\2\2\u00df\u00db\3\2\2\2\u00df\u00dc\3\2\2\2\u00df\u00dd"+
-		"\3\2\2\2\u00df\u00de\3\2\2\2\u00e0\'\3\2\2\2\u00e1\u00e2\7\31\2\2\u00e2"+
-		"\u00e3\5(\25\2\u00e3\u00e4\7$\2\2\u00e4\u00e7\3\2\2\2\u00e5\u00e7\5\60"+
-		"\31\2\u00e6\u00e1\3\2\2\2\u00e6\u00e5\3\2\2\2\u00e7\u00ed\3\2\2\2\u00e8"+
-		"\u00e9\5\64\33\2\u00e9\u00ea\5(\25\2\u00ea\u00ec\3\2\2\2\u00eb\u00e8\3"+
-		"\2\2\2\u00ec\u00ef\3\2\2\2\u00ed\u00eb\3\2\2\2\u00ed\u00ee\3\2\2\2\u00ee"+
-		")\3\2\2\2\u00ef\u00ed\3\2\2\2\u00f0\u00f1\7\31\2\2\u00f1\u00f2\5*\26\2"+
-		"\u00f2\u00f3\7$\2\2\u00f3\u00f6\3\2\2\2\u00f4\u00f6\5.\30\2\u00f5\u00f0"+
-		"\3\2\2\2\u00f5\u00f4\3\2\2\2\u00f6\u00fc\3\2\2\2\u00f7\u00f8\5\62\32\2"+
-		"\u00f8\u00f9\5*\26\2\u00f9\u00fb\3\2\2\2\u00fa\u00f7\3\2\2\2\u00fb\u00fe"+
-		"\3\2\2\2\u00fc\u00fa\3\2\2\2\u00fc\u00fd\3\2\2\2\u00fd+\3\2\2\2\u00fe"+
-		"\u00fc\3\2\2\2\u00ff\u0100\7\61\2\2\u0100\u0101\7\32\2\2\u0101\u0102\5"+
-		".\30\2\u0102\u0103\7\33\2\2\u0103-\3\2\2\2\u0104\u0109\7\61\2\2\u0105"+
-		"\u0109\7\30\2\2\u0106\u0109\5,\27\2\u0107\u0109\5\66\34\2\u0108\u0104"+
-		"\3\2\2\2\u0108\u0105\3\2\2\2\u0108\u0106\3\2\2\2\u0108\u0107\3\2\2\2\u0109"+
-		"/\3\2\2\2\u010a\u0111\7\6\2\2\u010b\u0111\7\7\2\2\u010c\u0111\7\61\2\2"+
-		"\u010d\u0111\5,\27\2\u010e\u0111\58\35\2\u010f\u0111\5\66\34\2\u0110\u010a"+
-		"\3\2\2\2\u0110\u010b\3\2\2\2\u0110\u010c\3\2\2\2\u0110\u010d\3\2\2\2\u0110"+
-		"\u010e\3\2\2\2\u0110\u010f\3\2\2\2\u0111\61\3\2\2\2\u0112\u0113\t\6\2"+
-		"\2\u0113\63\3\2\2\2\u0114\u0115\t\7\2\2\u0115\65\3\2\2\2\u0116\u0117\7"+
-		"\24\2\2\u0117\u0118\7\31\2\2\u0118\u0119\7\61\2\2\u0119\u011a\7$\2\2\u011a"+
-		"\67\3\2\2\2\u011b\u011c\7\25\2\2\u011c\u011d\7\31\2\2\u011d\u011e\7\61"+
-		"\2\2\u011e\u011f\7$\2\2\u011f9\3\2\2\2\34=?FLWbj\177\u0085\u008d\u0097"+
-		"\u00a3\u00a9\u00ad\u00c3\u00ca\u00cc\u00d6\u00d8\u00df\u00e6\u00ed\u00f5"+
-		"\u00fc\u0108\u0110";
+		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\3\2\3\2\3"+
+		"\2\7\2B\n\2\f\2\16\2E\13\2\3\3\3\3\7\3I\n\3\f\3\16\3L\13\3\3\3\3\3\3\3"+
+		"\5\3Q\n\3\3\4\3\4\3\4\3\4\3\4\3\5\3\5\7\5Z\n\5\f\5\16\5]\13\5\3\5\3\5"+
+		"\3\6\3\6\3\6\3\6\7\6e\n\6\f\6\16\6h\13\6\3\6\3\6\3\6\3\7\3\7\5\7o\n\7"+
+		"\3\b\3\b\3\b\3\b\3\b\3\t\3\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3"+
+		"\n\3\n\5\n\u0084\n\n\3\13\3\13\6\13\u0088\n\13\r\13\16\13\u0089\3\13\3"+
+		"\13\3\f\3\f\3\f\3\f\5\f\u0092\n\f\3\r\3\r\3\r\3\r\3\r\3\r\6\r\u009a\n"+
+		"\r\r\r\16\r\u009b\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\6\16\u00a6\n\16"+
+		"\r\16\16\16\u00a7\3\16\3\16\6\16\u00ac\n\16\r\16\16\16\u00ad\7\16\u00b0"+
+		"\n\16\f\16\16\16\u00b3\13\16\3\16\3\16\3\17\3\17\3\17\3\17\3\17\3\20\3"+
+		"\20\3\20\3\20\3\21\3\21\3\21\3\21\3\21\3\21\3\21\5\21\u00c7\n\21\7\21"+
+		"\u00c9\n\21\f\21\16\21\u00cc\13\21\3\22\5\22\u00cf\n\22\3\22\3\22\3\22"+
+		"\3\22\3\22\5\22\u00d6\n\22\3\22\5\22\u00d9\n\22\3\23\3\23\3\23\3\23\3"+
+		"\23\5\23\u00e0\n\23\3\23\3\23\3\23\7\23\u00e5\n\23\f\23\16\23\u00e8\13"+
+		"\23\3\24\3\24\3\24\3\24\3\24\5\24\u00ef\n\24\3\24\3\24\3\24\7\24\u00f4"+
+		"\n\24\f\24\16\24\u00f7\13\24\3\25\3\25\3\25\3\25\3\25\3\26\3\26\3\26\3"+
+		"\26\5\26\u0102\n\26\3\27\3\27\3\30\3\30\3\30\3\30\5\30\u010a\n\30\3\31"+
+		"\3\31\5\31\u010e\n\31\3\32\3\32\3\33\3\33\3\34\3\34\3\34\5\34\u0117\n"+
+		"\34\3\35\3\35\3\36\3\36\3\36\3\36\3\36\3\37\3\37\3\37\3\37\3\37\3\37\2"+
+		"\2 \2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<\2\6"+
+		"\3\2\b\t\4\3\16\16\20\20\3\2\60\62\4\2\'(,/\2\u012e\2C\3\2\2\2\4F\3\2"+
+		"\2\2\6R\3\2\2\2\b[\3\2\2\2\nf\3\2\2\2\fn\3\2\2\2\16p\3\2\2\2\20u\3\2\2"+
+		"\2\22w\3\2\2\2\24\u0085\3\2\2\2\26\u0091\3\2\2\2\30\u0093\3\2\2\2\32\u009f"+
+		"\3\2\2\2\34\u00b6\3\2\2\2\36\u00bb\3\2\2\2 \u00bf\3\2\2\2\"\u00d8\3\2"+
+		"\2\2$\u00df\3\2\2\2&\u00ee\3\2\2\2(\u00f8\3\2\2\2*\u0101\3\2\2\2,\u0103"+
+		"\3\2\2\2.\u0109\3\2\2\2\60\u010d\3\2\2\2\62\u010f\3\2\2\2\64\u0111\3\2"+
+		"\2\2\66\u0116\3\2\2\28\u0118\3\2\2\2:\u011a\3\2\2\2<\u011f\3\2\2\2>B\5"+
+		"\4\3\2?B\5\22\n\2@B\5\24\13\2A>\3\2\2\2A?\3\2\2\2A@\3\2\2\2BE\3\2\2\2"+
+		"CA\3\2\2\2CD\3\2\2\2D\3\3\2\2\2EC\3\2\2\2FJ\7\n\2\2GI\5\6\4\2HG\3\2\2"+
+		"\2IL\3\2\2\2JH\3\2\2\2JK\3\2\2\2KP\3\2\2\2LJ\3\2\2\2MQ\7\2\2\3NQ\7\13"+
+		"\2\2OQ\5\24\13\2PM\3\2\2\2PN\3\2\2\2PO\3\2\2\2Q\5\3\2\2\2RS\5\b\5\2ST"+
+		"\7#\2\2TU\5\f\7\2UV\7%\2\2V\7\3\2\2\2WX\7\64\2\2XZ\7&\2\2YW\3\2\2\2Z]"+
+		"\3\2\2\2[Y\3\2\2\2[\\\3\2\2\2\\^\3\2\2\2][\3\2\2\2^_\7\64\2\2_\t\3\2\2"+
+		"\2`a\5\f\7\2ab\7\64\2\2bc\7&\2\2ce\3\2\2\2d`\3\2\2\2eh\3\2\2\2fd\3\2\2"+
+		"\2fg\3\2\2\2gi\3\2\2\2hf\3\2\2\2ij\5\f\7\2jk\7\64\2\2k\13\3\2\2\2lo\5"+
+		"\20\t\2mo\5\16\b\2nl\3\2\2\2nm\3\2\2\2o\r\3\2\2\2pq\7\27\2\2qr\7\31\2"+
+		"\2rs\5\20\t\2st\7$\2\2t\17\3\2\2\2uv\t\2\2\2v\21\3\2\2\2wx\7\r\2\2xy\7"+
+		"\64\2\2yz\7\31\2\2z{\5\n\6\2{|\7$\2\2|}\7\21\2\2}~\7\31\2\2~\177\5\n\6"+
+		"\2\177\u0083\7$\2\2\u0080\u0084\7\2\2\3\u0081\u0084\5\24\13\2\u0082\u0084"+
+		"\5\4\3\2\u0083\u0080\3\2\2\2\u0083\u0081\3\2\2\2\u0083\u0082\3\2\2\2\u0084"+
+		"\23\3\2\2\2\u0085\u0087\7\f\2\2\u0086\u0088\5\26\f\2\u0087\u0086\3\2\2"+
+		"\2\u0088\u0089\3\2\2\2\u0089\u0087\3\2\2\2\u0089\u008a\3\2\2\2\u008a\u008b"+
+		"\3\2\2\2\u008b\u008c\t\3\2\2\u008c\25\3\2\2\2\u008d\u0092\5\34\17\2\u008e"+
+		"\u0092\5\30\r\2\u008f\u0092\5\32\16\2\u0090\u0092\5\36\20\2\u0091\u008d"+
+		"\3\2\2\2\u0091\u008e\3\2\2\2\u0091\u008f\3\2\2\2\u0091\u0090\3\2\2\2\u0092"+
+		"\27\3\2\2\2\u0093\u0094\7\34\2\2\u0094\u0095\7\31\2\2\u0095\u0096\5 \21"+
+		"\2\u0096\u0097\7$\2\2\u0097\u0099\7\"\2\2\u0098\u009a\5\26\f\2\u0099\u0098"+
+		"\3\2\2\2\u009a\u009b\3\2\2\2\u009b\u0099\3\2\2\2\u009b\u009c\3\2\2\2\u009c"+
+		"\u009d\3\2\2\2\u009d\u009e\7\35\2\2\u009e\31\3\2\2\2\u009f\u00a0\7\36"+
+		"\2\2\u00a0\u00a1\7\31\2\2\u00a1\u00a2\5 \21\2\u00a2\u00a3\7$\2\2\u00a3"+
+		"\u00a5\7!\2\2\u00a4\u00a6\5\26\f\2\u00a5\u00a4\3\2\2\2\u00a6\u00a7\3\2"+
+		"\2\2\u00a7\u00a5\3\2\2\2\u00a7\u00a8\3\2\2\2\u00a8\u00b1\3\2\2\2\u00a9"+
+		"\u00ab\7\37\2\2\u00aa\u00ac\5\26\f\2\u00ab\u00aa\3\2\2\2\u00ac\u00ad\3"+
+		"\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ae\3\2\2\2\u00ae\u00b0\3\2\2\2\u00af"+
+		"\u00a9\3\2\2\2\u00b0\u00b3\3\2\2\2\u00b1\u00af\3\2\2\2\u00b1\u00b2\3\2"+
+		"\2\2\u00b2\u00b4\3\2\2\2\u00b3\u00b1\3\2\2\2\u00b4\u00b5\7 \2\2\u00b5"+
+		"\33\3\2\2\2\u00b6\u00b7\7\64\2\2\u00b7\u00b8\7+\2\2\u00b8\u00b9\5\"\22"+
+		"\2\u00b9\u00ba\7%\2\2\u00ba\35\3\2\2\2\u00bb\u00bc\7\21\2\2\u00bc\u00bd"+
+		"\5\"\22\2\u00bd\u00be\7%\2\2\u00be\37\3\2\2\2\u00bf\u00ca\5$\23\2\u00c0"+
+		"\u00c6\5\66\34\2\u00c1\u00c7\5 \21\2\u00c2\u00c3\7\31\2\2\u00c3\u00c4"+
+		"\5 \21\2\u00c4\u00c5\7$\2\2\u00c5\u00c7\3\2\2\2\u00c6\u00c1\3\2\2\2\u00c6"+
+		"\u00c2\3\2\2\2\u00c7\u00c9\3\2\2\2\u00c8\u00c0\3\2\2\2\u00c9\u00cc\3\2"+
+		"\2\2\u00ca\u00c8\3\2\2\2\u00ca\u00cb\3\2\2\2\u00cb!\3\2\2\2\u00cc\u00ca"+
+		"\3\2\2\2\u00cd\u00cf\7\26\2\2\u00ce\u00cd\3\2\2\2\u00ce\u00cf\3\2\2\2"+
+		"\u00cf\u00d0\3\2\2\2\u00d0\u00d9\5 \21\2\u00d1\u00d9\5&\24\2\u00d2\u00d9"+
+		"\5(\25\2\u00d3\u00d9\5:\36\2\u00d4\u00d6\7\26\2\2\u00d5\u00d4\3\2\2\2"+
+		"\u00d5\u00d6\3\2\2\2\u00d6\u00d7\3\2\2\2\u00d7\u00d9\5<\37\2\u00d8\u00ce"+
+		"\3\2\2\2\u00d8\u00d1\3\2\2\2\u00d8\u00d2\3\2\2\2\u00d8\u00d3\3\2\2\2\u00d8"+
+		"\u00d5\3\2\2\2\u00d9#\3\2\2\2\u00da\u00db\7\31\2\2\u00db\u00dc\5$\23\2"+
+		"\u00dc\u00dd\7$\2\2\u00dd\u00e0\3\2\2\2\u00de\u00e0\5.\30\2\u00df\u00da"+
+		"\3\2\2\2\u00df\u00de\3\2\2\2\u00e0\u00e6\3\2\2\2\u00e1\u00e2\5\64\33\2"+
+		"\u00e2\u00e3\5\"\22\2\u00e3\u00e5\3\2\2\2\u00e4\u00e1\3\2\2\2\u00e5\u00e8"+
+		"\3\2\2\2\u00e6\u00e4\3\2\2\2\u00e6\u00e7\3\2\2\2\u00e7%\3\2\2\2\u00e8"+
+		"\u00e6\3\2\2\2\u00e9\u00ea\7\31\2\2\u00ea\u00eb\5&\24\2\u00eb\u00ec\7"+
+		"$\2\2\u00ec\u00ef\3\2\2\2\u00ed\u00ef\5,\27\2\u00ee\u00e9\3\2\2\2\u00ee"+
+		"\u00ed\3\2\2\2\u00ef\u00f5\3\2\2\2\u00f0\u00f1\5\62\32\2\u00f1\u00f2\5"+
+		"&\24\2\u00f2\u00f4\3\2\2\2\u00f3\u00f0\3\2\2\2\u00f4\u00f7\3\2\2\2\u00f5"+
+		"\u00f3\3\2\2\2\u00f5\u00f6\3\2\2\2\u00f6\'\3\2\2\2\u00f7\u00f5\3\2\2\2"+
+		"\u00f8\u00f9\7\64\2\2\u00f9\u00fa\7\32\2\2\u00fa\u00fb\5,\27\2\u00fb\u00fc"+
+		"\7\33\2\2\u00fc)\3\2\2\2\u00fd\u0102\7\64\2\2\u00fe\u0102\7\30\2\2\u00ff"+
+		"\u0102\5(\25\2\u0100\u0102\5:\36\2\u0101\u00fd\3\2\2\2\u0101\u00fe\3\2"+
+		"\2\2\u0101\u00ff\3\2\2\2\u0101\u0100\3\2\2\2\u0102+\3\2\2\2\u0103\u0104"+
+		"\5*\26\2\u0104-\3\2\2\2\u0105\u010a\7\6\2\2\u0106\u010a\7\7\2\2\u0107"+
+		"\u010a\5*\26\2\u0108\u010a\5<\37\2\u0109\u0105\3\2\2\2\u0109\u0106\3\2"+
+		"\2\2\u0109\u0107\3\2\2\2\u0109\u0108\3\2\2\2\u010a/\3\2\2\2\u010b\u010e"+
+		"\5\62\32\2\u010c\u010e\5\64\33\2\u010d\u010b\3\2\2\2\u010d\u010c\3\2\2"+
+		"\2\u010e\61\3\2\2\2\u010f\u0110\t\4\2\2\u0110\63\3\2\2\2\u0111\u0112\t"+
+		"\5\2\2\u0112\65\3\2\2\2\u0113\u0117\5\64\33\2\u0114\u0117\7\23\2\2\u0115"+
+		"\u0117\7\22\2\2\u0116\u0113\3\2\2\2\u0116\u0114\3\2\2\2\u0116\u0115\3"+
+		"\2\2\2\u0117\67\3\2\2\2\u0118\u0119\7\26\2\2\u01199\3\2\2\2\u011a\u011b"+
+		"\7\24\2\2\u011b\u011c\7\31\2\2\u011c\u011d\7\64\2\2\u011d\u011e\7$\2\2"+
+		"\u011e;\3\2\2\2\u011f\u0120\7\25\2\2\u0120\u0121\7\31\2\2\u0121\u0122"+
+		"\7\64\2\2\u0122\u0123\7$\2\2\u0123=\3\2\2\2\35ACJP[fn\u0083\u0089\u0091"+
+		"\u009b\u00a7\u00ad\u00b1\u00c6\u00ca\u00ce\u00d5\u00d8\u00df\u00e6\u00ee"+
+		"\u00f5\u0101\u0109\u010d\u0116";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

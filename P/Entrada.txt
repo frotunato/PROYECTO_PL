@@ -1,37 +1,67 @@
 /*
 FUNCION mayor(SEQ(NUM) s) dev (NUM i, NUM max)
-VARIABLES
-    i,max,min:NUM;
-    s:SEQ(NUM);
-    k:SEQ(LOG);
-INSTRUCCIONES
-    j=0;
-    max=s[j+1];
-    mientras(j<=ultima_posicion(s)) hacer
-        si (s[j]>max && j<l || (l>s[q] && (a>(a<c))) entonces
-            si (!i<j) entonces
-                j=k;
-            sino
-                k=j;
-            fsi
-            max=s[j];
             i=j;
         fsi
-        j=j+1;) entonces
+        j=j+1;) eVARIABLES
+                     i,max,min:NUM;
+                     s:SEQ(NUM);
+                     k:SEQ(LOG);
+                 INSTRUCCIONES
+                     j=0;
+                     max=s[j+1];
+                     mientras(j<=ultima_posicion(s)) hacer
+                         si (s[j]>max && j<l || (l>s[q] && (a>(a<c))) entonces
+                             si (!i<j) entonces
+                                 j=k;
+                             sino
+                                 k=j;
+                             fsi
+                             max=s[j];
+ntonces
         dev T;
     fmientras
 FFUNCION
 
-
-
-*/
 FUNCION mayor_que_5(NUM x) dev (LOG r)
+    VARIABLES
+        q:NUM;
+    INSTRUCCIONES
+{ PARATODO(p:[s,ultima_posicion(s)],s[p]<=(max<b) || cierto) }        //a= !(s[k])>!(!a<(!b<a));
+        //b = ultima_posicion(s)-(k+(c-(b*a)));
+
+       // c = (k+2) + (k+25);
+
+        si ((b<2)<(b<2)) entonces
+        //si (!(a<((k+2) <= (k*25))) && (!b<!c)) entonces
+        //si (!(a<((k<2) <= !(k*25))) && (cierto) entonces
+            a = b;
+            //dev c;
+            a = b;
+            a = b;
+            a = b;
+            a = b;
+        fsi
+
+FFUNCION
+
+PROCEDIMIENTO menor_que_5(NUM y)
 VARIABLES
+    q:NUM;
 INSTRUCCIONES
-    //a= (s[k])>(a<(b<a));
-    //b = ultima_posicion(s)-(k+(c-(b*a)));
-    //c = (k+2+3+5) + (k*25);
-    si (!(a<((k+2) <= !(k*25))) && (!b<!c)) entonces
-        a = b;
-    fsi
+    j = 0;
+FPROCEDIMIENTO
+*/
+
+FUNCION mayor_que_5(NUM x) dev (LOG r)
+    VARIABLES
+        q:NUM;
+    INSTRUCCIONES
+        i=0;
+        max=s[i];
+        mientras (i<=ultima_posicion(s)) hacer {avance: bucle_1_avance(s, i)}
+            si (s[i]>max) entonces
+                max=s[i];
+            fsi
+            i=i+1;
+        fmientras
 FFUNCION

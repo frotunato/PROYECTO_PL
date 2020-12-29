@@ -101,18 +101,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInstruccion_retorno(Anasint.Instruccion_retornoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#predicado_global}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPredicado_global(Anasint.Predicado_globalContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Anasint#lista_predicados}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLista_predicados(Anasint.Lista_predicadosContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#predicado}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -143,6 +131,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Anasint#operando_universal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_universal(Anasint.Operando_universalContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#operando_aritmetico}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -155,17 +149,35 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperando_logico(Anasint.Operando_logicoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operador_aritmetico}.
+	 * Visit a parse tree produced by {@link Anasint#operador_2_ario}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperador_aritmetico(Anasint.Operador_aritmeticoContext ctx);
+	T visitOperador_2_ario(Anasint.Operador_2_arioContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operador_logico}.
+	 * Visit a parse tree produced by {@link Anasint#operador_aritmetico_2_ario}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperador_logico(Anasint.Operador_logicoContext ctx);
+	T visitOperador_aritmetico_2_ario(Anasint.Operador_aritmetico_2_arioContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#operador_logico_2_ario}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperador_logico_2_ario(Anasint.Operador_logico_2_arioContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#operador_condicion_2_ario}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperador_condicion_2_ario(Anasint.Operador_condicion_2_arioContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#operador_condicion_1_ario}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#ultima_posicion}.
 	 * @param ctx the parse tree

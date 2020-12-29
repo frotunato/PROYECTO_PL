@@ -158,26 +158,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitInstruccion_retorno(Anasint.Instruccion_retornoContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#predicado_global}.
-	 * @param ctx the parse tree
-	 */
-	void enterPredicado_global(Anasint.Predicado_globalContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#predicado_global}.
-	 * @param ctx the parse tree
-	 */
-	void exitPredicado_global(Anasint.Predicado_globalContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Anasint#lista_predicados}.
-	 * @param ctx the parse tree
-	 */
-	void enterLista_predicados(Anasint.Lista_predicadosContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#lista_predicados}.
-	 * @param ctx the parse tree
-	 */
-	void exitLista_predicados(Anasint.Lista_predicadosContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Anasint#predicado}.
 	 * @param ctx the parse tree
 	 */
@@ -228,6 +208,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Anasint#operando_universal}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperando_universal(Anasint.Operando_universalContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#operando_universal}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperando_universal(Anasint.Operando_universalContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#operando_aritmetico}.
 	 * @param ctx the parse tree
 	 */
@@ -248,25 +238,55 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitOperando_logico(Anasint.Operando_logicoContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#operador_aritmetico}.
+	 * Enter a parse tree produced by {@link Anasint#operador_2_ario}.
 	 * @param ctx the parse tree
 	 */
-	void enterOperador_aritmetico(Anasint.Operador_aritmeticoContext ctx);
+	void enterOperador_2_ario(Anasint.Operador_2_arioContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#operador_aritmetico}.
+	 * Exit a parse tree produced by {@link Anasint#operador_2_ario}.
 	 * @param ctx the parse tree
 	 */
-	void exitOperador_aritmetico(Anasint.Operador_aritmeticoContext ctx);
+	void exitOperador_2_ario(Anasint.Operador_2_arioContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#operador_logico}.
+	 * Enter a parse tree produced by {@link Anasint#operador_aritmetico_2_ario}.
 	 * @param ctx the parse tree
 	 */
-	void enterOperador_logico(Anasint.Operador_logicoContext ctx);
+	void enterOperador_aritmetico_2_ario(Anasint.Operador_aritmetico_2_arioContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#operador_logico}.
+	 * Exit a parse tree produced by {@link Anasint#operador_aritmetico_2_ario}.
 	 * @param ctx the parse tree
 	 */
-	void exitOperador_logico(Anasint.Operador_logicoContext ctx);
+	void exitOperador_aritmetico_2_ario(Anasint.Operador_aritmetico_2_arioContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#operador_logico_2_ario}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperador_logico_2_ario(Anasint.Operador_logico_2_arioContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#operador_logico_2_ario}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperador_logico_2_ario(Anasint.Operador_logico_2_arioContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#operador_condicion_2_ario}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperador_condicion_2_ario(Anasint.Operador_condicion_2_arioContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#operador_condicion_2_ario}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperador_condicion_2_ario(Anasint.Operador_condicion_2_arioContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#operador_condicion_1_ario}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#operador_condicion_1_ario}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#ultima_posicion}.
 	 * @param ctx the parse tree

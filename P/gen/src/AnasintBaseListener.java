@@ -196,30 +196,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPredicado_global(Anasint.Predicado_globalContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPredicado_global(Anasint.Predicado_globalContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLista_predicados(Anasint.Lista_predicadosContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLista_predicados(Anasint.Lista_predicadosContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterPredicado(Anasint.PredicadoContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -280,6 +256,18 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOperando_universal(Anasint.Operando_universalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOperando_universal(Anasint.Operando_universalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterOperando_aritmetico(Anasint.Operando_aritmeticoContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -304,25 +292,61 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOperador_aritmetico(Anasint.Operador_aritmeticoContext ctx) { }
+	@Override public void enterOperador_2_ario(Anasint.Operador_2_arioContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitOperador_aritmetico(Anasint.Operador_aritmeticoContext ctx) { }
+	@Override public void exitOperador_2_ario(Anasint.Operador_2_arioContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOperador_logico(Anasint.Operador_logicoContext ctx) { }
+	@Override public void enterOperador_aritmetico_2_ario(Anasint.Operador_aritmetico_2_arioContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitOperador_logico(Anasint.Operador_logicoContext ctx) { }
+	@Override public void exitOperador_aritmetico_2_ario(Anasint.Operador_aritmetico_2_arioContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOperador_logico_2_ario(Anasint.Operador_logico_2_arioContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOperador_logico_2_ario(Anasint.Operador_logico_2_arioContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOperador_condicion_2_ario(Anasint.Operador_condicion_2_arioContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOperador_condicion_2_ario(Anasint.Operador_condicion_2_arioContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
