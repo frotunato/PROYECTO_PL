@@ -1,5 +1,4 @@
-// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src/src\Anasint.g4 by ANTLR 4.9
-package src;
+// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.9
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -16,12 +15,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSentencia(Anasint.SentenciaContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Anasint#bloque_variables}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBloque_variables(Anasint.Bloque_variablesContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#declaracion_variable}.
 	 * @param ctx the parse tree
@@ -41,6 +34,18 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLista_variables_tipadas(Anasint.Lista_variables_tipadasContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Anasint#variable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariable(Anasint.VariableContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#variable_tipada}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariable_tipada(Anasint.Variable_tipadaContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -59,17 +64,35 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTipo_elemental(Anasint.Tipo_elementalContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Anasint#args_funcion_procedimiento}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArgs_funcion_procedimiento(Anasint.Args_funcion_procedimientoContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#bloque_funcion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBloque_funcion(Anasint.Bloque_funcionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Anasint#bloque_procedimiento}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBloque_procedimiento(Anasint.Bloque_procedimientoContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#bloque_instrucciones}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBloque_instrucciones(Anasint.Bloque_instruccionesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#bloque_variables}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBloque_variables(Anasint.Bloque_variablesContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#instruccion}.
 	 * @param ctx the parse tree
@@ -89,6 +112,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInstruccion_control(Anasint.Instruccion_controlContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Anasint#instruccion_ruptura}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstruccion_ruptura(Anasint.Instruccion_rupturaContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#instruccion_asig}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -100,6 +129,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitInstruccion_retorno(Anasint.Instruccion_retornoContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#instruccion_aserto}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstruccion_aserto(Anasint.Instruccion_asertoContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#predicado}.
 	 * @param ctx the parse tree
@@ -124,12 +159,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOperacion_aritmetica(Anasint.Operacion_aritmeticaContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Anasint#variable_acceso}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#operando_universal}.
 	 * @param ctx the parse tree
@@ -178,6 +207,18 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#variable_acceso}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariable_acceso(Anasint.Variable_accesoContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#funcion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFuncion(Anasint.FuncionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#ultima_posicion}.
 	 * @param ctx the parse tree

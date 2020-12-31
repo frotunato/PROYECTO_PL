@@ -1,5 +1,4 @@
-// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src/src\Anasint.g4 by ANTLR 4.9
-package src;
+// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.9
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -17,16 +16,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSentencia(Anasint.SentenciaContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Anasint#bloque_variables}.
-	 * @param ctx the parse tree
-	 */
-	void enterBloque_variables(Anasint.Bloque_variablesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#bloque_variables}.
-	 * @param ctx the parse tree
-	 */
-	void exitBloque_variables(Anasint.Bloque_variablesContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#declaracion_variable}.
 	 * @param ctx the parse tree
@@ -58,6 +47,26 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitLista_variables_tipadas(Anasint.Lista_variables_tipadasContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Anasint#variable}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariable(Anasint.VariableContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#variable}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariable(Anasint.VariableContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#variable_tipada}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariable_tipada(Anasint.Variable_tipadaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#variable_tipada}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariable_tipada(Anasint.Variable_tipadaContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 */
@@ -88,6 +97,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitTipo_elemental(Anasint.Tipo_elementalContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Anasint#args_funcion_procedimiento}.
+	 * @param ctx the parse tree
+	 */
+	void enterArgs_funcion_procedimiento(Anasint.Args_funcion_procedimientoContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#args_funcion_procedimiento}.
+	 * @param ctx the parse tree
+	 */
+	void exitArgs_funcion_procedimiento(Anasint.Args_funcion_procedimientoContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#bloque_funcion}.
 	 * @param ctx the parse tree
 	 */
@@ -98,6 +117,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitBloque_funcion(Anasint.Bloque_funcionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Anasint#bloque_procedimiento}.
+	 * @param ctx the parse tree
+	 */
+	void enterBloque_procedimiento(Anasint.Bloque_procedimientoContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#bloque_procedimiento}.
+	 * @param ctx the parse tree
+	 */
+	void exitBloque_procedimiento(Anasint.Bloque_procedimientoContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#bloque_instrucciones}.
 	 * @param ctx the parse tree
 	 */
@@ -107,6 +136,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBloque_instrucciones(Anasint.Bloque_instruccionesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#bloque_variables}.
+	 * @param ctx the parse tree
+	 */
+	void enterBloque_variables(Anasint.Bloque_variablesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#bloque_variables}.
+	 * @param ctx the parse tree
+	 */
+	void exitBloque_variables(Anasint.Bloque_variablesContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#instruccion}.
 	 * @param ctx the parse tree
@@ -138,6 +177,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitInstruccion_control(Anasint.Instruccion_controlContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Anasint#instruccion_ruptura}.
+	 * @param ctx the parse tree
+	 */
+	void enterInstruccion_ruptura(Anasint.Instruccion_rupturaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#instruccion_ruptura}.
+	 * @param ctx the parse tree
+	 */
+	void exitInstruccion_ruptura(Anasint.Instruccion_rupturaContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#instruccion_asig}.
 	 * @param ctx the parse tree
 	 */
@@ -157,6 +206,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInstruccion_retorno(Anasint.Instruccion_retornoContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#instruccion_aserto}.
+	 * @param ctx the parse tree
+	 */
+	void enterInstruccion_aserto(Anasint.Instruccion_asertoContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#instruccion_aserto}.
+	 * @param ctx the parse tree
+	 */
+	void exitInstruccion_aserto(Anasint.Instruccion_asertoContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#predicado}.
 	 * @param ctx the parse tree
@@ -197,16 +256,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOperacion_aritmetica(Anasint.Operacion_aritmeticaContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Anasint#variable_acceso}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariable_acceso(Anasint.Variable_accesoContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#variable_acceso}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#operando_universal}.
 	 * @param ctx the parse tree
@@ -287,6 +336,26 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#variable_acceso}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariable_acceso(Anasint.Variable_accesoContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#variable_acceso}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariable_acceso(Anasint.Variable_accesoContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#funcion}.
+	 * @param ctx the parse tree
+	 */
+	void enterFuncion(Anasint.FuncionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#funcion}.
+	 * @param ctx the parse tree
+	 */
+	void exitFuncion(Anasint.FuncionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#ultima_posicion}.
 	 * @param ctx the parse tree

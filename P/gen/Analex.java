@@ -1,5 +1,4 @@
-// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src/src\Analex.g4 by ANTLR 4.9
-package src;
+// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Analex.g4 by ANTLR 4.9
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
