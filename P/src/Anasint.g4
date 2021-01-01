@@ -8,9 +8,7 @@ sentencia: (bloque_variables | bloque_funcion | bloque_procedimiento | bloque_in
 declaracion_variable: lista_variables DP tipo PyC;
 //declaracion_variable: (IDENT COMA)* IDENT DP tipo PyC;
 
-
 lista_variables: (IDENT COMA)* IDENT;
-
 //lista_variables: (variable COMA)* variable;
 //lista_variables_tipadas: (tipo IDENT COMA)* tipo IDENT;
 lista_variables_tipadas: (variable_tipada COMA)* variable_tipada;
@@ -44,16 +42,25 @@ instruccion_aserto:
         ((PARATODO | EXISTE) PA IDENT DP CA operando_universal COMA operando_universal CC COMA predicado PC))
     LLC;
 
+//predicado: operacion_logica (operador_condicion_2_ario (predicado | (PA predicado PC)))*;
 predicado: operacion_logica (operador_condicion_2_ario (predicado | (PA predicado PC)))*;
-evaluacion_variable: NO? operacion_logica | operacion_aritmetica | variable_acceso | ultima_posicion | NO? vacia; //estos dos ultimos sobran?
+evaluacion_variable: operando_secuencia | (NO? operacion_logica) | operacion_aritmetica | variable_acceso | ultima_posicion | NO? vacia; //estos dos ultimos sobran?
 
-operacion_logica: (NO? (PA evaluacion_variable PC) | NO? operando_logico) (operador_logico_2_ario evaluacion_variable)*;
+//check 1 argumento solo logico
+operacion_logica: (NO? operando_logico) | (NO? (PA evaluacion_variable PC) | NO? operando_logico) (operador_logico_2_ario evaluacion_variable)+;
 operacion_aritmetica: ((PA operacion_aritmetica PC) | operando_aritmetico) (operador_aritmetico_2_ario operacion_aritmetica)*;
 
 //esto se deberia arreglar, realmente operandos deberian ser de cualquier tipo... eso es del semantico!
-operando_universal: variable | NUMERO | variable_acceso | ultima_posicion | funcion;
-operando_aritmetico: operando_universal;
+operando_universal: variable | variable_acceso | ultima_posicion | funcion;
+operando_aritmetico: NUMERO | operando_universal;
 operando_logico: TRUE | FALSE | CIERTO | FALSO | operando_universal | vacia;
+operando_secuencia: CA (operando_secuencia_logica* | operando_secuencia_aritmetica*) CC;
+    //((operacion_aritmetica COMA)* operacion_aritmetica)+ |
+    //((operacion_logica COMA)* operacion_logica)+) CC;
+
+operando_secuencia_logica: (predicado COMA)* predicado;
+operando_secuencia_aritmetica: (operacion_aritmetica COMA)* operacion_aritmetica;
+
 
 operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
 

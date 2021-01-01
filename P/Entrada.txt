@@ -6,8 +6,13 @@ FUNCION mayor_que_5(NUM x) dev (LOG r)
         sq, lm, nk, pk: SEQ(NUM);
     INSTRUCCIONES
         i=0;
+        si ((i+5)<5) entonces
+            i = 10;
+        fsi
+
+        i=[9+1,1+1,5];
+ /*
         max=s[i];
-        max = 1+T;
         x = mayor(mayor(menor(s[j]+1)));
         mientras (i<=ultima_posicion(s)) hacer {avance: bucle_1_avance(s, i)}
             ruptura;
@@ -16,5 +21,6 @@ FUNCION mayor_que_5(NUM x) dev (LOG r)
             fsi
             i=i+1;
         fmientras
+        */
 FFUNCION
 

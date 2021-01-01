@@ -178,6 +178,24 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperando_logico(Anasint.Operando_logicoContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Anasint#operando_secuencia}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#operando_secuencia_logica}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#operando_secuencia_aritmetica}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_secuencia_aritmetica(Anasint.Operando_secuencia_aritmeticaContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#operador_2_ario}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

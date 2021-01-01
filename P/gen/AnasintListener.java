@@ -287,6 +287,36 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitOperando_logico(Anasint.Operando_logicoContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Anasint#operando_secuencia}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#operando_secuencia}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#operando_secuencia_logica}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#operando_secuencia_logica}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#operando_secuencia_aritmetica}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperando_secuencia_aritmetica(Anasint.Operando_secuencia_aritmeticaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#operando_secuencia_aritmetica}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperando_secuencia_aritmetica(Anasint.Operando_secuencia_aritmeticaContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#operador_2_ario}.
 	 * @param ctx the parse tree
 	 */
