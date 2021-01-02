@@ -8,6 +8,5 @@
     </content>
     <orderEntry type="jdk" jdkName="openjdk-15" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="PROYECTO_PL" level="project" />
   </component>
 </module>

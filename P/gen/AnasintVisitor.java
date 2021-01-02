@@ -10,12 +10,6 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link Anasint#sentencia}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSentencia(Anasint.SentenciaContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#declaracion_variable}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -69,6 +63,18 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitArgs_funcion_procedimiento(Anasint.Args_funcion_procedimientoContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#bloque_programa}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBloque_programa(Anasint.Bloque_programaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#bloque_subprogramas}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBloque_subprogramas(Anasint.Bloque_subprogramasContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#bloque_funcion}.
 	 * @param ctx the parse tree

@@ -1,4 +1,4 @@
-
+ /*
 FUNCION mayor_que_5(NUM x) dev (LOG r)
     VARIABLES
         i,k,j,max:NUM;
@@ -6,12 +6,12 @@ FUNCION mayor_que_5(NUM x) dev (LOG r)
         sq, lm, nk, pk: SEQ(NUM);
     INSTRUCCIONES
         i=0;
-        si ((i+5)<5) entonces
+        si (!(i<5) && i<(k+sq)) entonces
             i = 10;
         fsi
 
-        i=[9+1,1+1,5];
- /*
+        i=[i+5,1+1,5];
+
         max=s[i];
         x = mayor(mayor(menor(s[j]+1)));
         mientras (i<=ultima_posicion(s)) hacer {avance: bucle_1_avance(s, i)}
@@ -21,6 +21,25 @@ FUNCION mayor_que_5(NUM x) dev (LOG r)
             fsi
             i=i+1;
         fmientras
-        */
-FFUNCION
 
+FFUNCION
+ */
+
+PROGRAMA
+    VARIABLES
+        i:NUM;
+    SUBPROGRAMAS
+        FUNCION mayor_que_5(SEQ(NUM) x1) dev (LOG r1, LOG r11)
+            VARIABLES
+                j:NUM;
+            INSTRUCCIONES
+                j=25;
+        FFUNCION
+        FUNCION mayor_que_6(NUM x2) dev (LOG r2)
+            VARIABLES
+                k:NUM;
+            INSTRUCCIONES
+                mm=25;
+        FFUNCION
+    INSTRUCCIONES
+        i=1;

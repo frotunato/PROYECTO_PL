@@ -3,7 +3,6 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -14,14 +13,14 @@ public class Principal {
         Analex analex = new Analex(input);
         CommonTokenStream tokens = new CommonTokenStream(analex);
         Anasint anasint = new Anasint(tokens);
-        ParseTree tree = anasint.sentencia();
+        ParseTree tree = anasint.bloque_programa();
 
-        ParseTreeWalker walker = new ParseTreeWalker();
-        Anasem anasem = new Anasem();
-        walker.walk(anasem, tree);
+        //ParseTreeWalker walker = new ParseTreeWalker();
+        //Anasem anasem = new Anasem();
+        //walker.walk(anasem, tree);
 
-        //ExtraerVarsExpr s = new ExtraerVarsExpr();
-        //s.visit(tree);
+        VisitorP s = new VisitorP();
+        s.visit(tree);
 
         JFrame frame = new JFrame("Árbol de Análisis");
         JPanel panel = new JPanel();

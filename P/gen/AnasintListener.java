@@ -7,16 +7,6 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface AnasintListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link Anasint#sentencia}.
-	 * @param ctx the parse tree
-	 */
-	void enterSentencia(Anasint.SentenciaContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#sentencia}.
-	 * @param ctx the parse tree
-	 */
-	void exitSentencia(Anasint.SentenciaContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Anasint#declaracion_variable}.
 	 * @param ctx the parse tree
 	 */
@@ -106,6 +96,26 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArgs_funcion_procedimiento(Anasint.Args_funcion_procedimientoContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#bloque_programa}.
+	 * @param ctx the parse tree
+	 */
+	void enterBloque_programa(Anasint.Bloque_programaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#bloque_programa}.
+	 * @param ctx the parse tree
+	 */
+	void exitBloque_programa(Anasint.Bloque_programaContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#bloque_subprogramas}.
+	 * @param ctx the parse tree
+	 */
+	void enterBloque_subprogramas(Anasint.Bloque_subprogramasContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#bloque_subprogramas}.
+	 * @param ctx the parse tree
+	 */
+	void exitBloque_subprogramas(Anasint.Bloque_subprogramasContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#bloque_funcion}.
 	 * @param ctx the parse tree
