@@ -1,13 +1,12 @@
-import org.antlr.v4.runtime.RuleContext;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Anasem extends AnasintBaseListener {
+    public void enterInstruccion (Anasint.InstruccionContext ctx) {
+        System.out.println("entering" + ctx.getText());
+    }
+    /*
     ExtraerVarsExpr extractor = new ExtraerVarsExpr();
-    AuxVariables auxVariables = new AuxVariables();
-    Map<RuleContext, AuxVariables> almacen = new HashMap<>();
+    Scope auxVariables = new Scope();
+    Map<RuleContext, Scope> almacen = new HashMap<>();
 
     public void exitVariable (Anasint.VariableContext ctx) {
         //System.out.println("exitVariable " + ctx.parent);
@@ -21,7 +20,7 @@ public class Anasem extends AnasintBaseListener {
     //registramos la declaración y tipado de variables
     public void exitBloque_variables (Anasint.Bloque_variablesContext ctx) {
         //System.out.println("Hello from listener exitBloque_variables " + ctx.getRuleContext().toString());
-        AuxVariables NauxVariables = new AuxVariables();
+        Scope NauxVariables = new Scope();
         for (Anasint.Declaracion_variableContext declaracionVariable: ctx.declaracion_variable())
             for (TerminalNode variable: declaracionVariable.IDENT()) {
                 System.out.println("plugging on ");
@@ -38,7 +37,7 @@ public class Anasem extends AnasintBaseListener {
             auxVariables.declara(variablesTipadas.IDENT().getText(), variablesTipadas.tipo().getText());
         }
     }
-    /*
+
 
     public void enterDeclaracion_variable(Anasint.Declaracion_variableContext ctx) {
         almacenar_variable_declarada(ctx.getText());
@@ -54,3 +53,4 @@ public class Anasem extends AnasintBaseListener {
         System.out.println("asdasd");
     }*/
 }
+

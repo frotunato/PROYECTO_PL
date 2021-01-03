@@ -29,17 +29,35 @@ PROGRAMA
     VARIABLES
         i:NUM;
     SUBPROGRAMAS
-        FUNCION mayor_que_5(SEQ(NUM) x1) dev (LOG r1, LOG r11)
+        /*
+        FUNCION mayor_que_5 (SEQ(NUM) x1) dev (LOG r1, LOG r11)
             VARIABLES
                 j:NUM;
+                k:LOG;
             INSTRUCCIONES
                 j=25;
+                k=T;
         FFUNCION
+        */
         FUNCION mayor_que_6(NUM x2) dev (LOG r2)
             VARIABLES
                 k:NUM;
+                a:SEQ(NUM);
+                p:LOG;
             INSTRUCCIONES
-                mm=25;
+                //a=[1,3,5,5];
+                a=1;
+                p=(1+3)<(2<3);
+                //k=a+(a+(1+a));
+                /*
+                si (T) entonces
+                   k = 3;
+                fsi
+                */
+                /*
+                si (14 > 25) entonces
+                    k = 3 * (5+(8+9));
+                fsi*/
         FFUNCION
     INSTRUCCIONES
         i=1;

@@ -15,23 +15,25 @@ public class Principal {
         Anasint anasint = new Anasint(tokens);
         ParseTree tree = anasint.bloque_programa();
 
-        //ParseTreeWalker walker = new ParseTreeWalker();
-        //Anasem anasem = new Anasem();
-        //walker.walk(anasem, tree);
+
 
         VisitorP s = new VisitorP();
         s.visit(tree);
-
+        /*
+        ParseTreeWalker walker = new ParseTreeWalker();
+        Anasem anasem = new Anasem();
+        walker.walk(anasem, tree);
+        */
         JFrame frame = new JFrame("Árbol de Análisis");
         JPanel panel = new JPanel();
         TreeViewer viewer = new TreeViewer(Arrays.asList(
                 anasint.getRuleNames()),tree);
-        viewer.setScale(1);//scale a little
+        viewer.setScale(0.8);//scale a little
 
         panel.add(viewer);
         frame.add(panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500,400);
+        frame.setSize(1280,720);
         frame.setVisible(true);
     }
 }
