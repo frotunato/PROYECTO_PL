@@ -152,7 +152,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
     public Object visitInstruccion_asig (Anasint.Instruccion_asigContext ctx) {
         Scope scope = getUpperScope(ctx);
-        System.out.println("IM GETTING ASSIGNED " + ctx.getText());
+        //System.out.println("IM GETTING ASSIGNED " + ctx.getText());
         List<Anasint.VariableContext> expresionIzquierda = ctx.lista_variables().variable();
         Anasint.Evaluaciones_variablesContext expresionDerecha = ctx.evaluaciones_variables();
         //List<RuleContext> expresionDerecha = ctx.getRuleContexts();
@@ -256,7 +256,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         System.out.println("visitOperacion_logica " + ctx.getText());
         String tipoLadoIzquierdo = "";
         String tipoLadoDerecho = "";
-        String evaluacionTipos = "";
         String res;
 
         if (ctx.operador_logico_2_ario() != null && ctx.operando_logico() == null && ctx.operacion_logica().size() == 1) {
@@ -264,23 +263,25 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             res =  visitOperacion_logica(ctx.operacion_logica().get(0));
             return res;
         } else if (ctx.operador_logico_2_ario() == null && ctx.operando_logico() != null) {
-            System.out.println("CASO BASE" + ctx.getText());
-            //res = visitOperacion_logica(ctx.operacion_logica().get(0));
-            return visitOperando_logico(ctx.operando_logico());
+            res = visitOperando_logico(ctx.operando_logico());
+            System.out.println("CASO BASE para " + ctx.getText() + " returned " + res);
+            return res;
         } else if (ctx.operador_logico_2_ario() != null && ctx.operacion_logica().size() == 2) {
             System.out.println("DOSSS " + ctx.getText());
             tipoLadoIzquierdo = visitOperacion_logica(ctx.operacion_logica().get(0));
             tipoLadoDerecho = visitOperacion_logica(ctx.operacion_logica().get(1));
-            System.out.println("LOSLADOS SON " + tipoLadoIzquierdo + " y" + tipoLadoDerecho);
+            //System.out.println("LOSLADOS SON " + tipoLadoIzquierdo + " y" + tipoLadoDerecho);
         } else if (ctx.operando_logico() != null && ctx.operacion_logica() != null){
-            System.out.println("ENTRAMOS EN DECIDIDOR, SOLO UN OPERACION " + ctx.getText());
+            //System.out.println("ENTRAMOS EN DECIDIDOR, SOLO UN OPERACION " + ctx.getText());
             tipoLadoIzquierdo = visitOperando_logico(ctx.operando_logico());
             tipoLadoDerecho = visitOperacion_logica(ctx.operacion_logica().get(0));
 
 
         }
+        //if (tipoLadoDerecho == tipoLadoIzquierdo)
+        //    System.out.println("THIS IS ABOUT TO CRASH " + ctx.getText());
         if (tipoLadoDerecho != tipoLadoIzquierdo)
-            throw new IllegalStateException("TIPOS DE OPERANDOS NO VALIDOS");
+            throw new IllegalStateException("TIPOS DE OPERANDOS NO VALIDOS i " + tipoLadoIzquierdo + " d " + tipoLadoDerecho + " ctx " + ctx.getText());
         else
             tipoLadoIzquierdo = "Boolean";
 
@@ -288,6 +289,17 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
 
+
+    public String visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
+        String resultado = visitPredicado(ctx.predicado());
+        if (resultado != "Boolean")
+            throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
+        //System.out.println("RESULTADO PREDICADO " + resultado);
+        return resultado;
+    }
+    public String visitPredicado(Anasint.PredicadoContext ctx) {
+        return super.visitPredicado(ctx).toString();
+    }
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
         return super.visitEvaluacion_variable(ctx).toString();
     }
@@ -472,15 +484,16 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             System.out.println(ctx.)
         }
         */
+    /*
     public Object visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
         System.out.println("IM GETTING CONTROLLED " + ctx.getText());
         return super.visitInstruccion_control(ctx);
     }
-
+*/
     public Object visitVariable (Anasint.VariableContext ctx) {
         Scope scope = getUpperScope(ctx);
         System.out.println("Checking variable " + ctx.getText() + " on scope " + scope);
-        System.out.println("PARENT=?=?" + ctx.getParent().getClass() + " to " + Anasint.Operando_universalContext.class);
+        //System.out.println("PARENT=?=?" + ctx.getParent().getClass() + " to " + Anasint.Operando_universalContext.class);
 
         if (!scope.existeVariable(ctx.IDENT().getText())) {
             System.out.println("SE HUNDE EL BARCO HIJODEPUTA " + ctx.getText());

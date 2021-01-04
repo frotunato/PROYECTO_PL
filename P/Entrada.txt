@@ -27,7 +27,7 @@ PROGRAMA
                 //p = ((1<1)==(25+1)) == T;
                 //b = 5;
                 //c, d = a + b, a<1;
-                //a,b,c,d,e=1+1,2+a,1+3,4+5,5;
+                a,b,c,d,e,p = 1+1,2+2,1+3,4+5,5,5<5;
 
                 //k=a+(a+(1+a));
                 /*
@@ -35,10 +35,10 @@ PROGRAMA
                    k = 3;
                 fsi
                 */
-                /*
-                si (14 > 25) entonces
-                    k = 3 * (5+(8+9));
-                fsi*/
+                /**/
+                si (5<2 && 1<(5+1)) entonces
+                    a = 3 * (5+(8+9));
+                fsi
         FFUNCION
     INSTRUCCIONES
         i=1;
