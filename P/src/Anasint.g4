@@ -26,7 +26,7 @@ bloque_programa: PROGRAMA bloque_variables bloque_subprogramas bloque_instruccio
 bloque_subprogramas: SUBPROGRAMAS (bloque_funcion | bloque_procedimiento)*;
 bloque_funcion: FUNCION IDENT args_funcion_procedimiento RETORNO args_funcion_procedimiento bloque_variables bloque_instrucciones;
 bloque_procedimiento: PROCEDIMIENTO IDENT args_funcion_procedimiento (EOF | bloque_variables);
-bloque_instrucciones: INSTRUCCIONES instruccion+ (FFUNCION | FPROCEDIMIENTO | EOF);
+bloque_instrucciones: INSTRUCCIONES instruccion+ (EOF | (FFUNCION | FPROCEDIMIENTO));
 bloque_variables: VARIABLES declaracion_variable*;
 
 //separar en bloques?
@@ -51,7 +51,7 @@ instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP funcion LLC)? i
 //instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP IDENT PA lista_variables PC LLC)? instruccion+ FMIENTRAS;
 instruccion_control: SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)* FSI;
 instruccion_ruptura: RUPTURA PyC;
-instruccion_asig: lista_variables ASIG evaluacion_variable PyC;
+instruccion_asig: lista_variables ASIG evaluaciones_variables PyC;
 instruccion_retorno: RETORNO evaluacion_variable PyC;
 instruccion_aserto:
     LLA (
@@ -61,37 +61,41 @@ instruccion_aserto:
 
 //predicado: operacion_logica (operador_condicion_2_ario (predicado | (PA predicado PC)))*;
 predicado: NO? operacion_logica (operador_condicion_2_ario NO? (predicado | (PA predicado PC)))*;
+
+evaluaciones_variables: evaluacion_variable (COMA evaluacion_variable)*;
 /*
 evaluacion_variable:
-    operando_secuencia #evSecuencia |
-    (NO? operacion_logica) #evOperacionLogica |
-    operacion_aritmetica #evOperacionAritmetica |
-    variable_acceso #evVariableAcceso |
-    ultima_posicion #evUltimaPosicion |
-    (NO? vacia) #evVacia
-;*/
+    operando_secuencia #evalSecuencia |
+    (NO? operacion_logica) #evalOperacionLogica |
+    operacion_aritmetica #evalOperacionAritmetica |
+    variable_acceso #evalVariableAcceso |
+    ultima_posicion #evalUltimaPosicion |
+    (NO? vacia) #evalVacia
+;
+*/
 evaluacion_variable:
+    operando_aritmetico |
+    operando_logico |
+    operando_universal |
     operando_secuencia |
     operacion_aritmetica |
+    //operacion_2_aria |
     (NO? operacion_logica) |
     variable_acceso |
     ultima_posicion |
     (NO? vacia)
     ;
-//estos dos ultimos sobran?
 
-//check 1 argumento solo logico
-operacion_logica: ((NO? operando_logico) | ((PA (operacion_logica) PC))) (operador_logico_2_ario (operacion_logica))*;
-//operacion_logica: (NO? operando_logico) | (NO? (PA evaluacion_variable PC) | (NO? operando_logico)) (operador_logico_2_ario evaluacion_variable)+;
-//operacion_logica: (NO? operando_logico) | (NO? (PA evaluacion_variable PC) | NO? operando_logico) (operador_logico_2_ario evaluacion_variable)+;
-//(variable COMA)* variable
-operacion_aritmetica: (operando_aritmetico | (PA operacion_aritmetica PC)) (operador_aritmetico_2_ario (operacion_aritmetica))*;
-
+operacion_logica: (operando_logico | (PA (operacion_logica) PC)) (operador_logico_2_ario (operacion_logica | (PA (operacion_logica) PC) ))?;
+operacion_aritmetica: (operando_aritmetico | (PA operacion_aritmetica PC)) (operador_aritmetico_2_ario (operacion_aritmetica | (PA operacion_aritmetica PC) ))*;
+operacion_2_aria: ((operando_logico | operando_aritmetico) | (PA operacion_2_aria PC)) (operador_2_ario (operacion_2_aria | (PA operacion_2_aria PC)))*;
 //esto se deberia arreglar, realmente operandos deberian ser de cualquier tipo... eso es del semantico!
 operando_universal: variable | variable_acceso | ultima_posicion | funcion;
 operando_aritmetico: NUMERO | operando_universal;
-operando_logico: NUMERO | TRUE | FALSE | CIERTO | FALSO | operando_universal | vacia;
-operando_secuencia: CA (operando_secuencia_logica* | operando_secuencia_aritmetica*) CC;
+operando_logico: TRUE | FALSE | CIERTO | FALSO | operacion_aritmetica | vacia;
+
+operando_secuencia: CA (operando_secuencia_logica | operando_secuencia_aritmetica) CC;
+    //WTF¿?
     //((operacion_aritmetica COMA)* operacion_aritmetica)+ |
     //((operacion_logica COMA)* operacion_logica)+) CC;
 

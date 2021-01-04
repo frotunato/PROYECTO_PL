@@ -1,30 +1,3 @@
- /*
-FUNCION mayor_que_5(NUM x) dev (LOG r)
-    VARIABLES
-        i,k,j,max:NUM;
-        s:LOG;
-        sq, lm, nk, pk: SEQ(NUM);
-    INSTRUCCIONES
-        i=0;
-        si (!(i<5) && i<(k+sq)) entonces
-            i = 10;
-        fsi
-
-        i=[i+5,1+1,5];
-
-        max=s[i];
-        x = mayor(mayor(menor(s[j]+1)));
-        mientras (i<=ultima_posicion(s)) hacer {avance: bucle_1_avance(s, i)}
-            ruptura;
-            si (s[i]>max) entonces
-                max=s[i];
-            fsi
-            i=i+1;
-        fmientras
-
-FFUNCION
- */
-
 PROGRAMA
     VARIABLES
         i:NUM;
@@ -41,13 +14,21 @@ PROGRAMA
         */
         FUNCION mayor_que_6(NUM x2) dev (LOG r2)
             VARIABLES
-                k:NUM;
-                a:SEQ(NUM);
-                p:LOG;
+                //k:NUM;
+                a,b,c,d,e:NUM;
+                p,k:LOG;
             INSTRUCCIONES
                 //a=[1,3,5,5];
-                a=1;
-                p=(1+3)<(2<3);
+                //a = 1;
+                p = (T==F) == (2<(3<(4<(5<(1)))));
+                k = p;
+                //p = (1+1)==(2<12);
+                //p = 1<1;
+                //p = ((1<1)==(25+1)) == T;
+                //b = 5;
+                //c, d = a + b, a<1;
+                //a,b,c,d,e=1+1,2+a,1+3,4+5,5;
+
                 //k=a+(a+(1+a));
                 /*
                 si (T) entonces

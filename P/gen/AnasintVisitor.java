@@ -148,6 +148,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPredicado(Anasint.PredicadoContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Anasint#evaluaciones_variables}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEvaluaciones_variables(Anasint.Evaluaciones_variablesContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#evaluacion_variable}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -165,6 +171,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOperacion_aritmetica(Anasint.Operacion_aritmeticaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#operacion_2_aria}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#operando_universal}.
 	 * @param ctx the parse tree

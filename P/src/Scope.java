@@ -21,6 +21,10 @@ public class Scope {
 
     }
 
+    public void inicializaVariable (String nombre) {
+        variables.get(nombre).inicializaVariable();
+    }
+
     public Variable getVariable (String nombre) {
         return variables.get(nombre);
     }

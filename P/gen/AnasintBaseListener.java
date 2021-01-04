@@ -291,6 +291,18 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterEvaluaciones_variables(Anasint.Evaluaciones_variablesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEvaluaciones_variables(Anasint.Evaluaciones_variablesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterEvaluacion_variable(Anasint.Evaluacion_variableContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -322,6 +334,18 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOperacion_aritmetica(Anasint.Operacion_aritmeticaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

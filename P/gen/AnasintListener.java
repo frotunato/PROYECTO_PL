@@ -237,6 +237,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitPredicado(Anasint.PredicadoContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Anasint#evaluaciones_variables}.
+	 * @param ctx the parse tree
+	 */
+	void enterEvaluaciones_variables(Anasint.Evaluaciones_variablesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#evaluaciones_variables}.
+	 * @param ctx the parse tree
+	 */
+	void exitEvaluaciones_variables(Anasint.Evaluaciones_variablesContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#evaluacion_variable}.
 	 * @param ctx the parse tree
 	 */
@@ -266,6 +276,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOperacion_aritmetica(Anasint.Operacion_aritmeticaContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#operacion_2_aria}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#operacion_2_aria}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#operando_universal}.
 	 * @param ctx the parse tree
