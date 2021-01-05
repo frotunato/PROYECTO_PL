@@ -95,7 +95,8 @@ operando_universal: variable | variable_acceso | ultima_posicion | funcion;
 operando_aritmetico: NUMERO | operando_universal;
 operando_logico: TRUE | FALSE | CIERTO | FALSO | operacion_aritmetica | vacia;
 
-operando_secuencia: CA (operando_secuencia_logica | operando_secuencia_aritmetica) CC;
+operando_secuencia: CA ((evaluacion_variable COMA)* evaluacion_variable?) CC;
+////operando_secuencia: CA (operando_secuencia_logica | operando_secuencia_aritmetica) CC;
     //WTF¿?
     //((operacion_aritmetica COMA)* operacion_aritmetica)+ |
     //((operacion_logica COMA)* operacion_logica)+) CC;

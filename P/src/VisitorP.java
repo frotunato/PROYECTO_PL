@@ -111,7 +111,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         List<Anasint.VariableContext> expresionIzquierda = ctx.lista_variables().variable();
         Anasint.Evaluaciones_variablesContext expresionDerecha = ctx.evaluaciones_variables();
         //List<RuleContext> expresionDerecha = ctx.getRuleContexts();
-
+        String tipoVarDerecha = "";
         //String tipoExpresionDerecha = convierteClaseATipo(visitEvaluacion_variable(expresionDerecha));
         //String tipoExpresionIzquierda = scope.getVariable(expresionIzquierda.get(0).getText()).getTipo();
 
@@ -134,37 +134,25 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                     arrTiposDer.add(vSalida.getTipo());
 
             } else
+                //tipoVarDerecha = visitEvaluacion_variable(varDerecha);
+                //if (tipoVarDerecha == "ArrayList<>")
                 arrTiposDer.add(visitEvaluacion_variable(varDerecha));
         }
+
+        for (int i = 0; i < arrTiposIzq.size(); i++) {
+            System.out.println(arrTiposIzq.size() + " " + arrTiposIzq.get(i));
+            if (arrTiposIzq.get(i).contains("ArrayList") && arrTiposDer.get(i).equals("ArrayList<>")) {
+                System.out.println("Lista tipada vs generica ");
+            } else if (!arrTiposIzq.get(i).equals(arrTiposDer.get(i))) {
+                throw new IllegalStateException("Asignación no valida... Izq: " + arrTiposIzq.toString() +
+                        " vs Der: " + arrTiposDer.toString());
+            }
+        }
         /*
-        for (int i = 0; i < expresionDerecha.evaluacion_variable().size(); i++) {
-            Anasint.Evaluacion_variableContext a = expresionDerecha.evaluacion_variable().get(i);
-            if (a.funcion() != null) {
-                List<Variable> varSalidaFuncion = scopeGlobal.getFuncion(a.funcion().IDENT().getText()).getSalida();
-                for (Variable vSalida : varSalidaFuncion) {
-                    System.out.println("Salida " + vSalida.getTipo());
-                    arrTiposDer.add(vSalida.getTipo());
-                }
-            } else {
-                String tipoVarDerecha = visitEvaluacion_variable(a);
-                arrTiposDer.add(tipoVarDerecha);
-                /*if (variableIzqAsociada.getTipo() != tipoVarDerecha)
-                    throw new IllegalStateException("ASIGNACION DE TIPOS INVALIDOS ENTRE VAR " +
-                            variableIzqAsociada.getNombre() + " TIPO " + variableIzqAsociada.getTipo() +
-                            "CON TIPO " + tipoVarDerecha);
-
-                ///System.out.println("IZK " + variableIzqAsociada.getTipo() + " vs DER " + tipoVarDerecha);
-
-            }
-            //ariable variableIzqAsociada = scope.getVariable(expresionIzquierda.get(i).getText());
-            //arrTiposIzq.add(variableIzqAsociada.getTipo());
-            }
-         */
-
        if (!arrTiposDer.equals(arrTiposIzq))
            throw new IllegalStateException("Asignación no valida... Izq: " + arrTiposIzq.toString() +
                    " vs Der: " + arrTiposDer.toString());
-
+        */
             //Asignacion paralela
         for (Anasint.VariableContext variableIzquierda: expresionIzquierda)
             scope.inicializaVariable(variableIzquierda.getText());
@@ -231,6 +219,19 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             tipoLadoIzquierdo = "Boolean";
 
         return tipoLadoIzquierdo;
+    }
+
+    public String visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
+        List<String> tiposSecuencia = new ArrayList<>();
+        for (Anasint.Evaluacion_variableContext elemento: ctx.evaluacion_variable()) {
+            tiposSecuencia.add(visitEvaluacion_variable(elemento));
+        }
+        if (!tiposSecuencia.stream().allMatch(s -> s.equals(tiposSecuencia.get(0))))
+            throw new IllegalStateException("Secuencia con tipos mixtos " + tiposSecuencia.toString());
+        if (tiposSecuencia.isEmpty())
+            return "ArrayList<>";
+        else
+            return "ArrayList<" + tiposSecuencia.get(0) + ">";
     }
 
     public String visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
