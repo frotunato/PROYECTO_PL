@@ -29,6 +29,8 @@ public class Scope {
         return variables.get(nombre);
     }
 
+    public Funcion getFuncion (String nombre) { return funciones.get(nombre); }
+
     public void declaraVariable (Variable variable) {
         if (variables.containsKey(variable.nombre))
             throw new IllegalStateException("La variable " + variable.nombre + " ya ha sido declarada con anterioridad");

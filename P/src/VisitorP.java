@@ -54,18 +54,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     public Object visitBloque_subprogramas (Anasint.Bloque_subprogramasContext ctx) {
-        //System.out.println("heheheheu " + scope.getVariablesDeclaradas());
-
-        /*for (Anasint.Bloque_funcionContext funcion: ctx.bloque_funcion())
-            visitBloque_funcion(funcion);
-        */
-        /*for (Anasint.Bloque_funcionContext subprograma: ctx.bloque_funcion()) {
-            visitBloque_funcion(subprograma);
-            //System.out.println(subprograma.getText());
-        }*/
-        //return super.visitBloque_subprogramas(ctx);
-
-        //System.out.println("visitBloque_subprogramas");
         return super.visitBloque_subprogramas(ctx);
     }
 
@@ -87,19 +75,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             Aquí entramos en el bloque de instrucciones de la función, y comenzamos a
             realizar las diferentes comprobaciones de tipo y existencia en scope.
          */
-
-        //visitBloque_instrucciones(ctx.bloque_instrucciones());
-
-        //List<Variable> entrada = visit(ctx.args_funcion_procedimiento());
-        //List<Variable> salida = ctx.args_funcion_procedimiento().get(1);
-        /*
-        for (Anasint.Args_funcion_procedimientoContext args: ctx.args_funcion_procedimiento())
-            visitArgs_funcion_procedimiento(args, scope);
-        scopes.put(scope.hashCode(), scope);
-        for (Integer scope2: scopes.keySet())
-            System.out.println("scope " + scope2 + " " + scopes.get(scope2).getVariablesDeclaradas());
-        */
-        //return 0;
 
         return super.visitBloque_funcion(ctx);
     }
@@ -129,26 +104,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             //scope.declaraVariable(varTipada.IDENT().getText(), varTipada.tipo().getText());
         return res;
     }
-    /*
-    public Object visitInstruccion(Anasint.InstruccionContext ctx) {
-        Scope pscope = getUpperScope(ctx);
-        System.out.println("JUST AN INSTRUCTION " + ctx.getText());
-        //ctx.;
-        //return 0;
-        return super.visitInstruccion(ctx);
-    }
-    */
-    /*
-    private String convierteClaseATipo (Object expresion) {
-        String res = "";
-        System.out.println(expresion.getClass());
-        switch (expresion.getClass()) {
-            //case Anasint.Operando_logicoContext -> res = "Boolean";
-            case Anasint.Operando_aritmeticoContext -> res = "Integer";
-        }
-        return res;
-    }
-    */
 
     public Object visitInstruccion_asig (Anasint.Instruccion_asigContext ctx) {
         Scope scope = getUpperScope(ctx);
@@ -160,71 +115,61 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         //String tipoExpresionDerecha = convierteClaseATipo(visitEvaluacion_variable(expresionDerecha));
         //String tipoExpresionIzquierda = scope.getVariable(expresionIzquierda.get(0).getText()).getTipo();
 
+
+
+        List<String> arrTiposIzq = new ArrayList<String>();
+        List<String> arrTiposDer = new ArrayList<String>();
+
         for (Anasint.VariableContext variableIzquierda: expresionIzquierda) {
-            Object dunno = visit(variableIzquierda);
-            System.out.println(dunno);
+            visit(variableIzquierda);
+            arrTiposIzq.add(scope.getVariable(variableIzquierda.getText()).getTipo());
         }
 
         //Comprobación de tipo variable con homonimo
+
+        for (Anasint.Evaluacion_variableContext varDerecha: expresionDerecha.evaluacion_variable()) {
+            if (varDerecha.funcion() != null) {
+                List<Variable> varSalidaFuncion = scopeGlobal.getFuncion(varDerecha.funcion().IDENT().getText()).getSalida();
+                for (Variable vSalida : varSalidaFuncion)
+                    arrTiposDer.add(vSalida.getTipo());
+
+            } else
+                arrTiposDer.add(visitEvaluacion_variable(varDerecha));
+        }
+        /*
         for (int i = 0; i < expresionDerecha.evaluacion_variable().size(); i++) {
             Anasint.Evaluacion_variableContext a = expresionDerecha.evaluacion_variable().get(i);
-            String tipoVarDerecha = visitEvaluacion_variable(a);
-            Variable variableIzqAsociada = scope.getVariable(expresionIzquierda.get(i).getText());
-            if (variableIzqAsociada.getTipo() != tipoVarDerecha)
-                throw new IllegalStateException("ASIGNACION DE TIPOS INVALIDOS ENTRE VAR " +
-                        variableIzqAsociada.getNombre() + " TIPO " + variableIzqAsociada.getTipo() +
-                        "CON TIPO " + tipoVarDerecha);
-            //variableIzqAsociada.inicializaVariable();
-            System.out.println("IZK " + variableIzqAsociada.getTipo() + " vs DER " + tipoVarDerecha);
+            if (a.funcion() != null) {
+                List<Variable> varSalidaFuncion = scopeGlobal.getFuncion(a.funcion().IDENT().getText()).getSalida();
+                for (Variable vSalida : varSalidaFuncion) {
+                    System.out.println("Salida " + vSalida.getTipo());
+                    arrTiposDer.add(vSalida.getTipo());
+                }
+            } else {
+                String tipoVarDerecha = visitEvaluacion_variable(a);
+                arrTiposDer.add(tipoVarDerecha);
+                /*if (variableIzqAsociada.getTipo() != tipoVarDerecha)
+                    throw new IllegalStateException("ASIGNACION DE TIPOS INVALIDOS ENTRE VAR " +
+                            variableIzqAsociada.getNombre() + " TIPO " + variableIzqAsociada.getTipo() +
+                            "CON TIPO " + tipoVarDerecha);
 
-        }
-        //Asignacion paralela
-        for (Anasint.VariableContext variableIzquierda: expresionIzquierda) {
-            scope.inicializaVariable(variableIzquierda.getText());
-        }
+                ///System.out.println("IZK " + variableIzqAsociada.getTipo() + " vs DER " + tipoVarDerecha);
 
-
-
-/*
-        for (Anasint.Evaluacion_variableContext variableDerecha: expresionDerecha.evaluacion_variable()) {
-            System.out.println(variableDerecha.getText() + " TIPO IS " + visitEvaluacion_variable(variableDerecha));
-            //System.out.println(variableDerecha.getChild(0).getClass());
-        }
-*/
-        //System.out.println(tipo);
-        /*
-        for (Anasint.Evaluacion_variableContext evaluacion: expresionDerecha) {
-            System.out.println("huey " + evaluacion);
-        }
-*/
-
-        //System.out.println("TipoIzq " + tipoExpresionIzquierda + " TipoDer" + tipoExpresionDerecha);
-        /*
-        //if (who.getClass().equals(Anasint.Operando_aritmeticoContext.class)) {
-        if (tipoExpresionDerecha.equals(scope.getVariable(expresionIzquierda.get(0).getText()).getTipo()))
-            Anasint.Operando_aritmeticoContext cnumero = (Anasint.Operando_aritmeticoContext) who;
-            System.out.println("ESPUNTONUMEROOO " + cnumero.getText());
-
-            if (scope.getVariable(expresionIzquierda.get(0).getText()).getTipo() == "Integer") {
-                scope.getVariable(expresionIzquierda.get(0).getText()).inicializaVariable();
-            } else
-                throw new IllegalStateException("ASIGNACION DE TIPOS INVALIDOS " + scope.getVariable(expresionIzquierda.get(0).getText()).getTipo() + " vs " + cnumero.getText());
-        } else if (who.getClass().equals(Anasint.Operando_logicoContext.class)) {
-            Anasint.Operando_logicoContext cnumero = (Anasint.Operando_logicoContext) who;
-            System.out.println("ES PUTO LOGICOo " + cnumero.getText());
-
-            if (scope.getVariable(expresionIzquierda.get(0).getText()).getTipo() == "Boolean") {
-                scope.getVariable(expresionIzquierda.get(0).getText()).inicializaVariable();
             }
-        }
-    /*
+            //ariable variableIzqAsociada = scope.getVariable(expresionIzquierda.get(i).getText());
+            //arrTiposIzq.add(variableIzqAsociada.getTipo());
+            }
+         */
+
+       if (!arrTiposDer.equals(arrTiposIzq))
+           throw new IllegalStateException("Asignación no valida... Izq: " + arrTiposIzq.toString() +
+                   " vs Der: " + arrTiposDer.toString());
+
+            //Asignacion paralela
+        for (Anasint.VariableContext variableIzquierda: expresionIzquierda)
+            scope.inicializaVariable(variableIzquierda.getText());
 
 
-        //las del lado izq, no pueden aparecer en el derecho
-        //System.out.println("STOP is " + ctx.evaluacion_variable().getStop().getText());
-        /*for (ParserRuleContext valAsig: rightSide) {
-            System.out.println("Testing the shit " + valAsig.getText());
-        }*/
         return 1;
         //return super.visitInstruccion_asig(ctx);
     }
@@ -288,8 +233,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return tipoLadoIzquierdo;
     }
 
-
-
     public String visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
         String resultado = visitPredicado(ctx.predicado());
         if (resultado != "Boolean")
@@ -297,12 +240,23 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         //System.out.println("RESULTADO PREDICADO " + resultado);
         return resultado;
     }
+
     public String visitPredicado(Anasint.PredicadoContext ctx) {
         return super.visitPredicado(ctx).toString();
     }
+
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
+        if (ctx.funcion() != null &&
+            scopeGlobal.getFuncion(ctx.funcion().IDENT().getText()).getSalida().size() > 1 &&
+            ctx.getParent().getClass() != Anasint.Evaluaciones_variablesContext.class)
+                throw new IllegalStateException("Variables retorno multiple solo en definicion");
+
         return super.visitEvaluacion_variable(ctx).toString();
     }
+
+    /*public String visitEvaluaciones_variables (Anasint.Evaluaciones_variablesContext ctx) {
+        if
+    }*/
 
     public String visitOperando_aritmetico (Anasint.Operando_aritmeticoContext ctx) {
         System.out.println("visitOperando_aritmetico " + ctx.getText());
@@ -324,173 +278,37 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return super.visitOperando_universal(ctx).toString();
     }
 
-    /*
-
-    public boolean evalOperacionLogica (Anasint.EvalOperacionLogicaContext ctx) {
-        this.visit(ctx);
-        return true;
-    }
-    public int evalOperacionAritmetica (Anasint.EvalOperacionAritmeticaContext ctx) {
-        this.visit(ctx);
-        return 0;
-    }*/
-    /*
-    public Object visitEvalSecuencia (Anasint.EvalSecuenciaContext ctx) {
-        System.out.println("im sequence");
-        return super.visitEvalSecuencia(ctx);
-    }
-
-    }
-    public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
-        String tipoEvaluacion = "";
-        this.visit(ctx);
-        return tipoEvaluacion;*/
-        //return super.visitEvaluacion_variable(ctx);
-    /*
-    public Anasint.Operando_logicoContext visitOperacion_logica (Anasint.Operacion_logicaContext ctx) {
-        //Anasint.Operando_aritmeticoContext operando = visitOperando_aritmetico(ctx.operando_aritmetico());
-        Scope scope = getUpperScope(ctx);
-        Anasint.Operando_logicoContext operandoIzquierda = ctx.operando_logico();
-        //System.out.println("opIzq " + operandoIzquierda.getText());
-        if (operandoIzquierda == null)
-            return visitOperacion_logica(ctx.operacion_logica().get(0));
-        //return visitOperacion_aritmetica((Anasint.Operacion_aritmeticaContext) ctx.operacion_aritmetica());
-
-        //operandos.add(ctx.operando_aritmetico());
-        System.out.println("LOGICO Operando " + ctx.operando_logico().getText());
-        System.out.println("LOGICO Operacion " + ctx.operacion_logica().toString());
-        //operandos.add(visitOperacion_aritmetica(ctx));
-
-        for (Anasint.Operacion_logicaContext nOperando: ctx.operacion_logica()) {
-            Anasint.Operando_logicoContext operandoDerecha = visitOperacion_logica(nOperando);
-            visitOperando_logico(operandoIzquierda);
-            visitOperando_logico(operandoDerecha);
-
-            //System.out.println(nValor.getText() + " vs " + operandoIzquierda.getText());
-            //System.out.println("[LOGICO] OperandoIzquierda " + operandoIzquierda.getStop().getText());
-            //System.out.println("[LOGICO] OperandoDerecha " + operandoDerecha.getStop().getText());
-            String tipoOperandoDerecha = "";
-            String tipoOperandoIzquierda = "";
-
-            if (operandoDerecha.operando_universal() != null) {
-                if (operandoDerecha.operando_universal().variable() != null)
-                    tipoOperandoDerecha = scope.getVariable(operandoDerecha.getText()).getTipo();
-                else if (operandoDerecha.operando_universal().variable_acceso() != null)
-                    tipoOperandoDerecha = scope.getVariable(operandoDerecha.operando_universal().variable_acceso().variable().getText()).getTipo();
-                else if (operandoDerecha.operando_universal().ultima_posicion().variable() != null)
-                    tipoOperandoDerecha = scope.getVariable(operandoDerecha.operando_universal().ultima_posicion().variable().getText()).getTipo();
-            } else if (operandoDerecha.TRUE() != null || operandoDerecha.FALSO() != null)
-                tipoOperandoDerecha = "Boolean";
-
-            if (operandoIzquierda.operando_universal() != null) {
-                if (operandoIzquierda.operando_universal().variable() != null)
-                    tipoOperandoIzquierda = scope.getVariable(operandoIzquierda.getText()).getTipo();
-                else if (operandoIzquierda.operando_universal().variable_acceso() != null)
-                    tipoOperandoIzquierda = scope.getVariable(operandoIzquierda.operando_universal().variable_acceso().variable().getText()).getTipo();
-                else if (operandoIzquierda.operando_universal().ultima_posicion().variable() != null)
-                    tipoOperandoIzquierda = scope.getVariable(operandoIzquierda.operando_universal().ultima_posicion().variable().getText()).getTipo();
-            } else if (operandoDerecha.TRUE() != null || operandoDerecha.FALSO() != null)
-                tipoOperandoIzquierda = "Boolean";
-
-            if (tipoOperandoDerecha != tipoOperandoIzquierda)
-                throw new IllegalStateException("DOS VARIABLES NO DEL MISMO TIPO");
-        }
-        return operandoIzquierda;
-    }
-
-*/
-/*
-    public Anasint.Operando_aritmeticoContext visitOperacion_aritmetica (Anasint.Operacion_aritmeticaContext ctx) {
-        //Anasint.Operando_aritmeticoContext operando = visitOperando_aritmetico(ctx.operando_aritmetico());
-        Scope scope = getUpperScope(ctx);
-        Anasint.Operando_aritmeticoContext operandoIzquierda = ctx.operando_aritmetico();
-        //System.out.println("opIzq " + operandoIzquierda.getText());
-        if (operandoIzquierda == null) {
-            return visitOperacion_aritmetica(ctx.operacion_aritmetica().get(0));
-        }
-            //return visitOperacion_aritmetica((Anasint.Operacion_aritmeticaContext) ctx.operacion_aritmetica());
-
-        //operandos.add(ctx.operando_aritmetico());
-        //System.out.println("Operando " + ctx.operando_aritmetico().getText());
-        //System.out.println("Operacion " + ctx.operacion_aritmetica().toString());
-        //operandos.add(visitOperacion_aritmetica(ctx));
-
-        for (Anasint.Operacion_aritmeticaContext nOperando: ctx.operacion_aritmetica()) {
-            Anasint.Operando_aritmeticoContext operandoDerecha = visitOperacion_aritmetica(nOperando);
-            visitOperando_aritmetico(operandoIzquierda);
-            visitOperando_aritmetico(operandoDerecha);
-
-            //System.out.println(nValor.getText() + " vs " + operandoIzquierda.getText());
-            //System.out.println("OperandoIzquierda " + operandoIzquierda.getStop().getTokenSource());
-            //System.out.println("OperandoDerecha " + operandoDerecha.getStop().getType());
-            String tipoOperandoDerecha = "";
-            String tipoOperandoIzquierda = "";
-
-            if (operandoDerecha.operando_universal() != null) {
-                if (operandoDerecha.operando_universal().variable() != null)
-                    tipoOperandoDerecha = scope.getVariable(operandoDerecha.getText()).getTipo();
-                else if (operandoDerecha.operando_universal().variable_acceso() != null)
-                    tipoOperandoDerecha = scope.getVariable(operandoDerecha.operando_universal().variable_acceso().variable().getText()).getTipo();
-                else if (operandoDerecha.operando_universal().ultima_posicion().variable() != null)
-                    tipoOperandoDerecha = scope.getVariable(operandoDerecha.operando_universal().ultima_posicion().variable().getText()).getTipo();
-            } else if (operandoDerecha.NUMERO() != null)
-                tipoOperandoDerecha = "Integer";
-
-            if (operandoIzquierda.operando_universal() != null) {
-                if (operandoIzquierda.operando_universal().variable() != null)
-                    tipoOperandoIzquierda = scope.getVariable(operandoIzquierda.getText()).getTipo();
-                else if (operandoIzquierda.operando_universal().variable_acceso() != null)
-                    tipoOperandoIzquierda = scope.getVariable(operandoIzquierda.operando_universal().variable_acceso().variable().getText()).getTipo();
-                else if (operandoIzquierda.operando_universal().ultima_posicion().variable() != null)
-                    tipoOperandoIzquierda = scope.getVariable(operandoIzquierda.operando_universal().ultima_posicion().variable().getText()).getTipo();
-            } else if (operandoIzquierda.NUMERO() != null)
-                tipoOperandoIzquierda = "Integer";
-
-            if (tipoOperandoDerecha != tipoOperandoIzquierda)
-                throw new IllegalStateException("DOS VARIABLES NO DEL MISMO TIPO");
-            else
-                System.out.println("EXPRESION VALIDA EN CUANTO A TIPOS " + tipoOperandoDerecha + " " + tipoOperandoIzquierda);
-
+    public String visitFuncion (Anasint.FuncionContext ctx) {
+        System.out.println("FUNCTION CALLED WITH PARAMS " + ctx.IDENT().getText());
+        String tipoArgumento;
+        int indexArgumento = 0;
+        //Scope scope = scopeGlobal;
+        Funcion funcion = scopeGlobal.getFuncion(ctx.IDENT().getText());
+        // comprobamos si ha sido invocada con el mismo numero de parametros
+        if (funcion.getEntrada().size() != ctx.evaluacion_variable().size()) {
+            throw new IllegalStateException("visitFuncion nº argumentos inválidos orig: " +
+                    funcion.getEntrada().size() + " , recib: " + ctx.evaluacion_variable().size());
         }
 
-
-        //operandos.add(ctx.operando_aritmetico());
-        return operandoIzquierda;
-        //return super.visitOperacion_aritmetica(ctx.);
-    }
-
-    public Object visitOperando_aritmetico (Anasint.Operando_aritmeticoContext ctx) {
-        //Scope scope = getUpperScope(ctx);
-        //System.out.println("OPERANDO UNIVERSAL? Q CLASE LOCO " + ctx.);
-        //return ctx.getText();
-        return super.visitOperando_aritmetico(ctx);
-    }
-*/
-    /*
-    public Object visitOperando_universal (Anasint.Operando_universalContext ctx) {
-        //System.out.println("hoing depp");
-        return super.visitOperando_universal(ctx);
-    }
-    */
-
-    /*
-        public Object visitOperando_logico (Anasint.Operando_logicoContext ctx) {
-            Scope scope = getUpperScope(ctx);
-            //System.out.println("OPERANDO UNIVERSAL? Q CLASE LOCO " + ctx.);
-            return ctx.getTe();
+        //comprobamos si los tipos de entrada son los adecuados
+        for (Anasint.Evaluacion_variableContext variable: ctx.evaluacion_variable()) {
+            tipoArgumento = visitEvaluacion_variable(variable);
+            if (variable.funcion() != null)
+                System.out.println("ES UNA FUNCION PARAMETER " + scopeGlobal.getFuncion(variable.funcion().IDENT().getText()).getSalida().size());
+            if (variable.funcion() != null &&
+                    scopeGlobal.getFuncion(variable.funcion().IDENT().getText()).getSalida().size() > 1)
+                throw new IllegalStateException("visitFuncion funcion DEV > 1 como parametro");
+            if (tipoArgumento != funcion.getEntrada().get(indexArgumento).getTipo())
+                throw new IllegalStateException("visitFuncion tipo arg inválido orig: " +
+                        funcion.getEntrada().get(indexArgumento).getTipo() + " , recib: " + tipoArgumento);
+            System.out.println("visitFuncion argumento " + variable.getText());
+            indexArgumento++;
         }
-        /*
-        public Object visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
-            System.out.println(ctx.)
-        }
-        */
-    /*
-    public Object visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
-        System.out.println("IM GETTING CONTROLLED " + ctx.getText());
-        return super.visitInstruccion_control(ctx);
+        return funcion.getSalida().get(0).getTipo();
+        //return super.visitFuncion(ctx).toString();
     }
-*/
-    public Object visitVariable (Anasint.VariableContext ctx) {
+
+    public String visitVariable (Anasint.VariableContext ctx) {
         Scope scope = getUpperScope(ctx);
         System.out.println("Checking variable " + ctx.getText() + " on scope " + scope);
         //System.out.println("PARENT=?=?" + ctx.getParent().getClass() + " to " + Anasint.Operando_universalContext.class);

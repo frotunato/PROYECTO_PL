@@ -74,6 +74,8 @@ evaluacion_variable:
 ;
 */
 evaluacion_variable:
+    funcion |
+    variable_acceso |
     operando_aritmetico |
     operando_logico |
     operando_universal |
@@ -81,7 +83,6 @@ evaluacion_variable:
     operacion_aritmetica |
     //operacion_2_aria |
     (NO? operacion_logica) |
-    variable_acceso |
     ultima_posicion |
     (NO? vacia)
     ;
