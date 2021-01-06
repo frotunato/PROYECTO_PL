@@ -1,4 +1,3 @@
-import org.antlr.v4.misc.OrderedHashMap;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
@@ -6,20 +5,24 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class VisitorP extends AnasintBaseVisitor<Object> {
-    Map<Integer, Scope> scopes = new OrderedHashMap<>();
     //AuxVariables subprogramas = new AuxVariables();
-    Scope scopeGlobal = new Scope();
-    ParseTreeProperty<Scope> scopeTree = new ParseTreeProperty<Scope>();
+    Scope scopeGlobal = new Scope("global");
+    ParseTreeProperty<Scope> scopeTree = new ParseTreeProperty<>();
+    ParseTreeProperty<List<Boolean>> retornoTree = new ParseTreeProperty<>();
+    ParseTreeProperty<String> rupturaTree = new ParseTreeProperty<>();
+
 
     @Override
     public Object visitBloque_programa(Anasint.Bloque_programaContext ctx) {
         ////System.out.println("hello world");
         //AuxVariables scope = new AuxVariables();
         //this.visit(ctx.bloque_variables(), new AuxVariables());
-        scopeGlobal = visitBloque_variables(ctx.bloque_variables());
+        List<Variable> variables = visitBloque_variables(ctx.bloque_variables());
+        scopeGlobal = new Scope("scopeGlobal");
+        scopeGlobal.declaraVariables(variables);
+
         scopeTree.put(ctx, scopeGlobal);
         //visitBloque_subprogramas(ctx.bloque_subprogramas());
         //visitBloque_instrucciones(ctx.bloque_instrucciones());
@@ -29,28 +32,42 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return super.visitBloque_programa(ctx);
     }
 
-    public Scope visitBloque_variables(Anasint.Bloque_variablesContext ctx) {
+    public List<Variable> visitBloque_variables(Anasint.Bloque_variablesContext ctx) {
+        List<Variable> variables = new ArrayList<>();
         ////System.out.println("visitBloque_variables " + ctx.getText());
-        Scope scope = new Scope();
+        /////Scope scope = new Scope();
         //scopes.add(scope);
+        /*
         for (Anasint.Declaracion_variableContext variable: ctx.declaracion_variable()) {
              scope = visitDeclaracion_variable(variable, scope);
             //visitBloque_funcion(subprograma);
             //System.out.println(subprograma.getText());
         }
+        */
+        for (Anasint.Declaracion_variableContext variable: ctx.declaracion_variable()) {
+            variables.addAll(visitDeclaracion_variable(variable));
+        }
         //scopes.add(scope);
-        return scope;
+        return variables;
         //return super.visitBloque_variables(ctx);
     }
 
-    public Scope visitDeclaracion_variable(Anasint.Declaracion_variableContext ctx, Scope scope) {
+    public List<Variable> visitDeclaracion_variable(Anasint.Declaracion_variableContext ctx) {
         //System.out.println("visitDeclaracion_variable " + ctx.getText());
         //AuxVariables scope = new AuxVariables();
+
+        /*
         for (TerminalNode variable: ctx.IDENT())
             scope.declaraVariable(variable.getText(), ctx.tipo().getText());
+
         //scopes.add(scope);
         return scope;
+        */
         //return super.visitBloque_variables(ctx);
+        List<Variable> res = new ArrayList<>();
+        for (TerminalNode variable: ctx.IDENT())
+             res.add(new Variable(variable.getText(), ctx.tipo().getText()));
+        return res;
     }
 
     public Object visitBloque_subprogramas (Anasint.Bloque_subprogramasContext ctx) {
@@ -63,20 +80,54 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             variables de entrada, salida, y las definidas en su bloque VARIABLES son
             añadidas al scope de la función.
          */
-        Scope scope = visitBloque_variables(ctx.bloque_variables());
-        List<Anasint.Args_funcion_procedimientoContext> variables =  ctx.args_funcion_procedimiento();
-        List<Variable> entrada =  visitArgs_funcion_procedimiento(variables.get(0));
-        List<Variable> salida = visitArgs_funcion_procedimiento(variables.get(1));
+        //Scope scope = visitBloque_variables(ctx.bloque_variables());
+        Scope scope = new Scope(ctx.IDENT().getText());
+        List<Variable> variables = visitBloque_variables(ctx.bloque_variables());
+
+        scope.declaraVariables(variables);
+
+        List<Anasint.Lista_variables_tipadasContext> variablesEntradaSalida =  ctx.lista_variables_tipadas();
+        List<Variable> entrada = new ArrayList<>();
+        List<Variable> salida = new ArrayList<>();
+
+        //List<Variable> entrada =  visitArgs_funcion_procedimiento(variables.get(0));
+        //List<Variable> salida = visitArgs_funcion_procedimiento(variables.get(1));
+
+
+        if (variablesEntradaSalida.size() > 1) {
+            entrada.addAll(visitLista_variables_tipadas(variablesEntradaSalida.get(0)));
+            salida.addAll(visitLista_variables_tipadas(variablesEntradaSalida.get(1)));
+        } else
+            salida.addAll(visitLista_variables_tipadas(variablesEntradaSalida.get(0)));
+
+
         scope.declaraVariables(entrada);
         scope.declaraVariables(salida);
         scopeGlobal.declaraFuncion(ctx.IDENT().getText(), entrada, salida);
         scopeTree.put(ctx, scope);
+
         /*
             Aquí entramos en el bloque de instrucciones de la función, y comenzamos a
             realizar las diferentes comprobaciones de tipo y existencia en scope.
          */
+        visitBloque_variables(ctx.bloque_variables());
+        visitBloque_instrucciones(ctx.bloque_instrucciones());
 
-        return super.visitBloque_funcion(ctx);
+        // Añadimos retornoTree
+        System.out.println("ANALIZANDO RETORNO FUNCION " + retornoTree.get(ctx.bloque_instrucciones()));
+        if (!retornoTree.get(ctx.bloque_instrucciones()).contains(true))
+            throw new IllegalArgumentException("La función no tiene ningún retorno alcanzable");
+        //return super.visitBloque_funcion(ctx);
+        return 0;
+    }
+
+    public List<Variable> visitLista_variables_tipadas (Anasint.Lista_variables_tipadasContext ctx) {
+        //System.out.println("first " + ctx.lista_variables_tipadas())
+        List<Variable> res = new ArrayList<>();
+        for (Anasint.Variable_tipadaContext varTipada: ctx.variable_tipada())
+            res.add(new Variable(varTipada.IDENT().getText(), varTipada.tipo().getText()));
+        //scope.declaraVariable(varTipada.IDENT().getText(), varTipada.tipo().getText());
+        return res;
     }
 
     private Scope getUpperScope (ParserRuleContext ctx) {
@@ -86,13 +137,36 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             return getUpperScope(ctx.getParent());
     }
 
+    private boolean anyParentIsAFunction (ParserRuleContext ctx) {
+        if (ctx.getParent() != null)
+            if (ctx.getParent().getClass() == Anasint.Bloque_funcionContext.class)
+                return true;
+            else
+                return anyParentIsAFunction(ctx.getParent());
+        else
+            return false;
+    }
+
+
+    private ParserRuleContext closestReturnBlock (ParserRuleContext ctx) {
+        System.out.println(ctx.getParent().getClass());
+        if (ctx.getParent().getClass() == Anasint.Bloque_funcionContext.class ||
+        ctx.getParent().getClass() == Anasint.Instruccion_controlContext.class ||
+        ctx.getParent().getClass() == Anasint.Bloque_instruccionesContext.class)
+            return ctx.getParent();
+        else
+            return closestReturnBlock(ctx.getParent());
+    }
+
     public Object visitBloque_instrucciones (Anasint.Bloque_instruccionesContext ctx) {
         //System.out.println("AUTOmagically? " + scopeTree.get(ctx.getParent()));
         Scope pscope = getUpperScope(ctx);
-        for (Anasint.InstruccionContext instruccion: ctx.instruccion()){
+        //for (Anasint.InstruccionContext instruccion: ctx.instruccion()){
             //System.out.println("Instruccion " + instruccion.getText());
             //visitInstruccion(instruccion);
-        }
+        //}
+        retornoTree.put(ctx, new ArrayList<Boolean>());
+
         return super.visitBloque_instrucciones(ctx);
     }
 
@@ -132,10 +206,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                 List<Variable> varSalidaFuncion = scopeGlobal.getFuncion(varDerecha.funcion().IDENT().getText()).getSalida();
                 for (Variable vSalida : varSalidaFuncion)
                     arrTiposDer.add(vSalida.getTipo());
-
             } else
-                //tipoVarDerecha = visitEvaluacion_variable(varDerecha);
-                //if (tipoVarDerecha == "ArrayList<>")
                 arrTiposDer.add(visitEvaluacion_variable(varDerecha));
         }
 
@@ -148,12 +219,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                         " vs Der: " + arrTiposDer.toString());
             }
         }
-        /*
-       if (!arrTiposDer.equals(arrTiposIzq))
-           throw new IllegalStateException("Asignación no valida... Izq: " + arrTiposIzq.toString() +
-                   " vs Der: " + arrTiposDer.toString());
-        */
-            //Asignacion paralela
+
+        //Asignacion paralela
         for (Anasint.VariableContext variableIzquierda: expresionIzquierda)
             scope.inicializaVariable(variableIzquierda.getText());
 
@@ -234,12 +301,71 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             return "ArrayList<" + tiposSecuencia.get(0) + ">";
     }
 
-    public String visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
+    public String visitInstruccion_retorno (Anasint.Instruccion_retornoContext ctx) {
+        boolean algunPadreFuncion = anyParentIsAFunction(ctx);
+        if (!algunPadreFuncion)
+            throw new IllegalStateException("Retorno solo válido dentro de función");
+
+        Scope scope = getUpperScope(ctx);
+        List<String> tiposSalidaDefinidos = scopeGlobal.getFuncion(scope.getNombre()).getTiposSalida();
+        List<String> tiposSalidaPrograma = new ArrayList<>();
+
+        for (Anasint.Evaluacion_variableContext variablesRetorno: ctx.evaluaciones_variables().evaluacion_variable()) {
+            tiposSalidaPrograma.add(visitEvaluacion_variable(variablesRetorno));
+        }
+
+        if (!tiposSalidaDefinidos.equals(tiposSalidaPrograma))
+            throw new IllegalStateException("Instruccion retorno inválida (no devuelve los tipos especificados)");
+
+
+        System.out.println("Estamos en la funcion" + scope.getNombre() +
+                " obtenidos " + tiposSalidaPrograma);
+
+        ParserRuleContext bloqueAsociadoARetorno = closestReturnBlock(ctx);
+        //List<String> tiposParametrosRetorno = new ArrayList<>();
+        if (retornoTree.get(bloqueAsociadoARetorno) == null) {
+            retornoTree.put(bloqueAsociadoARetorno, new ArrayList<Boolean>());
+            System.out.println("El padre no tiene un arr bool para guardar ret " + bloqueAsociadoARetorno.getClass());
+        }
+        retornoTree.get(bloqueAsociadoARetorno).add(true);
+
+        return "True";
+    }
+
+    public Object visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
         String resultado = visitPredicado(ctx.predicado());
+        boolean algunPadreFuncion = anyParentIsAFunction(ctx);
+        ParserRuleContext bloqueAsociadoARetorno = closestReturnBlock(ctx);
+
+
+
+        //Comprobamos que algun nodo padre es una funcion. Evaluamos retorno si lo tiene.
+
+        if (algunPadreFuncion) {
+            retornoTree.put(bloqueAsociadoARetorno, new ArrayList<Boolean>());
+        }
+
+        System.out.println("visitInstruccion_control " + ctx.getText() + " Is any parent a function?" + algunPadreFuncion);
         if (resultado != "Boolean")
             throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
         //System.out.println("RESULTADO PREDICADO " + resultado);
-        return resultado;
+
+        for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
+            visitInstruccion(instruccion);
+        }
+        //aqui ya se han procesado todas las instrucciones, analizamos retornos
+        System.out.println("RETORNO MAESTRO " + ctx.getText() + " ret "+  retornoTree.get(ctx) + "algun padre funcion " + algunPadreFuncion);
+
+        if (algunPadreFuncion) {
+            if (!retornoTree.get(ctx).contains(false) && retornoTree.get(ctx).size() == 2)
+                retornoTree.get(bloqueAsociadoARetorno).add(true);
+            else
+                retornoTree.get(bloqueAsociadoARetorno).add(false);
+        }
+
+
+        return 0;
+        //return super.visitInstruccion_control(ctx);
     }
 
     public String visitPredicado(Anasint.PredicadoContext ctx) {
@@ -254,10 +380,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         return super.visitEvaluacion_variable(ctx).toString();
     }
-
-    /*public String visitEvaluaciones_variables (Anasint.Evaluaciones_variablesContext ctx) {
-        if
-    }*/
 
     public String visitOperando_aritmetico (Anasint.Operando_aritmeticoContext ctx) {
         System.out.println("visitOperando_aritmetico " + ctx.getText());

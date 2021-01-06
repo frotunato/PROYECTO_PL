@@ -8,6 +8,7 @@ public class Scope {
     private final Map<String, Variable> variables = new OrderedHashMap<>();
     private final Map<String, Funcion> funciones = new OrderedHashMap<>();
     private final Map<String, Procedimiento> procedimientos = new OrderedHashMap<>();
+    private final String nombre;
 
     public Collection<Variable> getVariablesDeclaradas () {
         return variables.values();
@@ -20,6 +21,13 @@ public class Scope {
         System.out.println("[SCOPE, declaraVariable]: " + nombre + " " + tipo);
 
     }
+
+    public Scope (String nNombre) {
+        System.out.println("Created new scope " + nNombre);
+        this.nombre = nNombre;
+    }
+
+    public String getNombre () { return this.nombre; }
 
     public void inicializaVariable (String nombre) {
         variables.get(nombre).inicializaVariable();

@@ -24,7 +24,8 @@ args_funcion_procedimiento: PA lista_variables_tipadas PC;
 
 bloque_programa: PROGRAMA bloque_variables bloque_subprogramas bloque_instrucciones;
 bloque_subprogramas: SUBPROGRAMAS (bloque_funcion | bloque_procedimiento)*;
-bloque_funcion: FUNCION IDENT args_funcion_procedimiento RETORNO args_funcion_procedimiento bloque_variables bloque_instrucciones;
+//bloque_funcion: FUNCION IDENT args_funcion_procedimiento RETORNO args_funcion_procedimiento bloque_variables bloque_instrucciones;
+bloque_funcion: FUNCION IDENT PA lista_variables_tipadas? PC RETORNO PA lista_variables_tipadas PC bloque_variables bloque_instrucciones;
 bloque_procedimiento: PROCEDIMIENTO IDENT args_funcion_procedimiento (EOF | bloque_variables);
 bloque_instrucciones: INSTRUCCIONES instruccion+ (EOF | (FFUNCION | FPROCEDIMIENTO));
 bloque_variables: VARIABLES declaracion_variable*;
@@ -49,10 +50,10 @@ instruccion:
 instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP funcion LLC)? instruccion+ FMIENTRAS;
 
 //instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP IDENT PA lista_variables PC LLC)? instruccion+ FMIENTRAS;
-instruccion_control: SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)* FSI;
+instruccion_control: SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)? FSI;
 instruccion_ruptura: RUPTURA PyC;
 instruccion_asig: lista_variables ASIG evaluaciones_variables PyC;
-instruccion_retorno: RETORNO evaluacion_variable PyC;
+instruccion_retorno: RETORNO evaluaciones_variables PyC;
 instruccion_aserto:
     LLA (
         (CIERTO | FALSO) |
@@ -113,6 +114,6 @@ operador_condicion_2_ario: operador_logico_2_ario | AND | OR;
 operador_condicion_1_ario: NO;
 
 variable_acceso: variable CA operacion_aritmetica CC;
-funcion: IDENT PA (evaluacion_variable (COMA evaluacion_variable)*) PC;
+funcion: IDENT PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;
 ultima_posicion: UL_POS PA variable PC; //esto deberia solo aceptar listas
 vacia: VACIA PA variable PC; //esto tambien acepta solo listas

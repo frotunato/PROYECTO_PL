@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Funcion {
@@ -17,6 +18,20 @@ public class Funcion {
 
     public List<Variable> getEntrada() {
         return entrada;
+    }
+
+    public List<String> getTiposEntrada () {
+        List<String> tipos = new ArrayList<>();
+        for (Variable entrada: this.entrada)
+            tipos.add(entrada.getTipo());
+        return tipos;
+    }
+
+    public List<String> getTiposSalida () {
+        List<String> tipos = new ArrayList<>();
+        for (Variable salida: this.salida)
+            tipos.add(salida.getTipo());
+        return tipos;
     }
 
     public List<Variable> getSalida() {
