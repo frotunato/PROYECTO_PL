@@ -33,6 +33,11 @@ public class Scope {
         variables.get(nombre).inicializaVariable();
     }
 
+    public void inicializaVariables (List<Variable> variables) {
+        for (Variable variable: variables)
+            variable.inicializaVariable();
+    }
+
     public Variable getVariable (String nombre) {
         return variables.get(nombre);
     }

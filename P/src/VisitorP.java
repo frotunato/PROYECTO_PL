@@ -1,4 +1,5 @@
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -74,6 +75,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         scope.declaraVariables(entrada);
         scope.declaraVariables(salida);
+        scope.inicializaVariables(entrada);
+        //scope.inicializaVariables(salida);
 
         scopeGlobal.declaraFuncion(ctx.IDENT().getText(), entrada, salida);
         scopeTree.put(ctx, scope);
@@ -233,7 +236,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         String tipoLadoIzquierdo = "";
         String tipoLadoDerecho = "";
         String res;
-
+        Interval tst;
         if (ctx.operador_logico_2_ario() != null && ctx.operando_logico() == null && ctx.operacion_logica().size() == 1) {
             System.out.println("CASO NESTED " + ctx.getText());
             res =  visitOperacion_logica(ctx.operacion_logica().get(0));
@@ -256,9 +259,12 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         }
         //if (tipoLadoDerecho == tipoLadoIzquierdo)
         //    System.out.println("THIS IS ABOUT TO CRASH " + ctx.getText());
-        if (tipoLadoDerecho != tipoLadoIzquierdo)
-            throw new IllegalStateException("TIPOS DE OPERANDOS NO VALIDOS i " + tipoLadoIzquierdo + " d " + tipoLadoDerecho + " ctx " + ctx.getText());
-        else
+        if (tipoLadoDerecho != tipoLadoIzquierdo) {
+            //tst = ctx.getSourceInterval();
+            //System.out.println("asd");
+            return "Indefinido";
+            //throw new IllegalStateException("TIPOS DE OPERANDOS NO VALIDOS i " + tipoLadoIzquierdo + " d " + tipoLadoDerecho + " ctx " + ctx.getText());
+        } else
             tipoLadoIzquierdo = "Boolean";
 
         return tipoLadoIzquierdo;
@@ -399,7 +405,9 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             throw new IllegalStateException("visitFuncion nº argumentos inválidos orig: " +
                     funcion.getEntrada().size() + " , recib: " + ctx.evaluacion_variable().size());
         }
-
+        if (ctx.getParent().getClass() == Anasint.Operando_universalContext.class &&
+            funcion.getSalida().size() > 1)
+            throw new IllegalStateException("La función devuelve más de un parámetro fuera de una asignación");
         //comprobamos si los tipos de entrada son los adecuados
         for (Anasint.Evaluacion_variableContext variable: ctx.evaluacion_variable()) {
             tipoArgumento = visitEvaluacion_variable(variable);
@@ -418,6 +426,17 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         //return super.visitFuncion(ctx).toString();
     }
 
+    public String visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
+        String tipoVariable = visitVariable(ctx.variable());
+        String tipoAcceso = visitOperacion_aritmetica(ctx.operacion_aritmetica());
+        System.out.println("Visiting variable acceso");
+        if (tipoAcceso != "Integer")
+            throw new IllegalArgumentException("Indice de acceso a secuencia no numérico");
+        else if (!tipoVariable.contains("ArrayList"))
+            throw new IllegalStateException("La variable " + ctx.variable().IDENT() + " no es de tipo secuencia");
+        return tipoVariable.replace("ArrayList<", "").replace(">", "");
+    }
+
     public String visitVariable (Anasint.VariableContext ctx) {
         Scope scope = getUpperScope(ctx);
         System.out.println("Checking variable " + ctx.getText() + " on scope " + scope);
@@ -428,10 +447,13 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             throw new IllegalStateException("Variable " + ctx.getText() + " no declarada");
         }
 
+        /*
         if (ctx.getParent().getClass() == Anasint.Operando_universalContext.class &&
                 !scope.getVariable(ctx.getText()).isInicializada())
             throw new IllegalStateException("Variable " + ctx.getText() + " no inicializada");
-
+        */
+        if (!scope.getVariable(ctx.getText()).inicializada)
+            return "Undefined";
 
         return scope.getVariable(ctx.getText()).getTipo();
         //return super.visitVariable(ctx);
