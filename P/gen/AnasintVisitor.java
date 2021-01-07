@@ -112,6 +112,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInstruccion_bucle(Anasint.Instruccion_bucleContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Anasint#instruccion_llamada_subprograma}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#instruccion_control}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -250,11 +256,11 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#funcion}.
+	 * Visit a parse tree produced by {@link Anasint#subprograma}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFuncion(Anasint.FuncionContext ctx);
+	T visitSubprograma(Anasint.SubprogramaContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#ultima_posicion}.
 	 * @param ctx the parse tree

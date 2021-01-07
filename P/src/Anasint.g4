@@ -26,18 +26,20 @@ bloque_programa: PROGRAMA bloque_variables bloque_subprogramas bloque_instruccio
 bloque_subprogramas: SUBPROGRAMAS (bloque_funcion | bloque_procedimiento)*;
 //bloque_funcion: FUNCION IDENT args_funcion_procedimiento RETORNO args_funcion_procedimiento bloque_variables bloque_instrucciones;
 bloque_funcion: FUNCION IDENT PA lista_variables_tipadas? PC RETORNO PA lista_variables_tipadas PC bloque_variables bloque_instrucciones;
-bloque_procedimiento: PROCEDIMIENTO IDENT args_funcion_procedimiento (EOF | bloque_variables);
+bloque_procedimiento: PROCEDIMIENTO IDENT PA lista_variables_tipadas? PC bloque_variables bloque_instrucciones;
 bloque_instrucciones: INSTRUCCIONES instruccion+ (EOF | (FFUNCION | FPROCEDIMIENTO));
 bloque_variables: VARIABLES declaracion_variable*;
 
 //separar en bloques?
 instruccion:
+    instruccion_llamada_subprograma |
     instruccion_aserto  |
     instruccion_bucle  |
     instruccion_control  |
     instruccion_ruptura  |
     instruccion_asig |
     instruccion_retorno;
+
 /*
 instruccion:
     instruccion_aserto #instrAserto |
@@ -47,9 +49,10 @@ instruccion:
     instruccion_asig #instrAsign |
     instruccion_retorno #instrRetorno
 ;*/
-instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP funcion LLC)? instruccion+ FMIENTRAS;
+instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP subprograma LLC)? instruccion+ FMIENTRAS;
 
 //instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP IDENT PA lista_variables PC LLC)? instruccion+ FMIENTRAS;
+instruccion_llamada_subprograma: subprograma PyC;
 instruccion_control: SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)? FSI;
 instruccion_ruptura: RUPTURA PyC;
 instruccion_asig: lista_variables ASIG evaluaciones_variables PyC;
@@ -75,7 +78,7 @@ evaluacion_variable:
 ;
 */
 evaluacion_variable:
-    funcion |
+    subprograma |
     variable_acceso |
     operando_aritmetico |
     operando_logico |
@@ -92,7 +95,7 @@ operacion_logica: (operando_logico | (PA (operacion_logica) PC)) (operador_logic
 operacion_aritmetica: (operando_aritmetico | (PA operacion_aritmetica PC)) (operador_aritmetico_2_ario (operacion_aritmetica | (PA operacion_aritmetica PC) ))*;
 operacion_2_aria: ((operando_logico | operando_aritmetico) | (PA operacion_2_aria PC)) (operador_2_ario (operacion_2_aria | (PA operacion_2_aria PC)))*;
 //esto se deberia arreglar, realmente operandos deberian ser de cualquier tipo... eso es del semantico!
-operando_universal: variable | variable_acceso | ultima_posicion | funcion;
+operando_universal: variable | variable_acceso | ultima_posicion | subprograma;
 operando_aritmetico: NUMERO | operando_universal;
 operando_logico: TRUE | FALSE | CIERTO | FALSO | operacion_aritmetica | vacia;
 
@@ -114,6 +117,6 @@ operador_condicion_2_ario: operador_logico_2_ario | AND | OR;
 operador_condicion_1_ario: NO;
 
 variable_acceso: variable CA operacion_aritmetica CC;
-funcion: IDENT PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;
+subprograma: IDENT PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;
 ultima_posicion: UL_POS PA variable PC; //esto deberia solo aceptar listas
 vacia: VACIA PA variable PC; //esto tambien acepta solo listas

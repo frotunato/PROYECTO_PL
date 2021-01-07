@@ -219,6 +219,18 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterInstruccion_control(Anasint.Instruccion_controlContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -495,13 +507,13 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFuncion(Anasint.FuncionContext ctx) { }
+	@Override public void enterSubprograma(Anasint.SubprogramaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFuncion(Anasint.FuncionContext ctx) { }
+	@Override public void exitSubprograma(Anasint.SubprogramaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

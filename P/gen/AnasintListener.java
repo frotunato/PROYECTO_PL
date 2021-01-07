@@ -177,6 +177,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitInstruccion_bucle(Anasint.Instruccion_bucleContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Anasint#instruccion_llamada_subprograma}.
+	 * @param ctx the parse tree
+	 */
+	void enterInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#instruccion_llamada_subprograma}.
+	 * @param ctx the parse tree
+	 */
+	void exitInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#instruccion_control}.
 	 * @param ctx the parse tree
 	 */
@@ -407,15 +417,15 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#funcion}.
+	 * Enter a parse tree produced by {@link Anasint#subprograma}.
 	 * @param ctx the parse tree
 	 */
-	void enterFuncion(Anasint.FuncionContext ctx);
+	void enterSubprograma(Anasint.SubprogramaContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#funcion}.
+	 * Exit a parse tree produced by {@link Anasint#subprograma}.
 	 * @param ctx the parse tree
 	 */
-	void exitFuncion(Anasint.FuncionContext ctx);
+	void exitSubprograma(Anasint.SubprogramaContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#ultima_posicion}.
 	 * @param ctx the parse tree

@@ -6,8 +6,7 @@ import java.util.Map;
 
 public class Scope {
     private final Map<String, Variable> variables = new OrderedHashMap<>();
-    private final Map<String, Funcion> funciones = new OrderedHashMap<>();
-    private final Map<String, Procedimiento> procedimientos = new OrderedHashMap<>();
+    private final Map<String, Subprograma> subprogramas = new OrderedHashMap<>();
     private final String nombre;
 
     public Collection<Variable> getVariablesDeclaradas () {
@@ -42,7 +41,7 @@ public class Scope {
         return variables.get(nombre);
     }
 
-    public Funcion getFuncion (String nombre) { return funciones.get(nombre); }
+    public Subprograma getSubprograma (String nombre) { return subprogramas.get(nombre); };
 
     public void declaraVariable (Variable variable) {
         if (variables.containsKey(variable.nombre))
@@ -57,21 +56,27 @@ public class Scope {
             declaraVariable(variable);
     }
 
-    public void declaraFuncion (String nombre, List<Variable> varsEntrada, List<Variable> varsSalida) {
-        if (funciones.containsKey(nombre))
-            throw new IllegalStateException("La funcion " + nombre + " ya ha sido declarada con anterioridad");
-        funciones.put(nombre, new Funcion(nombre, varsEntrada, varsSalida));
-        System.out.println("[SCOPE, declaraFuncion]: " + nombre +  ", inpt: " + varsEntrada.toString() + ", out: " + varsEntrada.toString());
-        //System.out.println("[" + this.getClass() + "], mem <- " + nombre + ", tipo " + tipoVariable);
+    public void declaraSubprograma (String nombre, String tipo, List<Variable> varsEntrada, List<Variable> varsSalida) {
+        if (subprogramas.containsKey(nombre))
+            throw new IllegalStateException("El subprograma " + nombre + " ya ha sido declarado con anterioridad");
+        subprogramas.put(nombre, new Subprograma(nombre, tipo, varsEntrada, varsSalida));
+        System.out.println("[SCOPE, declaraSubprograma]: " + nombre +  ", inpt: " + varsEntrada.toString() + ", out: " + varsSalida.toString());
     }
 
+
     public Boolean existeVariable (String nombre) {
-        //Boolean estado = this.memoria.containsKey(nombreVariable);
-        //System.out.println("[" + this.getClass() + "] " + nombreVariable + " declarada? " + estado);
         return variables.containsKey(nombre);
     }
 
     public Boolean existeFuncion (String nombre) {
-        return funciones.containsKey(nombre);
+        return subprogramas.containsKey(nombre) &&
+                subprogramas.get(nombre).getTipo().equals("Funcion");
     }
+
+    public Boolean existeProcedimiento (String nombre) {
+        return subprogramas.containsKey(nombre) &&
+                subprogramas.get(nombre).getTipo() == "Procedimiento";
+    }
+
+    public Boolean existeSubprograma (String nombre) { return subprogramas.containsKey(nombre); }
 }
