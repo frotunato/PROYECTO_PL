@@ -56,6 +56,13 @@ public class Scope {
             declaraVariable(variable);
     }
 
+    public void declaraSubprogramaNativo (String nombre, String tipo){
+        if (subprogramas.containsKey(nombre))
+            throw new IllegalStateException("El subprograma nativo " + nombre + " ya ha sido declarado con anterioridad");
+        subprogramas.put(nombre, new Subprograma(nombre, tipo));
+        System.out.println("[SCOPE, declaraSubprogramaNativo]: " + nombre);
+    }
+
     public void declaraSubprograma (String nombre, String tipo, List<Variable> varsEntrada, List<Variable> varsSalida) {
         if (subprogramas.containsKey(nombre))
             throw new IllegalStateException("El subprograma " + nombre + " ya ha sido declarado con anterioridad");

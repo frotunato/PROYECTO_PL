@@ -58,12 +58,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTipo_elemental(Anasint.Tipo_elementalContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#args_funcion_procedimiento}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArgs_funcion_procedimiento(Anasint.Args_funcion_procedimientoContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#bloque_programa}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -208,18 +202,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operando_secuencia_logica}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Anasint#operando_secuencia_aritmetica}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperando_secuencia_aritmetica(Anasint.Operando_secuencia_aritmeticaContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#operador_2_ario}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -273,4 +255,10 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVacia(Anasint.VaciaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#mostrar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMostrar(Anasint.MostrarContext ctx);
 }

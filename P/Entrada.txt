@@ -42,9 +42,9 @@ PROGRAMA
                 test(12);
                 cuc = [k, T, T, T, F];
                 //z = cuc[devuelve_1(x)];
-                p,k,cuc = mayor_que_5(), [T,F,T];
+                p,k,z,cuc = mayor_que_5(), vacia([]), [T, ultima_posicion([T,T,F])];
                 a = test(25);
-
+                mostrar([1,2,3]);
                 //cuc = [1,1,1];
                 //a=[1,3,5,5];
                 //a = 1;

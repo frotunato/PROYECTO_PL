@@ -20,8 +20,6 @@ tipo: tipo_elemental | tipo_no_elemental;
 tipo_no_elemental: SEQUENCE PA tipo_elemental PC;
 tipo_elemental: INTEGER | BOOLEAN;
 
-args_funcion_procedimiento: PA lista_variables_tipadas PC;
-
 bloque_programa: PROGRAMA bloque_variables bloque_subprogramas bloque_instrucciones;
 bloque_subprogramas: SUBPROGRAMAS (bloque_funcion | bloque_procedimiento)*;
 //bloque_funcion: FUNCION IDENT args_funcion_procedimiento RETORNO args_funcion_procedimiento bloque_variables bloque_instrucciones;
@@ -52,7 +50,7 @@ instruccion:
 instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP subprograma LLC)? instruccion+ FMIENTRAS;
 
 //instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP IDENT PA lista_variables PC LLC)? instruccion+ FMIENTRAS;
-instruccion_llamada_subprograma: subprograma PyC;
+instruccion_llamada_subprograma: (mostrar | subprograma) PyC;
 instruccion_control: SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)? FSI;
 instruccion_ruptura: RUPTURA PyC;
 instruccion_asig: lista_variables ASIG evaluaciones_variables PyC;
@@ -100,13 +98,7 @@ operando_aritmetico: NUMERO | operando_universal;
 operando_logico: TRUE | FALSE | CIERTO | FALSO | operacion_aritmetica | vacia;
 
 operando_secuencia: CA ((evaluacion_variable COMA)* evaluacion_variable?) CC;
-////operando_secuencia: CA (operando_secuencia_logica | operando_secuencia_aritmetica) CC;
-    //WTF¿?
-    //((operacion_aritmetica COMA)* operacion_aritmetica)+ |
-    //((operacion_logica COMA)* operacion_logica)+) CC;
 
-operando_secuencia_logica: (predicado COMA)* predicado;
-operando_secuencia_aritmetica: (operacion_aritmetica COMA)* operacion_aritmetica;
 
 operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
 
@@ -118,5 +110,6 @@ operador_condicion_1_ario: NO;
 
 variable_acceso: variable CA operacion_aritmetica CC;
 subprograma: IDENT PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;
-ultima_posicion: UL_POS PA variable PC; //esto deberia solo aceptar listas
-vacia: VACIA PA variable PC; //esto tambien acepta solo listas
+ultima_posicion: UL_POS PA evaluacion_variable PC; //esto deberia solo aceptar listas
+vacia: VACIA PA evaluacion_variable PC; //esto tambien acepta solo listas
+mostrar: MOSTRAR PA evaluacion_variable PC;

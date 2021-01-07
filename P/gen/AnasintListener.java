@@ -87,16 +87,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitTipo_elemental(Anasint.Tipo_elementalContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#args_funcion_procedimiento}.
-	 * @param ctx the parse tree
-	 */
-	void enterArgs_funcion_procedimiento(Anasint.Args_funcion_procedimientoContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#args_funcion_procedimiento}.
-	 * @param ctx the parse tree
-	 */
-	void exitArgs_funcion_procedimiento(Anasint.Args_funcion_procedimientoContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Anasint#bloque_programa}.
 	 * @param ctx the parse tree
 	 */
@@ -337,26 +327,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#operando_secuencia_logica}.
-	 * @param ctx the parse tree
-	 */
-	void enterOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#operando_secuencia_logica}.
-	 * @param ctx the parse tree
-	 */
-	void exitOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Anasint#operando_secuencia_aritmetica}.
-	 * @param ctx the parse tree
-	 */
-	void enterOperando_secuencia_aritmetica(Anasint.Operando_secuencia_aritmeticaContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#operando_secuencia_aritmetica}.
-	 * @param ctx the parse tree
-	 */
-	void exitOperando_secuencia_aritmetica(Anasint.Operando_secuencia_aritmeticaContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Anasint#operador_2_ario}.
 	 * @param ctx the parse tree
 	 */
@@ -446,4 +416,14 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVacia(Anasint.VaciaContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#mostrar}.
+	 * @param ctx the parse tree
+	 */
+	void enterMostrar(Anasint.MostrarContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#mostrar}.
+	 * @param ctx the parse tree
+	 */
+	void exitMostrar(Anasint.MostrarContext ctx);
 }

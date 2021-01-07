@@ -14,6 +14,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     ParseTreeProperty<List<Boolean>> retornoTree = new ParseTreeProperty<>();
     ParseTreeProperty<Boolean> rupturaTree = new ParseTreeProperty<>();
 
+
     private Scope getGlobalScope () {
         return scopeTree.get(raiz);
     }
@@ -22,6 +23,11 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         List<Variable> variables = visitBloque_variables(ctx.bloque_variables());
         Scope scopeGlobal = new Scope("global");
         scopeGlobal.declaraVariables(variables);
+
+        scopeGlobal.declaraSubprogramaNativo("vacia", "Funcion");
+        scopeGlobal.declaraSubprogramaNativo("ultima_posicion", "Funcion");
+        scopeGlobal.declaraSubprogramaNativo("mostrar", "Procedimieneto");
+
         raiz = ctx;
         scopeTree.put(ctx, scopeGlobal);
 
@@ -183,7 +189,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         retornoTree.put(ctx, new ArrayList<Boolean>());
         return super.visitBloque_instrucciones(ctx);
     }
-
+/*
     public List<Variable> visitArgs_funcion_procedimiento (Anasint.Args_funcion_procedimientoContext ctx) {
         //System.out.println("first " + ctx.lista_variables_tipadas())
         List<Variable> res = new ArrayList<>();
@@ -192,7 +198,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             //scope.declaraVariable(varTipada.IDENT().getText(), varTipada.tipo().getText());
         return res;
     }
-
+*/
     public Object visitInstruccion_asig (Anasint.Instruccion_asigContext ctx) {
         Scope scope = getUpperScope(ctx);
         List<Anasint.VariableContext> expresionIzquierda = ctx.lista_variables().variable();
@@ -520,6 +526,27 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         else if (!tipoVariable.contains("ArrayList"))
             throw new IllegalStateException("La variable " + ctx.variable().IDENT() + " no es de tipo secuencia");
         return tipoVariable.replace("ArrayList<", "").replace(">", "");
+    }
+
+    public String visitUltima_posicion (Anasint.Ultima_posicionContext ctx) {
+        String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
+        if (!tipoArgumento.contains("ArrayList"))
+            throw new IllegalStateException("operador ultima_posicion solo válido en secuencias");
+        return tipoArgumento.replace("ArrayList<", "").replace(">", "");
+    }
+
+    public String visitVacia (Anasint.VaciaContext ctx) {
+        String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
+        if (!tipoArgumento.contains("ArrayList"))
+            throw new IllegalStateException("operador vacia solo válido en secuencias");
+        return "Boolean";
+    }
+
+    public String visitMostrar (Anasint.MostrarContext ctx) {
+        String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
+        if (!tipoArgumento.contains("ArrayList"))
+            throw new IllegalStateException("operador mostrar solo válido en secuencias");
+        return tipoArgumento;
     }
 
     public String visitVariable (Anasint.VariableContext ctx) {

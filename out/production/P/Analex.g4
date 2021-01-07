@@ -31,6 +31,7 @@ NUMERO : ('-')?DIGITO+;
 PA : '(';
 CA: '[';
 CC: ']';
+MOSTRAR: 'mostrar';
 MIENTRAS: 'mientras';
 FMIENTRAS: 'fmientras';
 AVANCE: 'avance';
