@@ -61,20 +61,10 @@ instruccion_aserto:
         ((PARATODO | EXISTE) PA IDENT DP CA operando_universal COMA operando_universal CC COMA predicado PC))
     LLC;
 
-//predicado: operacion_logica (operador_condicion_2_ario (predicado | (PA predicado PC)))*;
 predicado: NO? operacion_logica (operador_condicion_2_ario NO? (predicado | (PA predicado PC)))*;
 
 evaluaciones_variables: evaluacion_variable (COMA evaluacion_variable)*;
-/*
-evaluacion_variable:
-    operando_secuencia #evalSecuencia |
-    (NO? operacion_logica) #evalOperacionLogica |
-    operacion_aritmetica #evalOperacionAritmetica |
-    variable_acceso #evalVariableAcceso |
-    ultima_posicion #evalUltimaPosicion |
-    (NO? vacia) #evalVacia
-;
-*/
+
 evaluacion_variable:
     subprograma |
     variable_acceso |
@@ -98,7 +88,6 @@ operando_aritmetico: NUMERO | operando_universal;
 operando_logico: TRUE | FALSE | CIERTO | FALSO | operacion_aritmetica | vacia;
 
 operando_secuencia: CA ((evaluacion_variable COMA)* evaluacion_variable?) CC;
-
 
 operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
 

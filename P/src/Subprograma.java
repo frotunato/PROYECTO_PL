@@ -14,7 +14,7 @@ public class Subprograma {
     }
 
     public Subprograma (String nNombre, String nTipo, List<Variable> nEntrada, List<Variable> nSalida) {
-        if (nTipo == "Funcion" && nSalida.size() == 0)
+        if (nTipo.equals("Funcion") && nSalida.size() == 0)
             throw new IllegalArgumentException("Un subprograma debe tener argumentos de salida");
         this.nombre = nNombre;
         this.tipo = nTipo;

@@ -1,7 +1,8 @@
 public class Variable {
-    String nombre;
-    String tipo;
-    boolean inicializada = false;
+    private String nombre;
+    private String tipo;
+    private boolean inicializada = false;
+    private boolean soloLectura = false;
 
     public Variable (String nNombre, String nTipo) {
         this.nombre = nNombre;
@@ -21,6 +22,14 @@ public class Variable {
 
     public String getTipo() {
         return tipo;
+    }
+
+    public boolean isSoloLectura () {
+        return soloLectura;
+    }
+
+    public void setSoloLectura () {
+        this.soloLectura = true;
     }
 
     public boolean isInicializada() {

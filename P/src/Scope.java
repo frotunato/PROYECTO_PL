@@ -21,6 +21,11 @@ public class Scope {
 
     }
 
+    public Scope (Scope scopePadre, String nNombre) {
+        this.subprogramas.putAll(scopePadre.subprogramas);
+        this.variables.putAll(scopePadre.variables);
+        this.nombre = nNombre;
+    }
     public Scope (String nNombre) {
         System.out.println("Created new scope " + nNombre);
         this.nombre = nNombre;
@@ -44,10 +49,10 @@ public class Scope {
     public Subprograma getSubprograma (String nombre) { return subprogramas.get(nombre); };
 
     public void declaraVariable (Variable variable) {
-        if (variables.containsKey(variable.nombre))
-            throw new IllegalStateException("La variable " + variable.nombre + " ya ha sido declarada con anterioridad");
-        variables.put(variable.nombre, variable);
-        System.out.println("[SCOPE, declaraVariable]: " + variable.nombre + " " + variable.tipo);
+        if (variables.containsKey(variable.getNombre()))
+            throw new IllegalStateException("La variable " + variable.getNombre() + " ya ha sido declarada con anterioridad");
+        variables.put(variable.getNombre(), variable);
+        System.out.println("[SCOPE, declaraVariable]: " + variable.getNombre() + " " + variable.getTipo());
 
     }
 

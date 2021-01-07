@@ -1,22 +1,29 @@
 PROGRAMA
     VARIABLES
-        i:NUM;
+        i,max:NUM;
+        s:SEQ(NUM);
     SUBPROGRAMAS
+        FUNCION bucle_1_avance(SEQ(NUM) sik, NUM huey) dev (NUM j)
+            VARIABLES
+            INSTRUCCIONES
+                j = 1 + 1;
+                dev j;
+        FFUNCION
 
         FUNCION test (NUM ki) dev (NUM ka)
             VARIABLES
                 k:NUM;
             INSTRUCCIONES
-                k = 1;
+                k = 111;
                 ka = ki*25;
                 dev ka;
         FFUNCION
 
 
-        FUNCION devuelve_1 (NUM i) dev (NUM res)
+        FUNCION devuelve_1 (NUM i2) dev (NUM res)
             VARIABLES
             INSTRUCCIONES
-                dev i*25;
+                dev i2*25;
         FFUNCION
 
         FUNCION mayor_que_5 () dev (LOG r1, LOG xx2)
@@ -62,8 +69,12 @@ PROGRAMA
                 dev T, T;
         FFUNCION
     INSTRUCCIONES
-        i=1;
-        si (i > 1) entonces
-            i = 25;
-        fsi
-
+        i=0;
+        s = [1,2,3];
+        max=s[i];
+        mientras (i<=ultima_posicion(s)) hacer {avance: bucle_1_avance(s, i)}
+            si (s[i]>max) entonces
+                max=s[i];
+            fsi
+            i=i+1;
+        fmientras
