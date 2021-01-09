@@ -16,14 +16,18 @@ public class Principal {
         ParseTree tree = anasint.bloque_programa();
 
 
-
+        // Pase 1: análisis semántico
         VisitorP s = new VisitorP();
         s.visit(tree);
-        /*
+        // Pase 2: intérprete
+        System.out.println("//////////// INTERPRETE ////////////");
+        VisitorInterprete interprete = new VisitorInterprete();
+        interprete.visit(tree);
+/*
         ParseTreeWalker walker = new ParseTreeWalker();
-        Anasem anasem = new Anasem();
-        walker.walk(anasem, tree);
-        */
+        ListenerInterprete interpreteListener = new ListenerInterprete();
+        walker.walk(interpreteListener, tree);
+*/
         JFrame frame = new JFrame("Árbol de Análisis");
         JPanel panel = new JPanel();
         TreeViewer viewer = new TreeViewer(Arrays.asList(

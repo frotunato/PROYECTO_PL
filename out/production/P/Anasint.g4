@@ -61,46 +61,47 @@ instruccion_aserto:
         ((PARATODO | EXISTE) PA IDENT DP CA operando_universal COMA operando_universal CC COMA predicado PC))
     LLC;
 
-//predicado: operacion_logica (operador_condicion_2_ario (predicado | (PA predicado PC)))*;
-predicado: NO? operacion_logica (operador_condicion_2_ario NO? (predicado | (PA predicado PC)))*;
+//predicado: NO? operacion_logica (operador_condicion_2_ario NO? (predicado | (PA predicado PC)))*;
+predicado: (operacion | (PA (predicado) PC))
+            (operador_condicion_2_ario
+            (predicado | (PA (predicado) PC) ))?;
+
+//operacion_logica: (operando_logico | (PA (operacion_logica) PC)) (operador_logico_2_ario (operacion_logica | (PA (operacion_logica) PC) ))?;
 
 evaluaciones_variables: evaluacion_variable (COMA evaluacion_variable)*;
-/*
+
 evaluacion_variable:
-    operando_secuencia #evalSecuencia |
-    (NO? operacion_logica) #evalOperacionLogica |
-    operacion_aritmetica #evalOperacionAritmetica |
-    variable_acceso #evalVariableAcceso |
-    ultima_posicion #evalUltimaPosicion |
-    (NO? vacia) #evalVacia
-;
-*/
-evaluacion_variable:
+    //ultima_posicion |
+    //(NO? vacia)
+    //variable_acceso |
     subprograma |
-    variable_acceso |
-    operando_aritmetico |
-    operando_logico |
     operando_universal |
+    operando_aritmetico |
+    operacion |
+    //operacion_aritmetica |
+    operando_logico |
     operando_secuencia |
-    operacion_aritmetica |
-    //operacion_2_aria |
-    (NO? operacion_logica) |
-    ultima_posicion |
-    (NO? vacia)
+    //(NO? operacion_logica) |
     ;
 
-operacion_logica: (operando_logico | (PA (operacion_logica) PC)) (operador_logico_2_ario (operacion_logica | (PA (operacion_logica) PC) ))?;
-operacion_aritmetica: (operando_aritmetico | (PA operacion_aritmetica PC)) (operador_aritmetico_2_ario (operacion_aritmetica | (PA operacion_aritmetica PC) ))*;
-operacion_2_aria: ((operando_logico | operando_aritmetico) | (PA operacion_2_aria PC)) (operador_2_ario (operacion_2_aria | (PA operacion_2_aria PC)))*;
+operacion: (operando_logico | (PA (operacion) PC)) (operador_2_ario (operacion | (PA (operacion) PC) ))?;
+
+//operacion_logica: (operando_logico | (PA (operacion_logica) PC)) (operador_logico_2_ario (operacion_logica | (PA (operacion_logica) PC) ))?;
+//operacion_aritmetica: (operando_aritmetico | (PA operacion_aritmetica PC)) (operador_aritmetico_2_ario (operacion_aritmetica | (PA operacion_aritmetica PC) ))?; //he cambiado * por ?
+//operacion_2_aria: ((operando_logico | operando_aritmetico) | (PA operacion_2_aria PC)) (operador_2_ario (operacion_2_aria | (PA operacion_2_aria PC)))*;
 //esto se deberia arreglar, realmente operandos deberian ser de cualquier tipo... eso es del semantico!
 operando_universal: variable | variable_acceso | ultima_posicion | subprograma;
 operando_aritmetico: NUMERO | operando_universal;
-operando_logico: TRUE | FALSE | CIERTO | FALSO | operacion_aritmetica | vacia;
+//operando_logico: TRUE | FALSE | CIERTO | FALSO | operando_universal | operacion_aritmetica | vacia;
+operando_logico: TRUE | FALSE | CIERTO | FALSO | operando_universal | vacia;
 
-operando_secuencia: CA ((evaluacion_variable COMA)* evaluacion_variable?) CC;
-
+operando_secuencia: (CA CC) ||
+(CA evaluacion_variable CC) ||
+(CA ((evaluacion_variable COMA)* evaluacion_variable) CC);
+//operando_secuencia: CA evaluacion_variable CC;
 
 operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
+
 
 operador_aritmetico_2_ario: MULT | (MAS | MENOS);
 operador_logico_2_ario: IGUAL | DIGUAL | MAYOR | MENOR | MAIGUAL | MEIGUAL;
@@ -108,8 +109,14 @@ operador_logico_2_ario: IGUAL | DIGUAL | MAYOR | MENOR | MAIGUAL | MEIGUAL;
 operador_condicion_2_ario: operador_logico_2_ario | AND | OR;
 operador_condicion_1_ario: NO;
 
-variable_acceso: variable CA operacion_aritmetica CC;
-subprograma: IDENT PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;
+variable_acceso: variable CA operacion CC;
+subprograma: IDENT (
+    (PA PC) |
+    (PA evaluacion_variable PC) |
+    (PA ((COMA evaluacion_variable)* evaluacion_variable) PC)
+);
+
+//PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;
 ultima_posicion: UL_POS PA evaluacion_variable PC; //esto deberia solo aceptar listas
 vacia: VACIA PA evaluacion_variable PC; //esto tambien acepta solo listas
 mostrar: MOSTRAR PA evaluacion_variable PC;

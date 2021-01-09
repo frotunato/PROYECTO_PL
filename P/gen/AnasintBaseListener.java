@@ -1,4 +1,4 @@
-// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.9
+// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.8
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -339,18 +339,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterOperando_universal(Anasint.Operando_universalContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -394,18 +382,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOperando_secuencia(Anasint.Operando_secuenciaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOperador_2_ario(Anasint.Operador_2_arioContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperador_2_ario(Anasint.Operador_2_arioContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

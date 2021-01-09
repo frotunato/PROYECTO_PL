@@ -1,4 +1,4 @@
-// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.9
+// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -277,16 +277,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitOperacion_aritmetica(Anasint.Operacion_aritmeticaContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#operacion_2_aria}.
-	 * @param ctx the parse tree
-	 */
-	void enterOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#operacion_2_aria}.
-	 * @param ctx the parse tree
-	 */
-	void exitOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Anasint#operando_universal}.
 	 * @param ctx the parse tree
 	 */
@@ -326,16 +316,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Anasint#operador_2_ario}.
-	 * @param ctx the parse tree
-	 */
-	void enterOperador_2_ario(Anasint.Operador_2_arioContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#operador_2_ario}.
-	 * @param ctx the parse tree
-	 */
-	void exitOperador_2_ario(Anasint.Operador_2_arioContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#operador_aritmetico_2_ario}.
 	 * @param ctx the parse tree

@@ -1,5 +1,4 @@
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -20,7 +19,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     private Scope getUpperScope (ParserRuleContext ctx) {
-        if (scopeTree.get((ParseTree) ctx) != null)
+        if (scopeTree.get(ctx) != null)
             return scopeTree.get(ctx);
         else
             return getUpperScope(ctx.getParent());
@@ -83,7 +82,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
     public Object visitBloque_instrucciones (Anasint.Bloque_instruccionesContext ctx) {
         //igual hay que descomentar esto??
-        retornoTree.put(ctx, new ArrayList<Boolean>());
+        retornoTree.put(ctx, new ArrayList<>());
         return super.visitBloque_instrucciones(ctx);
     }
 
@@ -185,8 +184,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return 0;
     }
 
-
-
     public List<Variable> visitDeclaracion_variable(Anasint.Declaracion_variableContext ctx) {
         List<Variable> res = new ArrayList<>();
         for (TerminalNode variable: ctx.IDENT())
@@ -202,8 +199,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         //scope.declaraVariable(varTipada.IDENT().getText(), varTipada.tipo().getText());
         return res;
     }
-
-
 
     public String visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
         List<String> tiposSecuencia = new ArrayList<>();
@@ -230,10 +225,9 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         Scope scope = getUpperScope(ctx);
         List<Anasint.VariableContext> expresionIzquierda = ctx.lista_variables().variable();
         Anasint.Evaluaciones_variablesContext expresionDerecha = ctx.evaluaciones_variables();
-        String tipoVarDerecha = "";
         String nombreSubprograma;
-        List<String> arrTiposIzq = new ArrayList<String>();
-        List<String> arrTiposDer = new ArrayList<String>();
+        List<String> arrTiposIzq = new ArrayList<>();
+        List<String> arrTiposDer = new ArrayList<>();
 
         // cargamos en arrTiposIzq los tipos de las variables a asignar
         for (Anasint.VariableContext variableIzquierda: expresionIzquierda) {
@@ -246,14 +240,19 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         // cargamos en arrTiposDer los tipos de las expresiones
         for (Anasint.Evaluacion_variableContext varDerecha: expresionDerecha.evaluacion_variable()) {
+            System.out.println("ESTAMOS ASIGNANDO " + varDerecha.getText());
             if (varDerecha.subprograma() != null) {
                 nombreSubprograma = varDerecha.subprograma().IDENT().getText();
+                System.out.println("EXISTE PROCEDIMIENTO GLOBAL?? " + getGlobalScope().existeProcedimiento(nombreSubprograma));
                 if (getGlobalScope().existeProcedimiento(nombreSubprograma))
                     throw new IllegalArgumentException("Los procedimientos no pueden ser usados en asignaciones");
                 else if (getGlobalScope().existeFuncion(nombreSubprograma))
                     arrTiposDer.addAll(getGlobalScope().getSubprograma(nombreSubprograma).getTiposSalida());
-            } else
+                System.out.println("ACABAMOS DE AÑADIR " + arrTiposDer.get(arrTiposDer.size() - 1));
+            } else {
                 arrTiposDer.add(visitEvaluacion_variable(varDerecha));
+                System.out.println("ACABAMOS DE AÑADIR " + arrTiposDer.get(arrTiposDer.size() - 1));
+            }
         }
 
         //Comprobación del tipo de la expresión y su variable asociada
@@ -299,7 +298,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         ParserRuleContext bloqueAsociadoARetorno = closestReturnBlock(ctx);
         //List<String> tiposParametrosRetorno = new ArrayList<>();
         if (retornoTree.get(bloqueAsociadoARetorno) == null) {
-            retornoTree.put(bloqueAsociadoARetorno, new ArrayList<Boolean>());
+            retornoTree.put(bloqueAsociadoARetorno, new ArrayList<>());
             System.out.println("El padre no tiene un arr bool para guardar ret " + bloqueAsociadoARetorno.getClass());
         }
         retornoTree.get(bloqueAsociadoARetorno).add(true);
@@ -321,12 +320,12 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         //Comprobamos que algun nodo padre es una funcion. Evaluamos retorno si lo tiene.
         if (algunPadreFuncion) {
-            retornoTree.put(bloqueAsociadoARetorno, new ArrayList<Boolean>());
+            retornoTree.put(bloqueAsociadoARetorno, new ArrayList<>());
         }
 
         System.out.println("visitInstruccion_control " + ctx.getText() + " Is any parent a function?" + algunPadreFuncion);
 
-        if (resultado != "Boolean")
+        if (!resultado.equals("Boolean"))
             throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
 
         for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
@@ -347,8 +346,12 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
-        if (!getGlobalScope().existeFuncion(ctx.subprograma().IDENT().getText()))
+        String resultado = visitPredicado(ctx.predicado());
+
+        if (ctx.subprograma() != null && !getGlobalScope().existeFuncion(ctx.subprograma().IDENT().getText()))
             throw new IllegalStateException("El subprograma de avance debe ser una función");
+        if (!resultado.equals("Boolean"))
+            throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
 
         return super.visitInstruccion_bucle(ctx);
     }
@@ -362,20 +365,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         int indexArgumento = 0;
         String tipoRes = "Indefinido";
         String nombreSubprograma = ctx.IDENT().getText();
-        //Scope scope = scopeGlobal;
-        String tipoSubprograma;
-/*
-        if (scopeGlobal.existeFuncion(nombreSubprograma)) {
-            tipoSubprograma = "Funcion";
-        }
-        else if(scopeGlobal.existeProcedimiento(nombreSubprograma)) {
-            tipoSubprograma = "Procedimiento";
-        }
-        else {
-            throw new IllegalArgumentException("Subprograma no definido");
-        }
-*/
-
+        System.out.println("visitSubprograma " + ctx.IDENT().getText());
         //comprobamos la existencia del subprograma
         if (!getGlobalScope().existeSubprograma(nombreSubprograma))
             throw new IllegalArgumentException("El subprograma no está definido");
@@ -383,7 +373,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         Subprograma subprograma = getGlobalScope().getSubprograma(nombreSubprograma);
 
         if (subprograma.getEntrada().size() != ctx.evaluacion_variable().size())
-            throw new IllegalArgumentException("El número de argumentos del subprograma " + ctx.IDENT().getText() + " no es correcto");
+            throw new IllegalArgumentException("El número de argumentos del subprograma " + ctx.IDENT().getText() + " no es correcto, esperando " + subprograma.getEntrada().size() + ", obtenemos " +  ctx.evaluacion_variable().size() + " " + ctx.getText());
 
         //tipoSubprograma = scopeGlobal.getSubprograma(nombreSubprograma).getTipo();
         //Subprograma subprograma = scopeGlobal.getSubprograma(nombreSubprograma);
@@ -395,7 +385,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             if (!tipoArgumento.equals(subprograma.getEntrada().get(indexArgumento).getTipo()))
                 throw new IllegalStateException("visitSubprograma tipo arg inválido orig: " +
                         subprograma.getEntrada().get(indexArgumento).getTipo() + " , recib: " + tipoArgumento);
-
 
             //if (variable.subprograma() != null)
             //    System.out.println("ES UN SUBPROGRAMA PARAMETER " + scopeGlobal.getFuncion(nombreSubprograma).getSalida().size());
@@ -414,44 +403,43 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             tipoRes = subprograma.getSalida().get(0).getTipo();
         }
 
-
-
-
-        //Funcion funcion = scopeGlobal.getFuncion(nombreSubprograma);
-        //Procedimiento
-        // comprobamos si ha sido invocada con el mismo numero de parametros
-        //Subprograma.Tipo tipoSubprograma = subprograma.getTipoSubprograma();
-/*
-        if (tipoSubprograma == "Funcion") {
-            Subprograma funcion = scopeGlobal.getSubprograma(nombreSubprograma);
-
-            if (funcion.getEntrada().size() != ctx.evaluacion_variable().size()) {
-                throw new IllegalStateException("visitSubprograma nº argumentos inválidos orig: " +
-                        funcion.getEntrada().size() + " , recib: " + ctx.evaluacion_variable().size());
-            }
-
-            if (ctx.getParent().getClass() == Anasint.Operando_universalContext.class &&
-                    funcion.getSalida().size() > 1)
-                throw new IllegalStateException("La función devuelve más de un parámetro fuera de una asignación");
-
-        } else {
-            Subprograma procedimiento = scopeGlobal.getSubprograma(nombreSubprograma);
-
-            if (ctx.getParent().getClass() == Anasint.Operando_universalContext.class) {
-                throw new IllegalStateException("Los procedimientos no pueden ser argumentos");
-            }
-        }
-        System.out.println(tipoSubprograma + "  " + ctx.IDENT().getText() + " CALLED RETURNED " + tipoRes);
-*/
-        return tipoRes;
-
-
-
-        //return super.visitFuncion(ctx).toString();
+      return tipoRes;
     }
-
+/*
     public String visitPredicado(Anasint.PredicadoContext ctx) {
         return super.visitPredicado(ctx).toString();
+    }
+*/
+
+    public String visitPredicado(Anasint.PredicadoContext ctx) {
+        System.out.println("visitOperacion_logica " + ctx.getText());
+        String tipoLadoIzquierdo = "Indefinido";
+        String tipoLadoDerecho = "";
+        String res;
+
+        if (ctx.operador_condicion_2_ario() != null && ctx.operacion_logica() == null && ctx.predicado().size() == 1) {
+            System.out.println("CASO NESTED " + ctx.getText());
+            res =  visitPredicado(ctx.predicado().get(0));
+            return res;
+        } else if (ctx.operador_condicion_2_ario() == null && ctx.operacion_logica() != null) {
+            res = visitOperacion_logica(ctx.operacion_logica());
+            System.out.println("CASO BASE para " + ctx.getText() + " returned " + res);
+            return res;
+        } else if (ctx.operador_condicion_2_ario() != null && ctx.predicado().size() == 2) {
+            System.out.println("DOSSS " + ctx.getText());
+            tipoLadoIzquierdo = visitPredicado(ctx.predicado().get(0));
+            tipoLadoDerecho = visitPredicado(ctx.predicado().get(1));
+            System.out.println("LOSLADOS SON " + tipoLadoIzquierdo + " y" + tipoLadoDerecho);
+        } else if (ctx.operacion_logica() != null && ctx.operacion_logica() != null) {
+            System.out.println("ENTRAMOS EN DECIDIDOR, SOLO UN OPERACION " + ctx.getText());
+            tipoLadoIzquierdo = visitOperacion_logica(ctx.operacion_logica());
+            tipoLadoDerecho = visitPredicado(ctx.predicado().get(0));
+        }
+
+        if (tipoLadoDerecho.equals(tipoLadoIzquierdo))
+            tipoLadoIzquierdo = "Boolean";
+
+        return tipoLadoIzquierdo;
     }
 
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
@@ -473,17 +461,33 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             return visitOperacion_aritmetica(ctx.operacion_aritmetica().get(0));
         } else if (ctx.operador_aritmetico_2_ario() == null && ctx.operando_aritmetico() != null)
             return visitOperando_aritmetico(ctx.operando_aritmetico());
+        /*
         else {
             tipoLadoIzquierdo = visitOperando_aritmetico(ctx.operando_aritmetico());
             for (Anasint.Operacion_aritmeticaContext operacion: ctx.operacion_aritmetica()) {
                 tipoLadoDerecho = visitOperacion_aritmetica(operacion);
                 System.out.println(tipoLadoDerecho + " vs " + tipoLadoIzquierdo);
-                if (tipoLadoDerecho != tipoLadoIzquierdo)
+                if (!tipoLadoDerecho.equals(tipoLadoIzquierdo))
                     throw new IllegalStateException("TIPOS DE OPERANDOS NO VALIDOS");
 
             }
         }
-        System.out.println("padre op aritmetica es " + ctx.getParent().getClass());
+         */
+        else if (ctx.operador_aritmetico_2_ario() != null && ctx.operacion_aritmetica().size() == 2) {
+            System.out.println("DOSSS " + ctx.getText());
+            tipoLadoIzquierdo = visitOperacion_aritmetica(ctx.operacion_aritmetica().get(0));
+            tipoLadoDerecho = visitOperacion_aritmetica(ctx.operacion_aritmetica().get(1));
+            System.out.println("LOSLADOS SON " + tipoLadoIzquierdo + " y" + tipoLadoDerecho);
+        } else if (ctx.operando_aritmetico() != null && ctx.operacion_aritmetica() != null) {
+            System.out.println("ENTRAMOS EN DECIDIDOR, SOLO UN OPERACION " + ctx.getText());
+            tipoLadoIzquierdo = visitOperando_aritmetico(ctx.operando_aritmetico());
+            tipoLadoDerecho = visitOperacion_aritmetica(ctx.operacion_aritmetica().get(0));
+        }
+            //System.out.println("padre op aritmetica es " + ctx.getParent().getClass());
+            //return tipoLadoIzquierdo;
+        if (tipoLadoDerecho.equals(tipoLadoIzquierdo))
+            tipoLadoIzquierdo = "Integer";
+
         return tipoLadoIzquierdo;
     }
 
@@ -521,16 +525,19 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     public String visitOperando_aritmetico (Anasint.Operando_aritmeticoContext ctx) {
         System.out.println("visitOperando_aritmetico " + ctx.getText());
         if (ctx.operando_universal() != null)
-            return visitOperando_universal(ctx.operando_universal());
-        else
-            return "Integer";
+            if(!visitOperando_universal(ctx.operando_universal()).equals("Integer"))
+                throw new IllegalArgumentException("Un operando aritmético debe ser un número " + ctx.getText());
+        return "Integer";
     }
 
     public String visitOperando_logico (Anasint.Operando_logicoContext ctx) {
         System.out.println("visitOperando_logico " + ctx.getText());
-        if (ctx.operacion_aritmetica() != null) {
+        if (ctx.operacion_aritmetica() != null)
             return visitOperacion_aritmetica(ctx.operacion_aritmetica());
-        } else
+        else if (ctx.operando_universal() != null)
+            return visitOperando_universal(ctx.operando_universal());
+            //return visitOperacion_aritmetica(ctx.operacion_aritmetica());
+         else
             return "Boolean";
     }
 
@@ -541,7 +548,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     public String visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
         String tipoVariable = visitVariable(ctx.variable());
         String tipoAcceso = visitOperacion_aritmetica(ctx.operacion_aritmetica());
-        if (tipoAcceso != "Integer") {
+        if (!tipoAcceso.equals("Integer")) {
             throw new IllegalArgumentException("Indice de acceso a secuencia no numérico");
         }
         else if (!tipoVariable.contains("ArrayList")) {
@@ -579,6 +586,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     public String visitVacia (Anasint.VaciaContext ctx) {
+        System.out.println("visitVacia " + ctx.getText());
         String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
         if (!tipoArgumento.contains("ArrayList"))
             throw new IllegalStateException("operador vacia solo válido en secuencias");

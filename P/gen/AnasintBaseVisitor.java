@@ -1,4 +1,4 @@
-// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.9
+// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -205,13 +205,6 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitOperando_universal(Anasint.Operando_universalContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -234,13 +227,6 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitOperando_secuencia(Anasint.Operando_secuenciaContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitOperador_2_ario(Anasint.Operador_2_arioContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

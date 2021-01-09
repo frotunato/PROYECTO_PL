@@ -1,4 +1,4 @@
-// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.9
+// Generated from C:/Users/user/IdeaProjects/PROYECTO_PL/P/src\Anasint.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -172,12 +172,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperacion_aritmetica(Anasint.Operacion_aritmeticaContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operacion_2_aria}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperacion_2_aria(Anasint.Operacion_2_ariaContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#operando_universal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -201,12 +195,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Anasint#operador_2_ario}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperador_2_ario(Anasint.Operador_2_arioContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#operador_aritmetico_2_ario}.
 	 * @param ctx the parse tree

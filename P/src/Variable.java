@@ -1,11 +1,15 @@
+import Valor.Valor;
+
 public class Variable {
     private String nombre;
     private String tipo;
+    private Valor valor;
     private boolean inicializada = false;
     private boolean soloLectura = false;
 
     public Variable (String nNombre, String nTipo) {
         this.nombre = nNombre;
+        //this.valor = new Object();
         switch (nTipo) {
             case "LOG" -> this.tipo = "Boolean";
             case "NUM" -> this.tipo = "Integer";
@@ -16,13 +20,22 @@ public class Variable {
         }
     }
 
+    public Variable (String nNombre, Valor nValor) {
+        this.nombre = nNombre;
+        this.valor = nValor;
+    }
+
     public String getNombre() {
-        return nombre;
+        return this.nombre;
     }
 
     public String getTipo() {
         return tipo;
     }
+
+    public Valor getValor() { return this.valor; }
+
+    //public void setValor (Object nValor) { this.valor = nValor; }
 
     public boolean isSoloLectura () {
         return soloLectura;
@@ -33,7 +46,7 @@ public class Variable {
     }
 
     public boolean isInicializada() {
-        return inicializada;
+        return this.inicializada;
     }
 
     public void inicializaVariable () {
