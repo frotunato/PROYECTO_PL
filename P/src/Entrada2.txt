@@ -79,7 +79,7 @@ PROGRAMA
         i=0;
         /*
 
-        s = [1,2,3];
+        s = [1,T,3];
         max=s[i];
         mientras (i<=ultima_posicion(s)) hacer {avance: bucle_1_avance(s, i)}
             si (s[i]>max) entonces

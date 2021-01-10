@@ -38,15 +38,6 @@ instruccion:
     instruccion_asig |
     instruccion_retorno;
 
-/*
-instruccion:
-    instruccion_aserto #instrAserto |
-    instruccion_bucle #instrBucle |
-    instruccion_control #instrControl |
-    instruccion_ruptura #instrRuptura |
-    instruccion_asig #instrAsign |
-    instruccion_retorno #instrRetorno
-;*/
 instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP subprograma LLC)? instruccion+ FMIENTRAS;
 
 //instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP IDENT PA lista_variables PC LLC)? instruccion+ FMIENTRAS;
@@ -58,62 +49,84 @@ instruccion_retorno: RETORNO evaluaciones_variables PyC;
 instruccion_aserto:
     LLA (
         (CIERTO | FALSO) |
-        ((PARATODO | EXISTE) PA IDENT DP CA operando_universal COMA operando_universal CC COMA predicado PC))
+        ((PARATODO | EXISTE) PA IDENT DP CA operando COMA operando CC COMA predicado PC))
     LLC;
 
-//predicado: NO? operacion_logica (operador_condicion_2_ario NO? (predicado | (PA predicado PC)))*;
-predicado: (operacion | (PA (predicado) PC))
-            (operador_condicion_2_ario
-            (predicado | (PA (predicado) PC) ))?;
-
-//operacion_logica: (operando_logico | (PA (operacion_logica) PC)) (operador_logico_2_ario (operacion_logica | (PA (operacion_logica) PC) ))?;
 
 evaluaciones_variables: evaluacion_variable (COMA evaluacion_variable)*;
 
 evaluacion_variable:
-    //ultima_posicion |
-    //(NO? vacia)
-    //variable_acceso |
     subprograma |
-    operando_universal |
-    operando_aritmetico |
+    operando |
     operacion |
-    //operacion_aritmetica |
-    operando_logico |
     operando_secuencia |
-    //(NO? operacion_logica) |
     ;
 
-operacion: (operando_logico | (PA (operacion) PC)) (operador_2_ario (operacion | (PA (operacion) PC) ))?;
+//: (operando_logico)
+
+predicado:
+    (operacion) #operacion_simple |
+    (operacion operador_condicion_2_ario operacion) #predicado_simple |
+    (operacion operador_condicion_2_ario predicado) #predicado_compuesto |
+    ((PA predicado PC) operador_condicion_2_ario predicado)  #predicado_compuesto_doble
+;
+
+operacion:
+    operando #operando_simple |
+    operando operador_logico_2_ario operando #op_logica_simple |
+    operando operador_logico_2_ario operacion #op_logica_compuesta |
+    (PA operacion PC) operador_logico_2_ario operacion  #op_logica_compuesta_doble |
+
+    operando operador_aritmetico_2_ario operando #op_aritmetica_simple |
+    operando operador_aritmetico_2_ario operacion #op_aritmetica_compuesta |
+    (PA operacion PC) operador_aritmetico_2_ario operacion #op_aritmetica_compuesta_doble
+;
+
+
+operando:
+    (TRUE | FALSE) #operando_booleano |
+    NUMERO #operando_numerico |
+    vacia #operando_vacia |
+    variable #operando_variable |
+    variable_acceso  #vle_acceso |
+    ultima_posicion #operando_ultima_posicion |
+    subprograma #operando_subprograma
+;
+
+operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
+
 
 //operacion_logica: (operando_logico | (PA (operacion_logica) PC)) (operador_logico_2_ario (operacion_logica | (PA (operacion_logica) PC) ))?;
 //operacion_aritmetica: (operando_aritmetico | (PA operacion_aritmetica PC)) (operador_aritmetico_2_ario (operacion_aritmetica | (PA operacion_aritmetica PC) ))?; //he cambiado * por ?
 //operacion_2_aria: ((operando_logico | operando_aritmetico) | (PA operacion_2_aria PC)) (operador_2_ario (operacion_2_aria | (PA operacion_2_aria PC)))*;
 //esto se deberia arreglar, realmente operandos deberian ser de cualquier tipo... eso es del semantico!
-operando_universal: variable | variable_acceso | ultima_posicion | subprograma;
-operando_aritmetico: NUMERO | operando_universal;
+//operando_universal: variable | variable_acceso | ultima_posicion | subprograma;
+//operando_aritmetico: NUMERO | operando_universal;
 //operando_logico: TRUE | FALSE | CIERTO | FALSO | operando_universal | operacion_aritmetica | vacia;
-operando_logico: TRUE | FALSE | CIERTO | FALSO | operando_universal | vacia;
+
+
 
 operando_secuencia: (CA CC) ||
 (CA evaluacion_variable CC) ||
 (CA ((evaluacion_variable COMA)* evaluacion_variable) CC);
 //operando_secuencia: CA evaluacion_variable CC;
 
-operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
+//operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
 
 
 operador_aritmetico_2_ario: MULT | (MAS | MENOS);
 operador_logico_2_ario: IGUAL | DIGUAL | MAYOR | MENOR | MAIGUAL | MEIGUAL;
 
-operador_condicion_2_ario: operador_logico_2_ario | AND | OR;
+operador_condicion_2_ario: AND | OR;
 operador_condicion_1_ario: NO;
 
 variable_acceso: variable CA operacion CC;
+
+//variable_acceso: variable CA operacion_aritmetica CC;
 subprograma: IDENT (
     (PA PC) |
     (PA evaluacion_variable PC) |
-    (PA ((COMA evaluacion_variable)* evaluacion_variable) PC)
+    (PA (evaluacion_variable (COMA evaluacion_variable)*) PC)
 );
 
 //PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;

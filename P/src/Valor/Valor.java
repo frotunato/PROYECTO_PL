@@ -50,6 +50,13 @@ public class Valor {
         return Objects.equals(valorNumerico, valor.valorNumerico) && Objects.equals(valorBooleano, valor.valorBooleano) && Objects.equals(secuenciaBooleana, valor.secuenciaBooleana) && Objects.equals(secuenciaNumerica, valor.secuenciaNumerica);
     }
 
+    public String toString () {
+        if (valorBooleano != null)
+            return "(bol " + getValorBooleano() + ")";
+        else
+            return "(int " + getValorNumerico() + ")";
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(valorNumerico, valorBooleano, secuenciaBooleana, secuenciaNumerica);

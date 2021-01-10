@@ -346,7 +346,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
-        String resultado = visitPredicado(ctx.predicado());
+        String resultado = (String) visit(ctx.predicado());
 
         if (ctx.subprograma() != null && !getGlobalScope().existeFuncion(ctx.subprograma().IDENT().getText()))
             throw new IllegalStateException("El subprograma de avance debe ser una función");
@@ -375,9 +375,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         if (subprograma.getEntrada().size() != ctx.evaluacion_variable().size())
             throw new IllegalArgumentException("El número de argumentos del subprograma " + ctx.IDENT().getText() + " no es correcto, esperando " + subprograma.getEntrada().size() + ", obtenemos " +  ctx.evaluacion_variable().size() + " " + ctx.getText());
 
-        //tipoSubprograma = scopeGlobal.getSubprograma(nombreSubprograma).getTipo();
-        //Subprograma subprograma = scopeGlobal.getSubprograma(nombreSubprograma);
-
         //comprobamos si los tipos de entrada son los adecuados
         for (Anasint.Evaluacion_variableContext variable: ctx.evaluacion_variable()) {
             tipoArgumento = visitEvaluacion_variable(variable);
@@ -405,41 +402,30 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
       return tipoRes;
     }
-/*
-    public String visitPredicado(Anasint.PredicadoContext ctx) {
-        return super.visitPredicado(ctx).toString();
+
+    public String visitPredicado (Anasint.PredicadoContext ctx) {
+        return (String) super.visit(ctx);
     }
-*/
 
-    public String visitPredicado(Anasint.PredicadoContext ctx) {
-        System.out.println("visitOperacion_logica " + ctx.getText());
-        String tipoLadoIzquierdo = "Indefinido";
-        String tipoLadoDerecho = "";
-        String res;
+    public String visitPredicado_simple(Anasint.Predicado_simpleContext ctx) {
+        if (visitOperacion(ctx.operacion(0)).equals(visitOperacion(ctx.operacion(1))))
+            return "Boolean";
+        else
+            return "Indefinido";
+    }
 
-        if (ctx.operador_condicion_2_ario() != null && ctx.operacion_logica() == null && ctx.predicado().size() == 1) {
-            System.out.println("CASO NESTED " + ctx.getText());
-            res =  visitPredicado(ctx.predicado().get(0));
-            return res;
-        } else if (ctx.operador_condicion_2_ario() == null && ctx.operacion_logica() != null) {
-            res = visitOperacion_logica(ctx.operacion_logica());
-            System.out.println("CASO BASE para " + ctx.getText() + " returned " + res);
-            return res;
-        } else if (ctx.operador_condicion_2_ario() != null && ctx.predicado().size() == 2) {
-            System.out.println("DOSSS " + ctx.getText());
-            tipoLadoIzquierdo = visitPredicado(ctx.predicado().get(0));
-            tipoLadoDerecho = visitPredicado(ctx.predicado().get(1));
-            System.out.println("LOSLADOS SON " + tipoLadoIzquierdo + " y" + tipoLadoDerecho);
-        } else if (ctx.operacion_logica() != null && ctx.operacion_logica() != null) {
-            System.out.println("ENTRAMOS EN DECIDIDOR, SOLO UN OPERACION " + ctx.getText());
-            tipoLadoIzquierdo = visitOperacion_logica(ctx.operacion_logica());
-            tipoLadoDerecho = visitPredicado(ctx.predicado().get(0));
-        }
+    public String visitPredicado_compuesto(Anasint.Predicado_compuestoContext ctx) {
+        if (visitOperacion(ctx.operacion()).equals(visit(ctx.predicado())))
+            return "Boolean";
+        else
+            return "Indefinido";
+    }
 
-        if (tipoLadoDerecho.equals(tipoLadoIzquierdo))
-            tipoLadoIzquierdo = "Boolean";
-
-        return tipoLadoIzquierdo;
+    public String visitPredicado_compuesto_doble(Anasint.Predicado_compuesto_dobleContext ctx) {
+        if (visit(ctx.predicado(0)).equals(visit(ctx.predicado(1))))
+            return "Boolean";
+        else
+            return "Indefinido";
     }
 
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
@@ -452,102 +438,67 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return super.visitEvaluacion_variable(ctx).toString();
     }
 
-    public String visitOperacion_aritmetica (Anasint.Operacion_aritmeticaContext ctx) {
-        System.out.println("visitOperacion_aritmetica " + ctx.getText());
-        String tipoLadoIzquierdo = "";
-        String tipoLadoDerecho = "";
-        //caso base
-        if (ctx.operador_aritmetico_2_ario() != null && ctx.operando_aritmetico() == null) {
-            return visitOperacion_aritmetica(ctx.operacion_aritmetica().get(0));
-        } else if (ctx.operador_aritmetico_2_ario() == null && ctx.operando_aritmetico() != null)
-            return visitOperando_aritmetico(ctx.operando_aritmetico());
-        /*
-        else {
-            tipoLadoIzquierdo = visitOperando_aritmetico(ctx.operando_aritmetico());
-            for (Anasint.Operacion_aritmeticaContext operacion: ctx.operacion_aritmetica()) {
-                tipoLadoDerecho = visitOperacion_aritmetica(operacion);
-                System.out.println(tipoLadoDerecho + " vs " + tipoLadoIzquierdo);
-                if (!tipoLadoDerecho.equals(tipoLadoIzquierdo))
-                    throw new IllegalStateException("TIPOS DE OPERANDOS NO VALIDOS");
-
-            }
-        }
-         */
-        else if (ctx.operador_aritmetico_2_ario() != null && ctx.operacion_aritmetica().size() == 2) {
-            System.out.println("DOSSS " + ctx.getText());
-            tipoLadoIzquierdo = visitOperacion_aritmetica(ctx.operacion_aritmetica().get(0));
-            tipoLadoDerecho = visitOperacion_aritmetica(ctx.operacion_aritmetica().get(1));
-            System.out.println("LOSLADOS SON " + tipoLadoIzquierdo + " y" + tipoLadoDerecho);
-        } else if (ctx.operando_aritmetico() != null && ctx.operacion_aritmetica() != null) {
-            System.out.println("ENTRAMOS EN DECIDIDOR, SOLO UN OPERACION " + ctx.getText());
-            tipoLadoIzquierdo = visitOperando_aritmetico(ctx.operando_aritmetico());
-            tipoLadoDerecho = visitOperacion_aritmetica(ctx.operacion_aritmetica().get(0));
-        }
-            //System.out.println("padre op aritmetica es " + ctx.getParent().getClass());
-            //return tipoLadoIzquierdo;
-        if (tipoLadoDerecho.equals(tipoLadoIzquierdo))
-            tipoLadoIzquierdo = "Integer";
-
-        return tipoLadoIzquierdo;
+    public String visitOperacion (Anasint.OperacionContext ctx) {
+        return (String) super.visit(ctx);
     }
 
-    public String visitOperacion_logica (Anasint.Operacion_logicaContext ctx) {
-        System.out.println("visitOperacion_logica " + ctx.getText());
-        String tipoLadoIzquierdo = "Indefinido";
-        String tipoLadoDerecho = "";
-        String res;
-
-        if (ctx.operador_logico_2_ario() != null && ctx.operando_logico() == null && ctx.operacion_logica().size() == 1) {
-            System.out.println("CASO NESTED " + ctx.getText());
-            res =  visitOperacion_logica(ctx.operacion_logica().get(0));
-            return res;
-        } else if (ctx.operador_logico_2_ario() == null && ctx.operando_logico() != null) {
-            res = visitOperando_logico(ctx.operando_logico());
-            System.out.println("CASO BASE para " + ctx.getText() + " returned " + res);
-            return res;
-        } else if (ctx.operador_logico_2_ario() != null && ctx.operacion_logica().size() == 2) {
-            System.out.println("DOSSS " + ctx.getText());
-            tipoLadoIzquierdo = visitOperacion_logica(ctx.operacion_logica().get(0));
-            tipoLadoDerecho = visitOperacion_logica(ctx.operacion_logica().get(1));
-            System.out.println("LOSLADOS SON " + tipoLadoIzquierdo + " y" + tipoLadoDerecho);
-        } else if (ctx.operando_logico() != null && ctx.operacion_logica() != null) {
-            System.out.println("ENTRAMOS EN DECIDIDOR, SOLO UN OPERACION " + ctx.getText());
-            tipoLadoIzquierdo = visitOperando_logico(ctx.operando_logico());
-            tipoLadoDerecho = visitOperacion_logica(ctx.operacion_logica().get(0));
-        }
-
-        if (tipoLadoDerecho.equals(tipoLadoIzquierdo))
-            tipoLadoIzquierdo = "Boolean";
-
-        return tipoLadoIzquierdo;
-    }
-
-    public String visitOperando_aritmetico (Anasint.Operando_aritmeticoContext ctx) {
-        System.out.println("visitOperando_aritmetico " + ctx.getText());
-        if (ctx.operando_universal() != null)
-            if(!visitOperando_universal(ctx.operando_universal()).equals("Integer"))
-                throw new IllegalArgumentException("Un operando aritmético debe ser un número " + ctx.getText());
-        return "Integer";
-    }
-
-    public String visitOperando_logico (Anasint.Operando_logicoContext ctx) {
-        System.out.println("visitOperando_logico " + ctx.getText());
-        if (ctx.operacion_aritmetica() != null)
-            return visitOperacion_aritmetica(ctx.operacion_aritmetica());
-        else if (ctx.operando_universal() != null)
-            return visitOperando_universal(ctx.operando_universal());
-            //return visitOperacion_aritmetica(ctx.operacion_aritmetica());
-         else
+    public String visitOp_logica_simple(Anasint.Op_logica_simpleContext ctx) {
+        if (visitOperando(ctx.operando(0)).equals(visitOperando(ctx.operando(1))))
             return "Boolean";
+        else
+            return "Indefinido";
     }
 
-    public String visitOperando_universal (Anasint.Operando_universalContext ctx) {
-        return super.visitOperando_universal(ctx).toString();
+    public String visitOp_logica_compuesta(Anasint.Op_logica_compuestaContext ctx) {
+        if (visitOperando(ctx.operando()).equals(visit(ctx.operacion())))
+            return "Boolean";
+        else
+            return "Indefinido";
+    }
+
+    public String visitOp_logica_compuesta_doble(Anasint.Op_logica_compuesta_dobleContext ctx) {
+        if (visit(ctx.operacion(0)).equals(visit(ctx.operacion(1))))
+            return "Boolean";
+        else
+            return "Indefinido";
+    }
+
+    public String visitOp_aritmetica_simple(Anasint.Op_aritmetica_simpleContext ctx) {
+        if (visitOperando(ctx.operando(0)).equals(visitOperando(ctx.operando(1))))
+            return "Integer";
+        else
+            return "Indefinido";
+    }
+
+    public String visitOp_aritmetica_compuesta(Anasint.Op_aritmetica_compuestaContext ctx) {
+        if (visitOperando(ctx.operando()).equals(visit(ctx.operacion())))
+            return "Integer";
+        else
+            return "Indefinido";
+    }
+
+    public String visitOp_aritmetica_compuesta_doble(Anasint.Op_aritmetica_compuesta_dobleContext ctx) {
+        if (visit(ctx.operacion(0)).equals(visit(ctx.operacion(1))))
+            return "Integer";
+        else
+            return "Indefinido";
+    }
+
+    public String visitOperando (Anasint.OperandoContext ctx) {
+        return (String) super.visit(ctx);
+    }
+
+    public String visitOperando_booleano (Anasint.Operando_booleanoContext ctx) {
+        return "Boolean";
+    }
+
+    public String visitOperando_numerico (Anasint.Operando_numericoContext ctx) {
+        return "Integer";
     }
 
     public String visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
         String tipoVariable = visitVariable(ctx.variable());
-        String tipoAcceso = visitOperacion_aritmetica(ctx.operacion_aritmetica());
+        String tipoAcceso = visitOperacion(ctx.operacion());
         if (!tipoAcceso.equals("Integer")) {
             throw new IllegalArgumentException("Indice de acceso a secuencia no numérico");
         }

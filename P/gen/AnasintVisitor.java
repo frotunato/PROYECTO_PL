@@ -142,12 +142,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInstruccion_aserto(Anasint.Instruccion_asertoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#predicado}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPredicado(Anasint.PredicadoContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#evaluaciones_variables}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -160,35 +154,137 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEvaluacion_variable(Anasint.Evaluacion_variableContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operacion_logica}.
+	 * Visit a parse tree produced by the {@code operacion_simple}
+	 * labeled alternative in {@link Anasint#predicado}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperacion_logica(Anasint.Operacion_logicaContext ctx);
+	T visitOperacion_simple(Anasint.Operacion_simpleContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operacion_aritmetica}.
+	 * Visit a parse tree produced by the {@code predicado_simple}
+	 * labeled alternative in {@link Anasint#predicado}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperacion_aritmetica(Anasint.Operacion_aritmeticaContext ctx);
+	T visitPredicado_simple(Anasint.Predicado_simpleContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operando_universal}.
+	 * Visit a parse tree produced by the {@code predicado_compuesto}
+	 * labeled alternative in {@link Anasint#predicado}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperando_universal(Anasint.Operando_universalContext ctx);
+	T visitPredicado_compuesto(Anasint.Predicado_compuestoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operando_aritmetico}.
+	 * Visit a parse tree produced by the {@code predicado_compuesto_doble}
+	 * labeled alternative in {@link Anasint#predicado}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperando_aritmetico(Anasint.Operando_aritmeticoContext ctx);
+	T visitPredicado_compuesto_doble(Anasint.Predicado_compuesto_dobleContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operando_logico}.
+	 * Visit a parse tree produced by the {@code operando_simple}
+	 * labeled alternative in {@link Anasint#operacion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperando_logico(Anasint.Operando_logicoContext ctx);
+	T visitOperando_simple(Anasint.Operando_simpleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code op_logica_simple}
+	 * labeled alternative in {@link Anasint#operacion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOp_logica_simple(Anasint.Op_logica_simpleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code op_logica_compuesta}
+	 * labeled alternative in {@link Anasint#operacion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOp_logica_compuesta(Anasint.Op_logica_compuestaContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code op_logica_compuesta_doble}
+	 * labeled alternative in {@link Anasint#operacion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOp_logica_compuesta_doble(Anasint.Op_logica_compuesta_dobleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code op_aritmetica_simple}
+	 * labeled alternative in {@link Anasint#operacion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOp_aritmetica_simple(Anasint.Op_aritmetica_simpleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code op_aritmetica_compuesta}
+	 * labeled alternative in {@link Anasint#operacion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOp_aritmetica_compuesta(Anasint.Op_aritmetica_compuestaContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code op_aritmetica_compuesta_doble}
+	 * labeled alternative in {@link Anasint#operacion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOp_aritmetica_compuesta_doble(Anasint.Op_aritmetica_compuesta_dobleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code operando_booleano}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_booleano(Anasint.Operando_booleanoContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code operando_numerico}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_numerico(Anasint.Operando_numericoContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code operando_vacia}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_vacia(Anasint.Operando_vaciaContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code operando_variable}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_variable(Anasint.Operando_variableContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code vle_acceso}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVle_acceso(Anasint.Vle_accesoContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code operando_ultima_posicion}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_ultima_posicion(Anasint.Operando_ultima_posicionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code operando_subprograma}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_subprograma(Anasint.Operando_subprogramaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#operador_2_ario}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperador_2_ario(Anasint.Operador_2_arioContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#operando_secuencia}.
 	 * @param ctx the parse tree
