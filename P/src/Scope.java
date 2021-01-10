@@ -1,4 +1,5 @@
 import org.antlr.v4.misc.OrderedHashMap;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Collection;
 import java.util.List;
@@ -8,6 +9,7 @@ public class Scope {
     private final Map<String, Variable> variables = new OrderedHashMap<>();
     private final Map<String, Subprograma> subprogramas = new OrderedHashMap<>();
     private final String nombre;
+    private ParserRuleContext puntero = null;
 
     public Collection<Variable> getVariablesDeclaradas () {
         return variables.values();
@@ -21,15 +23,27 @@ public class Scope {
 
     }
 
+
+
     public Scope (Scope scopePadre, String nNombre) {
         this.subprogramas.putAll(scopePadre.subprogramas);
         this.variables.putAll(scopePadre.variables);
         this.nombre = nNombre;
     }
+
     public Scope (String nNombre) {
         System.out.println("Created new scope " + nNombre);
         this.nombre = nNombre;
     }
+
+    public Scope (Scope scopePadre, String nNombre, ParserRuleContext ctx) {
+        this.subprogramas.putAll(scopePadre.subprogramas);
+        this.variables.putAll(scopePadre.variables);
+        this.nombre = nNombre;
+        this.puntero = ctx;
+    }
+
+    public ParserRuleContext getPuntero () { return this.puntero; }
 
     public String getNombre () { return this.nombre; }
 
@@ -74,7 +88,6 @@ public class Scope {
         subprogramas.put(nombre, new Subprograma(nombre, tipo, varsEntrada, varsSalida));
         System.out.println("[SCOPE, declaraSubprograma]: " + nombre +  ", inpt: " + varsEntrada.toString() + ", out: " + varsSalida.toString());
     }
-
 
     public Boolean existeVariable (String nombre) {
         return variables.containsKey(nombre);

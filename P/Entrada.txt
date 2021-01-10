@@ -3,20 +3,23 @@ PROGRAMA
         i,j,max:NUM;
         s:SEQ(NUM);
     SUBPROGRAMAS
-        FUNCION bucle_1_avance(SEQ(NUM) sik, NUM huey) dev (NUM ij)
+        FUNCION bucle_1_avance(NUM a, NUM b) dev (NUM ij)
             VARIABLES
                 k:NUM;
             INSTRUCCIONES
-                ij = 1 + 1;
-                dev ij;
+                k = a + b;
+                dev k;
         FFUNCION
     INSTRUCCIONES
         i = 0;
-        j = 0;
+        j = 1;
         s = [1, 2, 3];
-        max = bucle_1_avance(s, i);
-
-
+        max = bucle_1_avance(j, i);
+/*
+        mientras (i < 5) hacer
+            i = i + 1;
+            bucle_1_avance(5, i);
+        fmientras
 
         mientras (i<5) hacer
             //i = i + 1;
@@ -30,3 +33,5 @@ PROGRAMA
                 j = j + 1;
             fmientras
         fmientras
+        */
+

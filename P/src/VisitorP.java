@@ -54,7 +54,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             return closestBreakBlock(ctx.getParent());
     }
 
-
     public Object visitBloque_programa(Anasint.Bloque_programaContext ctx) {
         List<Variable> variables = visitBloque_variables(ctx.bloque_variables());
         Scope scopeGlobal = new Scope("global");
