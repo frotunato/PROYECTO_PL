@@ -182,34 +182,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPredicado_compuesto_doble(Anasint.Predicado_compuesto_dobleContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code operando_simple}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperando_simple(Anasint.Operando_simpleContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code op_logica_simple}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOp_logica_simple(Anasint.Op_logica_simpleContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code op_logica_compuesta}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOp_logica_compuesta(Anasint.Op_logica_compuestaContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code op_logica_compuesta_doble}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOp_logica_compuesta_doble(Anasint.Op_logica_compuesta_dobleContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code op_aritmetica_simple}
 	 * labeled alternative in {@link Anasint#operacion}.
 	 * @param ctx the parse tree
@@ -286,11 +258,19 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperador_2_ario(Anasint.Operador_2_arioContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operando_secuencia}.
+	 * Visit a parse tree produced by the {@code operando_secuencia_vacia}
+	 * labeled alternative in {@link Anasint#operando_secuencia}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
+	T visitOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code operando_secuencia_llena}
+	 * labeled alternative in {@link Anasint#operando_secuencia}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#operador_aritmetico_2_ario}.
 	 * @param ctx the parse tree

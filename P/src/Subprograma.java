@@ -1,16 +1,24 @@
+import org.antlr.v4.runtime.ParserRuleContext;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Subprograma {
-    String nombre;
-    String tipo;
-    List<Variable> entrada = new ArrayList<>();
-    List<Variable> salida = new ArrayList<>();
+    private String nombre;
+    private String tipo;
+    private ParserRuleContext puntero = null;
+
+    private List<Variable> entrada = new ArrayList<>();
+    private List<Variable> salida = new ArrayList<>();
 
 
     public Subprograma (String nNombre, String nTipo) {
         this.nombre = nNombre;
         this.tipo = nTipo;
+    }
+
+    public void setPuntero (ParserRuleContext nPuntero) {
+        this.puntero = nPuntero;
     }
 
     public Subprograma (String nNombre, String nTipo, List<Variable> nEntrada, List<Variable> nSalida) {
@@ -21,6 +29,8 @@ public class Subprograma {
         this.entrada.addAll(nEntrada);
         this.salida.addAll(nSalida);
     }
+
+    public ParserRuleContext getPuntero () { return this.puntero; }
 
     public boolean esFuncion () {
         return this.tipo.equals("Funcion");

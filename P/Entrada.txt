@@ -1,24 +1,68 @@
 PROGRAMA
     VARIABLES
-        i,j,max:NUM;
+        i,j,max2,max,max3, max4:NUM;
         s:SEQ(NUM);
     SUBPROGRAMAS
-        FUNCION bucle_1_avance(NUM a, NUM b) dev (NUM ij)
+        FUNCION bucle_1_avance(NUM a) dev (NUM ij)
             VARIABLES
                 k:NUM;
             INSTRUCCIONES
-                k = a + b;
-                dev k;
+               ij = 0;
+
+               mientras (ij < 3) hacer
+                    ij = ij + 1;
+                    ruptura;
+                    si (ij == 2) entonces
+
+                        ruptura;
+                    fsi
+               fmientras
+               //ruptura;
+
+               si (a > 5) entonces
+                    //a = 500;
+                    ruptura;
+                    si (a >5) entonces
+                        ruptura;
+                        ij = 499;
+                    fsi
+                    ij= 498;
+                    //ruptura;
+
+                    dev ij;
+               sino
+                    //dev 20;
+                     ruptura;
+                    ij = 300;
+                    ij=300;
+
+
+                fsi
+                //ruptura;
+                dev ij;
         FFUNCION
     INSTRUCCIONES
-        i = 0;
+        i = 1;
         j = 1;
         s = [1, 2, 3];
-        max = bucle_1_avance(j, i);
+        max, max2 = bucle_1_avance(3), bucle_1_avance(11);
+        ruptura;
+        max = 25;
+        max = 26;
+        max = 27;
+        si (max > 24) entonces
+            max = 50;
+        fsi
+
 /*
         mientras (i < 5) hacer
             i = i + 1;
-            bucle_1_avance(5, i);
+            ruptura;
+            mientras (j < 25) hacer
+                j = j + 1;
+                ruptura;
+            fmientras
+            //bucle_1_avance(i, j);
         fmientras
 
         mientras (i<5) hacer
@@ -33,5 +77,6 @@ PROGRAMA
                 j = j + 1;
             fmientras
         fmientras
-        */
+
+*/
 

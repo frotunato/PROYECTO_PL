@@ -72,10 +72,10 @@ predicado:
 ;
 
 operacion:
-    operando #operando_simple |
-    operando operador_logico_2_ario operando #op_logica_simple |
-    operando operador_logico_2_ario operacion #op_logica_compuesta |
-    (PA operacion PC) operador_logico_2_ario operacion  #op_logica_compuesta_doble |
+    //operando #operando_simple |
+    //operando operador_logico_2_ario operando #op_logica_simple |
+    //operando operador_logico_2_ario operacion #op_logica_compuesta |
+    //(PA operacion PC) operador_logico_2_ario operacion  #op_logica_compuesta_doble |
 
     operando operador_aritmetico_2_ario operando #op_aritmetica_simple |
     operando operador_aritmetico_2_ario operacion #op_aritmetica_compuesta |
@@ -106,9 +106,11 @@ operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
 
 
 
-operando_secuencia: (CA CC) ||
-(CA evaluacion_variable CC) ||
-(CA ((evaluacion_variable COMA)* evaluacion_variable) CC);
+operando_secuencia:
+(CA CC) #operando_secuencia_vacia |
+//(CA evaluacion_variable CC) #operando_secuencia_|
+(CA ((evaluacion_variable COMA)* evaluacion_variable) CC) #operando_secuencia_llena
+;
 //operando_secuencia: CA evaluacion_variable CC;
 
 //operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;

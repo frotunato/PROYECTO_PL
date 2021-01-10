@@ -34,10 +34,61 @@ public class Principal {
                 anasint.getRuleNames()),tree);
         viewer.setScale(0.8);//scale a little
 
+
+
         panel.add(viewer);
         frame.add(panel);
+
+        JScrollPane jScrollPane = new JScrollPane(panel);
+        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        // Then, add the jScrollPane to your frame
+        frame.getContentPane().add(jScrollPane);
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1440,920);
+        frame.setVisible(true);
+/*
+
+        JFrame frame = new JFrame();
+        JPanel panel = new JPanel();
+
+        // add something to you panel...
+        // panel.add(...);
+
+        // add the panel to a JScrollPane
+        JScrollPane jScrollPane = new JScrollPane(panel);
+        // only a configuration to the jScrollPane...
+        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        // Then, add the jScrollPane to your frame
+        frame.getContentPane().add(jScrollPane);
+        */
+/*
+
+        JFrame frameInterprete = new JFrame("Árbol de Análisis");
+        JPanel panelInterprete = new JPanel();
+        TreeViewer viewerInterprete = new TreeViewer(Arrays.asList(
+                s.getRuleNames()),tree);
+        viewer.setScale(0.8);//scale a little
+
+
+
+        panel.add(viewer);
+        frame.add(panel);
+
+        JScrollPane jScrollPane = new JScrollPane(panel);
+        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        // Then, add the jScrollPane to your frame
+        frame.getContentPane().add(jScrollPane);
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280,720);
         frame.setVisible(true);
+        */
     }
 }

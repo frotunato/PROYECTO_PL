@@ -20,10 +20,7 @@ public class Scope {
             throw new IllegalStateException("La variable " + nombre + " ya ha sido declarada con anterioridad");
         variables.put(nombre, new Variable(nombre, tipo));
         System.out.println("[SCOPE, declaraVariable]: " + nombre + " " + tipo);
-
     }
-
-
 
     public Scope (Scope scopePadre, String nNombre) {
         this.subprogramas.putAll(scopePadre.subprogramas);
@@ -35,15 +32,6 @@ public class Scope {
         System.out.println("Created new scope " + nNombre);
         this.nombre = nNombre;
     }
-
-    public Scope (Scope scopePadre, String nNombre, ParserRuleContext ctx) {
-        this.subprogramas.putAll(scopePadre.subprogramas);
-        this.variables.putAll(scopePadre.variables);
-        this.nombre = nNombre;
-        this.puntero = ctx;
-    }
-
-    public ParserRuleContext getPuntero () { return this.puntero; }
 
     public String getNombre () { return this.nombre; }
 
@@ -104,4 +92,5 @@ public class Scope {
     }
 
     public Boolean existeSubprograma (String nombre) { return subprogramas.containsKey(nombre); }
+
 }

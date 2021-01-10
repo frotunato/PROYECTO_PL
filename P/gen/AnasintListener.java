@@ -295,54 +295,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitPredicado_compuesto_doble(Anasint.Predicado_compuesto_dobleContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code operando_simple}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 */
-	void enterOperando_simple(Anasint.Operando_simpleContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code operando_simple}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 */
-	void exitOperando_simple(Anasint.Operando_simpleContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code op_logica_simple}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 */
-	void enterOp_logica_simple(Anasint.Op_logica_simpleContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code op_logica_simple}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 */
-	void exitOp_logica_simple(Anasint.Op_logica_simpleContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code op_logica_compuesta}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 */
-	void enterOp_logica_compuesta(Anasint.Op_logica_compuestaContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code op_logica_compuesta}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 */
-	void exitOp_logica_compuesta(Anasint.Op_logica_compuestaContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code op_logica_compuesta_doble}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 */
-	void enterOp_logica_compuesta_doble(Anasint.Op_logica_compuesta_dobleContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code op_logica_compuesta_doble}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 */
-	void exitOp_logica_compuesta_doble(Anasint.Op_logica_compuesta_dobleContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code op_aritmetica_simple}
 	 * labeled alternative in {@link Anasint#operacion}.
 	 * @param ctx the parse tree
@@ -473,15 +425,29 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitOperador_2_ario(Anasint.Operador_2_arioContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#operando_secuencia}.
+	 * Enter a parse tree produced by the {@code operando_secuencia_vacia}
+	 * labeled alternative in {@link Anasint#operando_secuencia}.
 	 * @param ctx the parse tree
 	 */
-	void enterOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
+	void enterOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#operando_secuencia}.
+	 * Exit a parse tree produced by the {@code operando_secuencia_vacia}
+	 * labeled alternative in {@link Anasint#operando_secuencia}.
 	 * @param ctx the parse tree
 	 */
-	void exitOperando_secuencia(Anasint.Operando_secuenciaContext ctx);
+	void exitOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code operando_secuencia_llena}
+	 * labeled alternative in {@link Anasint#operando_secuencia}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code operando_secuencia_llena}
+	 * labeled alternative in {@link Anasint#operando_secuencia}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#operador_aritmetico_2_ario}.
 	 * @param ctx the parse tree

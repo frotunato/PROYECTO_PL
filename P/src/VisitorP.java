@@ -45,7 +45,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     private ParserRuleContext closestBreakBlock (ParserRuleContext ctx) {
-        if (ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class) ||
+        if (//ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class) ||
                 ctx.getParent().getClass().equals(Anasint.Instruccion_controlContext.class) ||
                 ctx.getParent().getClass().equals(Anasint.Instruccion_bucleContext.class) ||
                 ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class))
@@ -81,7 +81,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
     public Object visitBloque_instrucciones (Anasint.Bloque_instruccionesContext ctx) {
         //igual hay que descomentar esto??
-        retornoTree.put(ctx, new ArrayList<>());
+        //retornoTree.put(ctx, new ArrayList<>());
         return super.visitBloque_instrucciones(ctx);
     }
 
@@ -170,13 +170,15 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             Aquí entramos en el bloque de instrucciones de la función, y comenzamos a
             realizar las diferentes comprobaciones de tipo y existencia en scope.
          */
+        retornoTree.put(ctx.bloque_instrucciones(), new ArrayList<Boolean>());
 
         visitBloque_variables(ctx.bloque_variables());
         visitBloque_instrucciones(ctx.bloque_instrucciones());
 
         // Añadimos retornoTree
-
         //comprobamos si algun retorno disponible es válido
+        System.out.println("La salida del arr bool a nivel funcion es " + retornoTree.get(ctx.bloque_instrucciones()).toString());
+
         if (!retornoTree.get(ctx.bloque_instrucciones()).contains(true))
             throw new IllegalArgumentException("La función no tiene ningún retorno alcanzable");
 
@@ -199,24 +201,45 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return res;
     }
 
-    public String visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
+    public String visitOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx) {
+        return "ArrayList<>";
+    }
+
+    public String visitOperando_secuencia_llena (Anasint.Operando_secuencia_llenaContext ctx) {
         List<String> tiposSecuencia = new ArrayList<>();
         for (Anasint.Evaluacion_variableContext elemento: ctx.evaluacion_variable()) {
             tiposSecuencia.add(visitEvaluacion_variable(elemento));
         }
         if (!tiposSecuencia.stream().allMatch(s -> s.equals(tiposSecuencia.get(0))))
             throw new IllegalStateException("Secuencia con tipos mixtos " + tiposSecuencia.toString());
-        if (tiposSecuencia.isEmpty())
-            return "ArrayList<>";
-        else
-            return "ArrayList<" + tiposSecuencia.get(0) + ">";
+        return "ArrayList<" + tiposSecuencia.get(0) + ">";
     }
 
     public Object visitInstruccion (Anasint.InstruccionContext ctx) {
+        System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion " + ctx.getText());
+
+        //comprobar si estamos en funcion
+        //si lo estamos y si estamos en bloque
+        //instrucciones con ruptura definida, no
+        //sin existir un retorno tirar error
+
+        boolean algunPadreFuncion = anyParentIsAFunction(ctx);
+
+        //funcion sin retorno alcanzable debido a ruptura
+        if (    algunPadreFuncion &&
+                ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class) &&
+                ctx.instruccion_ruptura() != null &&
+                !retornoTree.get(ctx.getParent()).contains(true))
+            throw new IllegalStateException("Funcion con ruptura sin retorno alcanzable");
+
+        //instrucciones despues de ruptura
         if (rupturaTree.get(ctx.getParent()) != null)
-            throw new IllegalStateException("No se admiten instrucciones después de una ruptura");
-        if (retornoTree.get(ctx.getParent()) != null && !retornoTree.get(ctx.getParent()).isEmpty())
+            System.out.println("No se admiten instrucciones después de una ruptura");
+
+            //throw new IllegalStateException("No se admiten instrucciones después de una ruptura");
+        if (retornoTree.get(ctx.getParent()) != null && retornoTree.get(ctx.getParent()).size() == 2)
             throw new IllegalStateException("No se admiten instrucciones después de un retorno");
+
         return super.visitInstruccion(ctx);
     }
 
@@ -290,7 +313,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         if (!tiposSalidaDefinidos.equals(tiposSalidaPrograma))
             throw new IllegalStateException("Instruccion retorno inválida (no devuelve los tipos especificados)");
 
-
         System.out.println("Estamos en la funcion" + scope.getNombre() +
                 " obtenidos " + tiposSalidaPrograma);
 
@@ -298,16 +320,17 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         //List<String> tiposParametrosRetorno = new ArrayList<>();
         if (retornoTree.get(bloqueAsociadoARetorno) == null) {
             retornoTree.put(bloqueAsociadoARetorno, new ArrayList<>());
-            System.out.println("El padre no tiene un arr bool para guardar ret " + bloqueAsociadoARetorno.getClass());
-        }
+            System.out.println("El padre no tiene un arr bool para guardar ret " + bloqueAsociadoARetorno.getClass() + " instr " + ctx.getText());
+        } else
+            System.out.println("El padre tiene un arr bool para guardar retornos, " + retornoTree.get(bloqueAsociadoARetorno).toString());
         retornoTree.get(bloqueAsociadoARetorno).add(true);
-
+        System.out.println("El arr bool para "+  ctx.getParent().getText() + " es " + retornoTree.get(bloqueAsociadoARetorno).toString());
         return "True";
     }
 
     public Object visitInstruccion_ruptura (Anasint.Instruccion_rupturaContext ctx) {
         ParserRuleContext closest = closestBreakBlock(ctx);
-        System.out.println("Hemos puesto ruptura en " + closest.getClass());
+        System.out.println("[ANALIZADOR SEMANTICO] Hemos puesto ruptura en " + closest.getClass());
         rupturaTree.put(closestBreakBlock(ctx), true);
         return super.visitInstruccion_ruptura(ctx);
     }
@@ -319,6 +342,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         //Comprobamos que algun nodo padre es una funcion. Evaluamos retorno si lo tiene.
         if (algunPadreFuncion) {
+            System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_control " + algunPadreFuncion);
             retornoTree.put(bloqueAsociadoARetorno, new ArrayList<>());
         }
 
@@ -327,9 +351,11 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         if (!resultado.equals("Boolean"))
             throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
 
+        // si comento esto, no se mete por donde deberia!
+        // if, visitar todo y analizar. no al reves
         for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
             visitInstruccion(instruccion);
-        }
+        } //he comentado esto y el retorno a 0, igual no es lo suyo
 
         //aqui ya se han procesado todas las instrucciones, analizamos retornos
         System.out.println("RETORNO MAESTRO " + ctx.getText() + " ret "+  retornoTree.get(ctx) + "algun padre funcion " + algunPadreFuncion);
@@ -340,6 +366,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             else
                 retornoTree.get(bloqueAsociadoARetorno).add(false);
         }
+        //le pasa lo mismo, visitariamos 2 veces
         return 0;
         //return super.visitInstruccion_control(ctx);
     }
@@ -441,6 +468,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return (String) super.visit(ctx);
     }
 
+    /*
+
     public String visitOp_logica_simple(Anasint.Op_logica_simpleContext ctx) {
         if (visitOperando(ctx.operando(0)).equals(visitOperando(ctx.operando(1))))
             return "Boolean";
@@ -461,6 +490,10 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         else
             return "Indefinido";
     }
+
+     */
+
+
 
     public String visitOp_aritmetica_simple(Anasint.Op_aritmetica_simpleContext ctx) {
         if (visitOperando(ctx.operando(0)).equals(visitOperando(ctx.operando(1))))

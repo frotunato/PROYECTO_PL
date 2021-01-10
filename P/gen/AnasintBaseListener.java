@@ -351,54 +351,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOperando_simple(Anasint.Operando_simpleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperando_simple(Anasint.Operando_simpleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOp_logica_simple(Anasint.Op_logica_simpleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOp_logica_simple(Anasint.Op_logica_simpleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOp_logica_compuesta(Anasint.Op_logica_compuestaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOp_logica_compuesta(Anasint.Op_logica_compuestaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOp_logica_compuesta_doble(Anasint.Op_logica_compuesta_dobleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOp_logica_compuesta_doble(Anasint.Op_logica_compuesta_dobleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterOp_aritmetica_simple(Anasint.Op_aritmetica_simpleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -531,13 +483,25 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOperando_secuencia(Anasint.Operando_secuenciaContext ctx) { }
+	@Override public void enterOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitOperando_secuencia(Anasint.Operando_secuenciaContext ctx) { }
+	@Override public void exitOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
