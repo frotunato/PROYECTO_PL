@@ -16,18 +16,34 @@ public class Valor {
 
     public Valor (Integer valorNumerico) {
         this.valor = valorNumerico;
+        this.tipo = "Integer";
         this.valorNumerico = valorNumerico;
     }
 
     public Valor (Boolean valorBooleano) {
         this.valor = valorBooleano;
+        this.tipo = "Boolean";
         this.valorBooleano = valorBooleano;
     }
 
+    public Valor(List<Integer> secuencia, Integer dummy) {
+        this.valor = secuenciaNumerica;
+        secuenciaNumerica = new ArrayList<>(secuencia);
+        //ecuenciaNumerica.addAll(secuencia);
+    }
+    public Valor(List<Boolean> secuencia, Boolean dummy) {
+        this.valor = secuenciaNumerica;
+        secuenciaBooleana = new ArrayList<>(secuencia);
+    }
     public Valor (List<Object> secuenciaGenerica) {
         this.valor = secuenciaGenerica;
         this.secuenciaGenerica.addAll(secuenciaGenerica);
     }
+
+    public boolean getEsNulo () {
+        return this.valor == null;
+    }
+
 /*
     public Valor (SecuenciaNumerica secuenciaNumerica) {
         this.valor = secuenciaNumerica;
@@ -39,6 +55,16 @@ public class Valor {
         this.secuenciaBooleana = secuenciaBooleana;
     }
 */
+    public Valor getUltimoValorSecuencia () {
+        if (secuenciaNumerica != null)
+            return new Valor(secuenciaNumerica.get(secuenciaNumerica.size() - 1));
+        else if (secuenciaBooleana != null)
+            return new Valor(secuenciaBooleana.get(secuenciaBooleana.size() - 1));
+        else
+            return null;
+        //return new Valor(this.secuenciaGenerica.get(this.secuenciaGenerica.size() - 1));
+    }
+
     public List<Valor> getValores () { return this.valores; }
 
     public void setValores (List<Valor> nValores) {
@@ -53,9 +79,15 @@ public class Valor {
         return valorNumerico;
     }
 
-    public Boolean getValorBooleano() {
-        return valorBooleano;
+    public void setValorNumerico (Integer valorNumerico) {
+        this.valorNumerico = valorNumerico;
     }
+
+    public void setValorBooleano(Boolean valorBooleano) {
+        this.valorBooleano = valorBooleano;
+    }
+
+    public Boolean getValorBooleano () { return this.valorBooleano; }
 
     public List<Object> getSecuenciaGenerica () {
         return this.secuenciaGenerica;
@@ -81,8 +113,21 @@ public class Valor {
             return "(bol " + getValorBooleano() + ")";
         else if (valorNumerico != null)
             return "(int " + getValorNumerico() + ")";
+        else if (secuenciaNumerica != null)
+            return "(seq(int) " + getSecuenciaNumerica().toString() + ")";
+        else if (secuenciaBooleana != null)
+            return "(seq(bool) " + getSecuenciaBooleana().toString() + ")";
         else
-            return "(seq " + getSecuenciaGenerica() + ")";
+            return "(indef " + this.valor + ")";
+
+    }
+
+    public List<Boolean> getSecuenciaBooleana() {
+        return this.secuenciaBooleana;
+    }
+
+    public List<Integer> getSecuenciaNumerica() {
+        return this.secuenciaNumerica;
     }
 
     @Override

@@ -60,36 +60,172 @@ evaluacion_variable:
     operando |
     operacion |
     operando_secuencia |
+    valor_booleano
     ;
 
 //: (operando_logico)
-
+/*
 predicado:
     (operacion) #operacion_simple |
-    (operacion operador_condicion_2_ario operacion) #predicado_simple |
-    (operacion operador_condicion_2_ario predicado) #predicado_compuesto |
-    ((PA predicado PC) operador_condicion_2_ario predicado)  #predicado_compuesto_doble
+    ((NO? (PA predicado PC))) #predicado_anidado |
+    (operacion operador_condicion_2_ario predicado) #predicado_compuesto_doble |
+    (NO? (operacion operador_condicion_2_ario operacion)) #predicado_simple |
+    (operacion operador_condicion_2_ario (NO? predicado)) #predicado_compuesto
+*/
+
+/*
+predicado:
+    (igualdades_desigualdades) #basico |
+    (igualdades_desigualdades operador_condicion_2_ario igualdades_desigualdades) #predicado_simple |
+    (igualdades_desigualdades operador_condicion_2_ario NO? predicado) #predicado_compuesto |
+    ((PA igualdades_desigualdades PC) operador_condicion_2_ario NO? (PA predicado PC))  #predicado_compuesto_doble |
+    ((PA predicado PC) operador_condicion_2_ario NO? (PA igualdades_desigualdades PC)) #predicado_compuesto_doble2 |
+    (NO? (PA predicado PC)) #predicado_anidado
+
 ;
+*/
+
+/* este era el bueno predicado
+predicado:
+    NO? ((PA igualdades_desigualdades PC) | igualdades_desigualdades) #operacion_simple |
+    NO? (PA predicado PC) #predicado_anidado |
+    (igualdades_desigualdades operador_condicion_2_ario igualdades_desigualdades) #predicado_simple |
+    (igualdades_desigualdades operador_condicion_2_ario predicado) #predicado_compuesto |
+    (NO? (PA predicado PC) operador_condicion_2_ario predicado)  #predicado_compuesto_doble
+;
+*/
+/*
+    CIERTO #predicado_cierto |
+    FALSO #predicado_falso |
+    NO predicado #predicado_negado |
+    PA predicado PC #predicado_envuelto |
+    digualdad #predicado_caso_base |
+    //predicado #predicado_envuelto |
+    predicado operador_condicion_2_ario predicado #predicado_doble
+*/
+//este es el beno 2,.
+
+predicado:
+    condicion #predicado_base |
+    CIERTO #predicado_cierto |
+    FALSO #predicado_falso |
+    NO predicado #predicado_negado |
+    PA predicado PC #predicado_envuelto |
+    predicado operador_condicion_2_ario predicado #predicado_rec
+    //condicion+ #predicado_rec;
+    //condicion (operador_condicion_2_ario condicion)* #predicado_rec
+;/*
+predicado:
+    CIERTO #predicado_cierto |
+    FALSO #predicado_falso |
+    NO predicado #predicado_negado |
+    PA predicado PC #predicado_envuelto |
+    condicion #predicado_base |
+    predicado (operador_condicion_2_ario predicado) #predicado_rec
+    ;
+*/
+
+
+
+
+//operaciones con operadores logicos
+/*
+digualdad:
+    PA digualdad PC #digualdad_envuelto |
+    valor_booleano operador_logico_2_ario valor_booleano #digualdad_caso_base_bool |
+    operando_secuencia operador_logico_2_ario operando_secuencia #digualdad_caso_base_se |
+    operacion (operador_logico_2_ario operacion) #digualdad_caso_base_num |
+    digualdad (operador_logico_2_ario digualdad) #digualdad_doble
+
+;
+*/
+
+
+
+condicion:
+    valor_booleano operador_logico_2_ario valor_booleano #condicion_bool |
+    operando_secuencia operador_logico_2_ario operando_secuencia #condicion_sec |
+    operacion #condicion_base |
+    PA condicion PC #condicion_envuelta |
+    condicion operador_logico_2_ario condicion #condicion_rec;
+
+
+
+
+    //operando_secuencia #condicion_sec |
+    //PA condicion PC #condicion_envuelta
+    //PA condicion PC #condicion_envuelta |
+    //condicion (operador_logico_2_ario condicion)+ #condicion_rec
+
+    //condicion ((IGUAL | DIGUAL | MAYOR | MENOR | MAIGUAL | MEIGUAL) condicion) #asd;
+    //operacion (operador_logico_2_ario condicion)+ #condicion_rec;
+        //(operacion | (PA operacion PC)) (operador_logico_2_ario operacion)+;
+
+
+//operaciones con operadores aritmeticos
 
 operacion:
-    //operando #operando_simple |
-    //operando operador_logico_2_ario operando #op_logica_simple |
-    //operando operador_logico_2_ario operacion #op_logica_compuesta |
-    //(PA operacion PC) operador_logico_2_ario operacion  #op_logica_compuesta_doble |
+    operando #operando_caso_base |
+    PA operacion PC #op_aritmetica_envuelta |
+    operacion MULT operacion #op_aritmetica_mult |
+    operacion (MAS | MENOS) operacion #op_aritmetica_sr;
 
-    operando operador_aritmetico_2_ario operando #op_aritmetica_simple |
-    operando operador_aritmetico_2_ario operacion #op_aritmetica_compuesta |
-    (PA operacion PC) operador_aritmetico_2_ario operacion #op_aritmetica_compuesta_doble
+   // operacion operador_aritmetico_2_ario operacion #asd;
+
+    //operando (operador_aritmetico_2_ario operacion)*;
+/*
+operacion:
+    operando #operando_caso_base |
+    PA operacion PC #op_aritmetica_envuelta |
+    operacion operador_aritmetico_2_ario operacion #op_aritmetica_doble
+    //operacion operador_aritmetico_2_ario operacion |
+    //PA operacion PC (MAS | MENOS) PA operacion PC |
+    //operacion (MAS | MENOS) operacion
+    ;
+    */
+/*
+operacion_mm:
+    operando |
+        PA operacion_mm PC (MAS | MENOS) PA operacion_mm PC |
+        operacion_mm (MAS | MENOS) operacion_mm
 ;
+*/
+/*
+operacion:
+    (operando | (PA operando PC)) #operando_simple |
+    (PA operacion PC ) #mult_operacion_anidada |
+    (operando MULT operando) #op_mult_aritmetica_simple |
+    (operando MULT operacion) #op_mult_aritmetica_compuesta |
+    ((PA operacion PC) MULT operacion) #op_mult_aritmetica_compuesta_doble |
 
+        //(PA operacion PC ) #mm_operacion_anidada |
+        (operando (MAS | MENOS) operando) #op_mm_aritmetica_simple |
+        (operando (MAS | MENOS) operacion) #op_mm_aritmetica_compuesta |
+        ((PA operacion PC) (MAS | MENOS) operacion) #op_mm_aritmetica_compuesta_doble
+
+;
+*/
+/*
+operacion:
+    (operando | (PA operando PC)) #operando_simple |
+    (PA operacion PC ) #operacion_anidada |
+    (operando operador_aritmetico_2_ario operando) #op_aritmetica_simple |
+    (operando operador_aritmetico_2_ario operacion) #op_aritmetica_compuesta |
+    ((PA operacion PC) operador_aritmetico_2_ario operacion) #op_aritmetica_compuesta_doble
+;
+*/
+
+
+//operando_numerico: NUMERO;
 
 operando:
-    (TRUE | FALSE) #operando_booleano |
     NUMERO #operando_numerico |
-    vacia #operando_vacia |
+
+    valor_booleano #operando_booleano |
+    //vacia #operando_vacia |
     variable #operando_variable |
     variable_acceso  #vle_acceso |
-    ultima_posicion #operando_ultima_posicion |
+    //ultima_posicion #operando_ultima_posicion |
     subprograma #operando_subprograma
 ;
 
@@ -109,7 +245,8 @@ operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
 operando_secuencia:
 (CA CC) #operando_secuencia_vacia |
 //(CA evaluacion_variable CC) #operando_secuencia_|
-(CA ((evaluacion_variable COMA)* evaluacion_variable) CC) #operando_secuencia_llena
+(CA ((valor_booleano COMA)* valor_booleano) CC) #operando_secuencia_logica |
+(CA ((NUMERO COMA)* NUMERO) CC) #operando_secuencia_numerica
 ;
 //operando_secuencia: CA evaluacion_variable CC;
 
@@ -118,9 +255,15 @@ operando_secuencia:
 
 operador_aritmetico_2_ario: MULT | (MAS | MENOS);
 operador_logico_2_ario: IGUAL | DIGUAL | MAYOR | MENOR | MAIGUAL | MEIGUAL;
+operador_igualdad_logica_2_ario: IGUAL | DIGUAL;
 
 operador_condicion_2_ario: AND | OR;
 operador_condicion_1_ario: NO;
+
+valor_booleano:
+    TRUE #valor_booleano_true |
+    FALSE #valor_booleano_false
+;
 
 variable_acceso: variable CA operacion CC;
 
@@ -132,6 +275,12 @@ subprograma: IDENT (
 );
 
 //PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;
-ultima_posicion: UL_POS PA evaluacion_variable PC; //esto deberia solo aceptar listas
+ultima_posicion:
+    UL_POS PA (variable | operando_secuencia) PC
+    //UL_POS PA operando_secuencia PC #ultima_posicion_secuencia
+;
+
+
+ //esto deberia solo aceptar listas
 vacia: VACIA PA evaluacion_variable PC; //esto tambien acepta solo listas
 mostrar: MOSTRAR PA evaluacion_variable PC;

@@ -120,7 +120,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //a nivel de bloque instruccion mas externo
         //if (rupturaBloque.get(ctx.getParent()) != null && rupturaBloque.get(ctx.getParent())) {
         //    System.out.println("[INTERPRETE] visitBloque_instrucciones RUPTURA " + ctx.getText());
-            //rupturaBloque.removeFrom(ctx);
+        //rupturaBloque.removeFrom(ctx);
         //    return 1;
         //}
 
@@ -180,7 +180,9 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             }
         }
         //si el predicado es cierto (condicion), entramos a las instrucciones
-        if (visitPredicado(ctx.predicado()).getValorBooleano())
+        boolean valorPredicado = visitPredicado(ctx.predicado()).getValorBooleano();
+        System.out.println("[INTERPRETE] visitInstruccion valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
+        if (valorPredicado)
             //se visitan instrucciones si
             for (Anasint.InstruccionContext instruccion: instruccionesSi) {
                 if (instruccion.instruccion_ruptura() != null) {
@@ -191,7 +193,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
                 visitInstruccion(instruccion);
                 System.out.println("[INTERPRETE] visitInstruccion_control instr si " + instruccion.getText());
             }
-        //se visitan las instrucciones sino
+            //se visitan las instrucciones sino
         else
             for (Anasint.InstruccionContext instruccion: instruccionesSino) {
                 if (instruccion.instruccion_ruptura() != null) {
@@ -292,41 +294,102 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Valor visitOperando (Anasint.OperandoContext ctx) {
         return (Valor) super.visit(ctx);
     }
+    public Valor visitValor_booleano (Anasint.Valor_booleanoContext ctx) {
+        return (Valor) super.visit(ctx);
+    }
 
+    public Valor visitValor_booleano_true (Anasint.Valor_booleano_trueContext ctx) {
+        return new Valor(true);
+    }
+    public Valor visitValor_booleano_false (Anasint.Valor_booleano_falseContext ctx) {
+        return new Valor(false);
+    }
+
+    /*
     public Valor visitOperando_booleano (Anasint.Operando_booleanoContext ctx) {
         if (ctx.TRUE() != null)
             return new Valor(true);
         else
             return new Valor(false);
     }
-
+*/
     public Valor visitOperando_numerico (Anasint.Operando_numericoContext ctx) {
         return new Valor(Integer.valueOf(ctx.NUMERO().getText()));
     }
+
+    public Valor visitCondicion (Anasint.CondicionContext ctx) {
+        return (Valor) super.visit(ctx);
+    }
+
+    public Valor visitCondicion_base (Anasint.Condicion_baseContext ctx) {
+        return visitOperacion(ctx.operacion());
+    }
+
+    public Valor visitCondicion_envuelta (Anasint.Condicion_envueltaContext ctx) {
+        return (Valor) visit(ctx.condicion());
+    }
+
+    public Valor visitCondicion_rec (Anasint.Condicion_recContext ctx) {
+        Valor condicionA = (Valor) visit(ctx.condicion(0));
+        Valor condicionB = (Valor) visit(ctx.condicion(1));
+
+        //System.out.println("visitDigualdad_caso_base de " + ctx.getText() + " res = " + predicadoA +" vs " + predicadoB +" computed " + predicadoA.equals(predicadoB));
+
+        /////////arregaaaa
+        //return new Valor(false);
+        return resuelveOperadorLogico(condicionA, condicionB, ctx.operador_logico_2_ario());
+    }
+
 
     public Valor visitPredicado (Anasint.PredicadoContext ctx) {
         return (Valor) super.visit(ctx);
     }
 
-    public Valor visitPredicado_simple(Anasint.Predicado_simpleContext ctx) {
-        return resuelveOperadorCondicion(
-                visitOperacion(ctx.operacion(0)),
-                visitOperacion(ctx.operacion(1)),
-                ctx.operador_condicion_2_ario());
+    public Valor visitPredicado_cierto (Anasint.Predicado_ciertoContext ctx) {
+        return new Valor(true);
+    }
+    
+    public Valor visitPredicado_falso (Anasint.Predicado_falsoContext ctx) {
+        return new Valor(false);
+    }
+    
+    public Valor visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
+        Valor valorPredicado = visitPredicado(ctx.predicado());
+        valorPredicado.setValorBooleano(!valorPredicado.getValorBooleano());
+        return valorPredicado;
     }
 
-    public Valor visitPredicado_compuesto(Anasint.Predicado_compuestoContext ctx) {
-        return resuelveOperadorCondicion(
-                visitOperacion(ctx.operacion()),
-                visitPredicado(ctx.predicado()),
-                ctx.operador_condicion_2_ario());
+    public Valor visitPredicado_envuelto (Anasint.Predicado_envueltoContext ctx) {
+        return visitPredicado(ctx.predicado());
     }
 
-    public Valor visitPredicado_compuesto_doble(Anasint.Predicado_compuesto_dobleContext ctx) {
-        return resuelveOperadorCondicion(
-                visitPredicado(ctx.predicado(0)),
-                visitPredicado(ctx.predicado(1)),
-                ctx.operador_condicion_2_ario());
+    public Valor visitPredicado_base (Anasint.Predicado_baseContext ctx) {
+        return visitCondicion(ctx.condicion());
+    }
+
+
+    public Valor visitPredicado_rec(Anasint.Predicado_recContext ctx) {
+        Valor predicadoA = (Valor) visitPredicado(ctx.predicado(0));
+        Valor predicadoB = (Valor) visitPredicado(ctx.predicado(1));
+        Valor condicionActual = null;
+        System.out.println("predicado rec me llega " + predicadoA  + " " + predicadoB + " " + ctx.getText());
+        //List<Anasint.Operador_condicion_2_arioContext> condiciones = ctx.operador_condicion_2_ario();
+        int i = 0;
+
+
+        /*
+        for (Anasint.CondicionContext condicion: ctx.condicion()) {
+            if (condicionActual == null)
+                condicionActual = (Valor) visit(condicion);
+            else
+                condicionActual = resuelveOperadorCondicion(condicionActual, (Valor) visit(condicion), condiciones.get(i));
+            i++;
+        }
+        */
+
+        //System.out.println("visitPredicado_doble de " + ctx.getText() + " res = " + predicadoA +" vs " + predicadoB +" computed " + predicadoA.equals(predicadoB));
+        return resuelveOperadorCondicion(predicadoA,
+                predicadoB, ctx.operador_condicion_2_ario());
     }
 
     public Valor visitVariable (Anasint.VariableContext ctx) {
@@ -334,29 +397,33 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
 
     public Valor visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
-        //Valor valor = visit(ctx);
-        //valorOperaciones.put(ctx, Arrays.asList(valor));
         return (Valor) super.visitEvaluacion_variable(ctx);
     }
 
     private Valor resuelveOperadorLogico (Valor a, Valor b, Anasint.Operador_logico_2_arioContext ctx) {
         String operador = ctx.getText();
         boolean res = false;
-        //if (a == null || b == null)
-        //    return new Valor(new Booleano(true));
-        switch (operador) {
-            case "==" -> res = a.equals(b);
-            case "!=" -> res = !a.equals(b);
-            case ">=" -> res = a.getValorNumerico() >= b.getValorNumerico();
-            case ">" -> res = a.getValorNumerico() > b.getValorNumerico();
-            case "<=" -> res = a.getValorNumerico() <= b.getValorNumerico();
-            case "<" -> res = a.getValorNumerico() < b.getValorNumerico();
+
+        if (a.getEsNulo() || b.getEsNulo()) {
+            System.out.println("resuelveOperadorLogico Evaluando " + a + " vs " + b + "a nulo...");
+
+            return new Valor(false);
+        } else {
+            switch (operador) {
+                case "==" -> res = a.equals(b);
+                case "!=" -> res = !a.equals(b);
+                case ">=" -> res = a.getValorNumerico() >= b.getValorNumerico();
+                case ">" -> res = a.getValorNumerico() > b.getValorNumerico();
+                case "<=" -> res = a.getValorNumerico() <= b.getValorNumerico();
+                case "<" -> res = a.getValorNumerico() < b.getValorNumerico();
+            }
+            System.out.println("resuelveOperadorLogico Evaluando " + a + " vs " + b + "(" + res + ")");
+
+            return new Valor(res);
         }
-        return new Valor(res);
     }
 
-    private Valor resuelveOperadorAritmetico (Valor a, Valor b, Anasint.Operador_aritmetico_2_arioContext ctx) {
-        String operador = ctx.getText();
+    private Valor resuelveOperadorAritmetico (Valor a, Valor b, String operador) {
         int res = 0;
         //if (a == null || b == null)
         //    return new Valor(new Numero(0));
@@ -371,79 +438,171 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     private Valor resuelveOperadorCondicion (Valor a, Valor b, Anasint.Operador_condicion_2_arioContext ctx) {
         String operador = ctx.getText();
         boolean res = false;
-        switch (operador) {
-            case "&&" -> res = a.getValorBooleano() && b.getValorBooleano();
-            case "||" -> res = a.getValorBooleano() || b.getValorBooleano();
+        System.out.println("resuelveOperadorCondicion Evaluando " + a + " vs " + b);
+
+        if (a.getValorBooleano() == null || b.getValorBooleano() == null) {
+            System.out.println("Resolucion condicion fallida");
+            return new Valor(false);
+        } else {
+            switch (operador) {
+                case "&&" -> res = a.getValorBooleano() && b.getValorBooleano();
+                case "||" -> res = a.getValorBooleano() || b.getValorBooleano();
+            }
+            return new Valor(res);
         }
-        return new Valor(res);
     }
 
     public Valor visitOperacion (Anasint.OperacionContext ctx) {
         return (Valor) super.visit(ctx);
     }
+    /*
+        public Valor visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
+            if (ctx.evaluacion_variable() != null)
+        }
+    */
 /*
-    public Valor visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
-        if (ctx.evaluacion_variable() != null)
+    public Valor visitOperando_booleano (Anasint.Operando_booleanoContext ctx) {
+        return (Valor) visit(ctx.valor_booleano());
     }
 */
     public Valor visitOperando_secuencia_vacia (Anasint.Operando_secuencia_vaciaContext ctx) {
         return new Valor(new ArrayList<>());
     }
-
-    public Valor visitOperando_secuencia_llena (Anasint.Operando_secuencia_llenaContext ctx) {
+/*
+    public Valor visitOperando_secuencia_logica (Anasint.Operando_secuencia_logicaContext ctx) {
         Valor res;
         List<Object> secuencia = new ArrayList<>();
-        for (Anasint.Evaluacion_variableContext valor: ctx.evaluacion_variable())
-            secuencia.add(visitEvaluacion_variable(valor).getValor());
-        //res = secuencia.get(0);
 
-        //res.setValores(secuencia);
-        res = new Valor(secuencia);
-        return res;
-        //return new Valor(new ArrayList<>());
+        for (ParseTree valorBooleano: ctx.children) {
+            if (valorBooleano.getText().equals("T"))
+                secuencia.add(true);
+            else if (valorBooleano.getText().equals("F"))
+                secuencia.add(false);
+            //if (valorBooleano.equals(ctx.TRUE))
+
+        }
+        //for Anasint.Operando_booleanoContext valorBooleano: ctx.
+        //for (Anasint.Operando_booleanoContext valorBooleano: ctx.operando_booleano())
+        //    secuencia.add(valorBooleano);
+        return new Valor(secuencia);
     }
+    */
 /*
-    public Valor visitOp_logica_simple(Anasint.Op_logica_simpleContext ctx) {
-        return resuelveOperadorLogico(
-                visitOperando(ctx.operando(0)),
-                visitOperando(ctx.operando(1)),
-                ctx.operador_logico_2_ario());
-    }
+    public Valor visitUltima_posicion(Anasint.Ultima_posicionContext ctx) {
+        Valor selector = visitEvaluacion_variable(ctx.evaluacion_variable());
+        return new Valor(selector.getSecuenciaGenerica().get(selector.getSecuenciaGenerica().size() - 1));
 
-    public Valor visitOp_logica_compuesta(Anasint.Op_logica_compuestaContext ctx) {
-        return resuelveOperadorLogico(
-                visitOperando(ctx.operando()),
-                visitOperacion(ctx.operacion()),
-                ctx.operador_logico_2_ario());
-    }
-
-    public Valor visitOp_logica_compuesta_doble(Anasint.Op_logica_compuesta_dobleContext ctx) {
-        return resuelveOperadorLogico(
-                visitOperacion(ctx.operacion(0)),
-                visitOperacion(ctx.operacion(1)),
-                ctx.operador_logico_2_ario());
     }
 */
-    public Valor visitOp_aritmetica_simple(Anasint.Op_aritmetica_simpleContext ctx) {
-        return resuelveOperadorAritmetico(
-                visitOperando(ctx.operando(0)),
-                visitOperando(ctx.operando(1)),
-                ctx.operador_aritmetico_2_ario());
+
+    public Valor visitUltima_posicion (Anasint.Ultima_posicionContext ctx) {
+        Valor ultimoValor;
+        if (ctx.variable() != null)
+            ultimoValor = visitVariable(ctx.variable()).getUltimoValorSecuencia();
+        else
+            ultimoValor = visitOperando_secuencia(ctx.operando_secuencia()).getUltimoValorSecuencia();
+        System.out.println("visitUltima_posicion es " + ctx.getText() + " = " + ultimoValor);
+        return ultimoValor;
     }
 
-    public Valor visitOp_aritmetica_compuesta(Anasint.Op_aritmetica_compuestaContext ctx) {
-        return resuelveOperadorAritmetico(
-                visitOperando(ctx.operando()),
-                visitOperacion(ctx.operacion()),
-                ctx.operador_aritmetico_2_ario());
+    public Valor visitVacia (Anasint.VaciaContext ctx) {
+        Valor res = visitEvaluacion_variable(ctx.evaluacion_variable());
+        boolean vaciaNum = res.getSecuenciaBooleana().size() == 0;
+        boolean vaciaBool = res.getSecuenciaNumerica().size() == 0;
+        /*
+        if (ctx.variable() != null)
+            ultimoValor = visitVariable(ctx.variable()).getUltimoValorSecuencia();
+        else
+            ultimoValor = visitOperando_secuencia(ctx.operando_secuencia()).getUltimoValorSecuencia();
+
+        System.out.println("visitUltima_posicion es " + ctx.getText() + " = " + ultimoValor);
+         */
+        return new Valor(vaciaNum && vaciaBool);
     }
 
-    public Valor visitOp_aritmetica_compuesta_doble(Anasint.Op_aritmetica_compuesta_dobleContext ctx) {
+
+
+/*
+    public Valor visitUltima_posicion_variable (Anasint.Ultima_posicion_variableContext ctx) {
+
+    }
+
+    public Valor visitUltima_posicion_variable (Anasint.Ultima_posicion_variableContext ctx) {
+
+    }
+*/
+    public Valor visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
+        return (Valor) visit(ctx);
+    }
+
+    public Valor visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
+        Valor res;
+        List<Integer> secuencia = new ArrayList<>();
+        for (TerminalNode numero: ctx.NUMERO())
+            secuencia.add(Integer.valueOf(numero.getText()));
+        return new Valor(secuencia, 0);
+    }
+
+    public Valor visitOperando_secuencia_logica (Anasint.Operando_secuencia_logicaContext ctx) {
+        List<Boolean> secuencia = new ArrayList<>();
+        for (Anasint.Valor_booleanoContext booleano: ctx.valor_booleano())
+            secuencia.add(booleano.getText().equals("T"));
+        return new Valor(secuencia, true);
+    }
+
+    /*
+        public Valor visitOp_logica_simple(Anasint.Op_logica_simpleContext ctx) {
+            return resuelveOperadorLogico(
+                    visitOperando(ctx.operando(0)),
+                    visitOperando(ctx.operando(1)),
+                    ctx.operador_logico_2_ario());
+        }
+
+        public Valor visitOp_logica_compuesta(Anasint.Op_logica_compuestaContext ctx) {
+            return resuelveOperadorLogico(
+                    visitOperando(ctx.operando()),
+                    visitOperacion(ctx.operacion()),
+                    ctx.operador_logico_2_ario());
+        }
+
+        public Valor visitOp_logica_compuesta_doble(Anasint.Op_logica_compuesta_dobleContext ctx) {
+            return resuelveOperadorLogico(
+                    visitOperacion(ctx.operacion(0)),
+                    visitOperacion(ctx.operacion(1)),
+                    ctx.operador_logico_2_ario());
+        }
+    */
+
+
+    public Valor visitOp_aritmetica_envuelta (Anasint.Op_aritmetica_envueltaContext ctx) {
+        return visitOperacion(ctx.operacion());
+    }
+
+    public Valor visitOp_aritmetica_mult (Anasint.Op_aritmetica_multContext ctx) {
+        return resuelveOperadorAritmetico(
+                visitOperacion(ctx.operacion(0)),
+                visitOperacion(ctx.operacion(1)),
+                "*");    }
+
+    public Valor visitOp_aritmetica_sr (Anasint.Op_aritmetica_srContext ctx) {
+        String operador;
+        if (ctx.MAS() != null)
+            operador = "+";
+        else
+            operador = "-";
+        return resuelveOperadorAritmetico(
+                visitOperacion(ctx.operacion(0)),
+                visitOperacion(ctx.operacion(1)),
+                operador);
+    }
+                /*
+    public Valor visitOp_aritmetica_doble(Anasint.Op_aritmetica_dobleContext ctx) {
         return resuelveOperadorAritmetico(
                 visitOperacion(ctx.operacion(0)),
                 visitOperacion(ctx.operacion(1)),
                 ctx.operador_aritmetico_2_ario());
     }
+*/
 
 }
 
