@@ -224,6 +224,13 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOp_aritmetica_mult(Anasint.Op_aritmetica_multContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code op_aritmetica_negacion}
+	 * labeled alternative in {@link Anasint#operacion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOp_aritmetica_negacion(Anasint.Op_aritmetica_negacionContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code op_aritmetica_sr}
 	 * labeled alternative in {@link Anasint#operacion}.
 	 * @param ctx the parse tree
@@ -237,13 +244,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOp_aritmetica_envuelta(Anasint.Op_aritmetica_envueltaContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code op_negacion}
-	 * labeled alternative in {@link Anasint#operacion}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOp_negacion(Anasint.Op_negacionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code operando_caso_base}
 	 * labeled alternative in {@link Anasint#operacion}.
@@ -280,12 +280,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperando_subprograma(Anasint.Operando_subprogramaContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operador_2_ario}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperador_2_ario(Anasint.Operador_2_arioContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code operando_secuencia_vacia}
 	 * labeled alternative in {@link Anasint#operando_secuencia}.
 	 * @param ctx the parse tree
@@ -307,35 +301,17 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperando_secuencia_numerica(Anasint.Operando_secuencia_numericaContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operador_aritmetico_2_ario}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperador_aritmetico_2_ario(Anasint.Operador_aritmetico_2_arioContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#operador_logico_2_ario}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitOperador_logico_2_ario(Anasint.Operador_logico_2_arioContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#operador_igualdad_logica_2_ario}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperador_igualdad_logica_2_ario(Anasint.Operador_igualdad_logica_2_arioContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#operador_condicion_2_ario}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitOperador_condicion_2_ario(Anasint.Operador_condicion_2_arioContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Anasint#operador_condicion_1_ario}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code valor_booleano_true}
 	 * labeled alternative in {@link Anasint#valor_booleano}.
@@ -357,23 +333,26 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#subprograma}.
+	 * Visit a parse tree produced by the {@code subprograma_ultima_posicion}
+	 * labeled alternative in {@link Anasint#subprograma}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSubprograma(Anasint.SubprogramaContext ctx);
+	T visitSubprograma_ultima_posicion(Anasint.Subprograma_ultima_posicionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#ultima_posicion}.
+	 * Visit a parse tree produced by the {@code subprograma_vacia}
+	 * labeled alternative in {@link Anasint#subprograma}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUltima_posicion(Anasint.Ultima_posicionContext ctx);
+	T visitSubprograma_vacia(Anasint.Subprograma_vaciaContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#vacia}.
+	 * Visit a parse tree produced by the {@code subprograma_declarado}
+	 * labeled alternative in {@link Anasint#subprograma}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVacia(Anasint.VaciaContext ctx);
+	T visitSubprograma_declarado(Anasint.Subprograma_declaradoContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#mostrar}.
 	 * @param ctx the parse tree

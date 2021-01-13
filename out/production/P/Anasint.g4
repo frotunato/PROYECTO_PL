@@ -73,35 +73,20 @@ evaluacion_variable:
 predicado:
     condicion #predicado_base |
     PA predicado PC #predicado_envuelto |
-
     NO predicado #predicado_negado |
     predicado operador_condicion_2_ario predicado #predicado_rec
 ;
 
 condicion:
-    //valor_booleano operador_logico_2_ario condicion #opbol |
-    //operacion operador_logico_2_ario operacion #condicion_base2 |
-    //operacion operador_logico_2_ario condicion #condicion_base |
-    //    condicion operador_logico_2_ario (valor_booleano | operacion) #babase |
     CIERTO #condicion_cierto |
     FALSO #condicion_falso |
     condicion operador_logico_2_ario condicion #condicion_rec |
     PA condicion PC #condicion_envuelta |
     (valor_booleano | operacion | operando_secuencia) #condicion_base;
-    //operador_logico_2_ario operando_secuencia
-    //valor_booleano operador_logico_2_ario operacion #condicion_rec2 |
-
-
-    //condicion operador_logico_2_ario (valor_booleano | operacion) #babase |
-    //(valor_booleano | operacion) operador_logico_2_ario valor_booleano #condicion_rec2 |
-    //condicion operador_logico_2_ario condicion #condicion_rec |
-
-    //operacion #opop |
-    //valor_booleano #condicion_bol | //operador_logico_2_ario valor_booleano
 
 operacion:
     PA operacion PC #op_aritmetica_envuelta |
-    MENOS operacion #op_negacion |
+    MENOS operacion #op_aritmetica_negacion |
     operacion MULT operacion #op_aritmetica_mult |
     operacion (MAS | MENOS) operacion #op_aritmetica_sr |
     operando #operando_caso_base;
@@ -116,7 +101,6 @@ operando:
     subprograma #operando_subprograma
 ;
 
-operador_2_ario: operador_aritmetico_2_ario | operador_logico_2_ario;
 
 
 operando_secuencia:
@@ -126,12 +110,8 @@ operando_secuencia:
     (CA ((NUMERO COMA)* NUMERO) CC) #operando_secuencia_numerica
 ;
 
-operador_aritmetico_2_ario: MULT | (MAS | MENOS);
 operador_logico_2_ario: IGUAL | DIGUAL | MAYOR | MENOR | MAIGUAL | MEIGUAL;
-operador_igualdad_logica_2_ario: IGUAL | DIGUAL;
-
 operador_condicion_2_ario: AND | OR;
-operador_condicion_1_ario: NO;
 
 valor_booleano:
     TRUE #valor_booleano_true |
@@ -140,18 +120,18 @@ valor_booleano:
 
 variable_acceso: variable CA operacion CC;
 
-subprograma: IDENT (
-    (PA PC) |
-    (PA evaluacion_variable PC) |
-    (PA (evaluacion_variable (COMA evaluacion_variable)*) PC)
-);
+subprograma:
+    UL_POS PA (variable | operando_secuencia) PC #subprograma_ultima_posicion |
+    VACIA PA evaluacion_variable PC #subprograma_vacia |
+    IDENT (
+        (PA PC) |
+        (PA evaluacion_variable PC) |
+        (PA (evaluacion_variable (COMA evaluacion_variable)*) PC)
+    ) #subprograma_declarado;
 
 //PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;
-ultima_posicion:
-    UL_POS PA (variable | operando_secuencia) PC
+//ultima_posicion: UL_POS PA (variable | operando_secuencia) PC
     //UL_POS PA operando_secuencia PC #ultima_posicion_secuencia
-;
 
-
-vacia: VACIA PA evaluacion_variable PC; //esto tambien acepta solo listas
+//vacia: VACIA PA evaluacion_variable PC; //esto tambien acepta solo listas
 mostrar: MOSTRAR PA evaluacion_variable PC;

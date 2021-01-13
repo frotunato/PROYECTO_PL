@@ -411,6 +411,18 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOp_aritmetica_negacion(Anasint.Op_aritmetica_negacionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOp_aritmetica_negacion(Anasint.Op_aritmetica_negacionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterOp_aritmetica_sr(Anasint.Op_aritmetica_srContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -430,18 +442,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOp_aritmetica_envuelta(Anasint.Op_aritmetica_envueltaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOp_negacion(Anasint.Op_negacionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOp_negacion(Anasint.Op_negacionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -507,18 +507,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOperador_2_ario(Anasint.Operador_2_arioContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperador_2_ario(Anasint.Operador_2_arioContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -555,18 +543,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOperador_aritmetico_2_ario(Anasint.Operador_aritmetico_2_arioContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperador_aritmetico_2_ario(Anasint.Operador_aritmetico_2_arioContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterOperador_logico_2_ario(Anasint.Operador_logico_2_arioContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -579,18 +555,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOperador_igualdad_logica_2_ario(Anasint.Operador_igualdad_logica_2_arioContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperador_igualdad_logica_2_ario(Anasint.Operador_igualdad_logica_2_arioContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterOperador_condicion_2_ario(Anasint.Operador_condicion_2_arioContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -598,18 +562,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOperador_condicion_2_ario(Anasint.Operador_condicion_2_arioContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperador_condicion_1_ario(Anasint.Operador_condicion_1_arioContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -651,37 +603,37 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSubprograma(Anasint.SubprogramaContext ctx) { }
+	@Override public void enterSubprograma_ultima_posicion(Anasint.Subprograma_ultima_posicionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSubprograma(Anasint.SubprogramaContext ctx) { }
+	@Override public void exitSubprograma_ultima_posicion(Anasint.Subprograma_ultima_posicionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterUltima_posicion(Anasint.Ultima_posicionContext ctx) { }
+	@Override public void enterSubprograma_vacia(Anasint.Subprograma_vaciaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitUltima_posicion(Anasint.Ultima_posicionContext ctx) { }
+	@Override public void exitSubprograma_vacia(Anasint.Subprograma_vaciaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVacia(Anasint.VaciaContext ctx) { }
+	@Override public void enterSubprograma_declarado(Anasint.Subprograma_declaradoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVacia(Anasint.VaciaContext ctx) { }
+	@Override public void exitSubprograma_declarado(Anasint.Subprograma_declaradoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

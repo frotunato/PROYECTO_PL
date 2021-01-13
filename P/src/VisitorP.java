@@ -206,7 +206,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         //funcion sin retorno alcanzable debido a ruptura
         if (    algunPadreFuncion &&
                 ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class) &&
-                ctx.children.contains(Anasint.RUPTURA) &&
+                !ctx.getTokens(Anasint.RUPTURA).isEmpty() &&
                 //ctx.instruccion_ruptura() != null &&
                 !retornoTree.get(ctx.getParent()).contains(true))
             throw new IllegalStateException("Funcion con ruptura sin retorno alcanzable");
@@ -242,8 +242,9 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         for (Anasint.Evaluacion_variableContext varDerecha: expresionDerecha.evaluacion_variable()) {
             System.out.println("ESTAMOS ASIGNANDO " + varDerecha.getText());
             if (varDerecha.subprograma() != null) {
-                nombreSubprograma = varDerecha.subprograma().IDENT().getText();
-                System.out.println("EXISTE PROCEDIMIENTO GLOBAL?? " + getGlobalScope().existeProcedimiento(nombreSubprograma));
+                nombreSubprograma = varDerecha.subprograma().getChild(0).getText();
+                if (!getGlobalScope().existeSubprograma(nombreSubprograma))
+                    throw new IllegalStateException("Subprograma no definido! " + nombreSubprograma);
                 if (getGlobalScope().existeProcedimiento(nombreSubprograma))
                     throw new IllegalArgumentException("Los procedimientos no pueden ser usados en asignaciones");
                 else if (getGlobalScope().existeFuncion(nombreSubprograma))
@@ -349,7 +350,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         String resultado = (String) visit(ctx.predicado());
 
-        if (ctx.subprograma() != null && !getGlobalScope().existeFuncion(ctx.subprograma().IDENT().getText()))
+        if (ctx.subprograma() != null && !getGlobalScope().existeFuncion(ctx.subprograma().getChild(0).getText()))
             throw new IllegalStateException("El subprograma de avance debe ser una función");
         if (!resultado.equals("Boolean"))
             throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
@@ -360,7 +361,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return super.visitInstruccion_aserto(ctx);
     }
 
-    public String visitSubprograma (Anasint.SubprogramaContext ctx) {
+
+    public String visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
         String tipoArgumento;
         int indexArgumento = 0;
         String tipoRes = "Indefinido";
@@ -385,7 +387,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
             if (variable.subprograma() != null &&
                     //scopeGlobal.getSubprograma(variable.subprograma().IDENT().getText()).esFuncion() &&
-                    !getGlobalScope().getSubprograma(variable.subprograma().IDENT().getText()).esArgumento())
+                    !getGlobalScope().getSubprograma(variable.subprograma().getChild(0).getText()).esArgumento())
                 throw new IllegalStateException("visitSubprograma argumento parametro funcion DEV > 1 como parametro");
             System.out.println("visitSubprograma argumento " + variable.getText());
             indexArgumento++;
@@ -400,7 +402,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
       return tipoRes;
     }
-
 
     public String visitPredicado (Anasint.PredicadoContext ctx) {
         return (String) super.visit(ctx);
@@ -494,8 +495,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
         if (ctx.subprograma() != null &&
-                getGlobalScope().existeFuncion(ctx.subprograma().IDENT().getText()) &&
-                !getGlobalScope().getSubprograma(ctx.subprograma().IDENT().getText()).esArgumento() && //piede fallar, quitar !
+                getGlobalScope().existeFuncion(ctx.subprograma().getChild(0).getText()) &&
+                !getGlobalScope().getSubprograma(ctx.subprograma().getChild(0).getText()).esArgumento() && //piede fallar, quitar !
                 !ctx.getParent().getClass().equals(Anasint.Evaluaciones_variablesContext.class))
                 throw new IllegalStateException("Variables retorno multiple solo en definicion");
 
@@ -572,7 +573,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
 
-    public String visitUltima_posicion(Anasint.Ultima_posicionContext ctx) {
+    public String visitSubprograma_ultima_posicion(Anasint.Subprograma_ultima_posicionContext ctx) {
         String tipoArgumento;
         if (ctx.variable() != null)
             tipoArgumento = (String) visit(ctx.variable());
@@ -599,7 +600,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 */
 
-    public String visitVacia (Anasint.VaciaContext ctx) {
+    public String visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
         System.out.println("visitVacia " + ctx.getText());
         String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
         if (!tipoArgumento.contains("ArrayList"))

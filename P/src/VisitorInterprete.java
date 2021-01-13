@@ -93,7 +93,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         if (memoria.get(ctx) == null)
             memoria.put(ctx, new HashMap<>());
         for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
-            if (instruccion.children.contains(Anasint.RUPTURA))
+            //System.out.println("Ruptura? " + !instruccion.getTokens(Anasint.RUPTURA).isEmpty());
+            if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty())
             //if (instruccion.instruccion_ruptura() != null)
                 break;
             visit(instruccion);
@@ -179,10 +180,10 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
                     ctx.predicado().getText() + ") = " +
                     visitPredicado(ctx.predicado()).getValorBooleano());
             for (Anasint.InstruccionContext instruccion: ctx.instruccion())
-                if (instruccion.children.contains(Anasint.RETORNO))
+                if (!instruccion.getTokens(Anasint.RETORNO).isEmpty())
                 //if (instruccion.instruccion_retorno() != null)
                     return 1;
-                else if (instruccion.children.contains(Anasint.RUPTURA)) {
+                else if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
                 //else if (instruccion.instruccion_ruptura() != null) {
                     ruptura = true;
                     break;
@@ -201,7 +202,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         for (ParseTree hijo: ctx.children) {
             if (hijo.equals(ctx.SINO()))
                 encontradoSino = true;
-            if (hijo.getClass().equals(Anasint.InstruccionContext.class)) {
+            if (Anasint.InstruccionContext.class.isAssignableFrom(hijo.getClass())) {
                 if (!encontradoSino)
                     instruccionesSi.add((Anasint.InstruccionContext) hijo);
                 else
@@ -210,23 +211,23 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         }
         //si el predicado es cierto (condicion), entramos a las instrucciones
         boolean valorPredicado = visitPredicado(ctx.predicado()).getValorBooleano();
-        System.out.println("[INTERPRETE] visitInstruccion valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
+        System.out.println("[INTERPRETE] visitInstruccion: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
         if (valorPredicado)
             //se visitan instrucciones si
             for (Anasint.InstruccionContext instruccion: instruccionesSi) {
-                if (instruccion.children.contains(Anasint.RUPTURA)) {
+                System.out.println("[INTERPRETE] visitInstruccion: instr si entonces ");
+                if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
                 //if (instruccion.instruccion_ruptura() != null) {
                     System.out.println("[INTERPRETE] visitInstruccion_control NO visitamos la instruccion porque tiene ruptura");
                     break;
                 }
-
                 visitInstruccion(instruccion);
                 System.out.println("[INTERPRETE] visitInstruccion_control instr si " + instruccion.getText());
             }
             //se visitan las instrucciones sino
         else
             for (Anasint.InstruccionContext instruccion: instruccionesSino) {
-               if (instruccion.children.contains(Anasint.RUPTURA)) {
+               if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
                 // if (instruccion.instruccion_ruptura() != null) {
                     System.out.println("[INTERPRETE] visitInstruccion_control NO visitamos la instruccion porque tiene ruptura");
                     break;
@@ -277,11 +278,9 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return 1;
     }
 
-
     public Valor visitPredicado (Anasint.PredicadoContext ctx) {
         return (Valor) super.visit(ctx);
     }
-
     public Valor visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
         Valor valorPredicado = visitPredicado(ctx.predicado());
         valorPredicado.setValorBooleano(!valorPredicado.getValorBooleano());
@@ -322,7 +321,6 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return new Valor(false);
     }
 
-
     public Valor visitValor_booleano_true (Anasint.Valor_booleano_trueContext ctx) {
         return new Valor(true);
     }
@@ -333,13 +331,12 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return new Valor(Integer.valueOf(ctx.NUMERO().getText()));
     }
 
-
     public Valor visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
         return (Valor) super.visitEvaluacion_variable(ctx);
     }
-    public Valor visitSubprograma (Anasint.SubprogramaContext ctx) {
+    public Valor visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
 
-        String nombre = ctx.IDENT().getText();
+        String nombre = ctx.getChild(0).getText();
         Subprograma subprograma = scopeGlobal.getSubprograma(nombre);
         System.out.println("Visitando programa " + ctx.getText() + " tiene memoria? " + memoria.get(subprograma.getPuntero()));
 
@@ -378,6 +375,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return (Valor) super.visit(ctx);
     }
 
+    /*
     public Valor visitUltima_posicion (Anasint.Ultima_posicionContext ctx) {
         Valor ultimoValor;
         if (ctx.variable() != null)
@@ -393,7 +391,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         boolean vaciaBool = res.getSecuenciaNumerica().size() == 0;
         return new Valor(vaciaNum && vaciaBool);
     }
-
+*/
     public Valor visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
         return (Valor) visit(ctx);
     }
@@ -415,6 +413,9 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
 
     public Valor visitOp_aritmetica_envuelta (Anasint.Op_aritmetica_envueltaContext ctx) {
         return visitOperacion(ctx.operacion());
+    }
+    public Valor visitOp_aritmetica_negacion (Anasint.Op_aritmetica_negacionContext ctx) {
+        return new Valor(visitOperacion(ctx.operacion()).getValorNumerico()*-1);
     }
     public Valor visitOp_aritmetica_mult (Anasint.Op_aritmetica_multContext ctx) {
         return resuelveOperadorAritmetico(
