@@ -8,13 +8,17 @@ import javax.swing.*;
 import java.util.Arrays;
 
 public class Principal {
+    private static void prueba(int[] t) {
+        System.out.println(t[0]);
+    }
+
+
     public static void main(String[] args) throws Exception {
         CharStream input = CharStreams.fromFileName(args[0]);
         Analex analex = new Analex(input);
         CommonTokenStream tokens = new CommonTokenStream(analex);
         Anasint anasint = new Anasint(tokens);
         ParseTree tree = anasint.bloque_programa();
-
 
         // Pase 1: análisis semántico
         VisitorP s = new VisitorP();

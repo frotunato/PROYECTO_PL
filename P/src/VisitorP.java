@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VisitorP extends AnasintBaseVisitor<Object> {
-    //AuxVariables subprogramas = new AuxVariables();
-    //Scope scopeGlobal = new Scope("global");
     Anasint.Bloque_programaContext raiz;
     ParseTreeProperty<Scope> scopeTree = new ParseTreeProperty<>();
     ParseTreeProperty<List<Boolean>> retornoTree = new ParseTreeProperty<>();
@@ -17,14 +15,12 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     private Scope getGlobalScope () {
         return scopeTree.get(raiz);
     }
-
     private Scope getUpperScope (ParserRuleContext ctx) {
         if (scopeTree.get(ctx) != null)
             return scopeTree.get(ctx);
         else
             return getUpperScope(ctx.getParent());
     }
-
     private boolean anyParentIsAFunction (ParserRuleContext ctx) {
         if (ctx.getParent() != null)
             if (ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class))
@@ -34,7 +30,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         else
             return false;
     }
-
     private ParserRuleContext closestReturnBlock (ParserRuleContext ctx) {
         if (ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class) ||
                 ctx.getParent().getClass().equals(Anasint.Instruccion_controlContext.class) ||
@@ -43,7 +38,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         else
             return closestReturnBlock(ctx.getParent());
     }
-
     private ParserRuleContext closestBreakBlock (ParserRuleContext ctx) {
         if (//ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class) ||
                 ctx.getParent().getClass().equals(Anasint.Instruccion_controlContext.class) ||
@@ -68,27 +62,20 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         return super.visitBloque_programa(ctx);
     }
-
     public List<Variable> visitBloque_variables(Anasint.Bloque_variablesContext ctx) {
         List<Variable> variables = new ArrayList<>();
-
-        for (Anasint.Declaracion_variableContext variable: ctx.declaracion_variable()) {
+        for (Anasint.Declaracion_variableContext variable: ctx.declaracion_variable())
             variables.addAll(visitDeclaracion_variable(variable));
-        }
         return variables;
-        //return super.visitBloque_variables(ctx);
     }
-
     public Object visitBloque_instrucciones (Anasint.Bloque_instruccionesContext ctx) {
         //igual hay que descomentar esto??
         //retornoTree.put(ctx, new ArrayList<>());
         return super.visitBloque_instrucciones(ctx);
     }
-
     public Object visitBloque_subprogramas (Anasint.Bloque_subprogramasContext ctx) {
         return super.visitBloque_subprogramas(ctx);
     }
-
     public Object visitBloque_procedimiento(Anasint.Bloque_procedimientoContext ctx) {
         /*
             En este bloque de instrucciones, añadimos el procedimiento al scope global. Las
@@ -107,9 +94,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         scope.declaraVariables(variablesEntrada);
         scope.inicializaVariables(variablesEntrada);
         //scope.inicializaVariables(salida);
-
-
-
 
         getGlobalScope().declaraSubprograma(ctx.IDENT().getText(), "Procedimiento", variablesEntrada, new ArrayList<>());
         //scopeGlobal.declaraFuncion(ctx.IDENT().getText(), entrada, salida);
@@ -131,7 +115,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         return 0;
     }
-
     public Object visitBloque_funcion(Anasint.Bloque_funcionContext ctx) {
         /*
             En este bloque de instrucciones, añadimos la función al scope global. Las
@@ -191,7 +174,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             res.add(new Variable(variable.getText(), ctx.tipo().getText()));
         return res;
     }
-
     public List<Variable> visitLista_variables_tipadas (Anasint.Lista_variables_tipadasContext ctx) {
         //System.out.println("first " + ctx.lista_variables_tipadas())
         List<Variable> res = new ArrayList<>();
@@ -201,38 +183,14 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return res;
     }
 
-    public String visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
-        return (String) super.visit(ctx);
-    }
 
     public String visitOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx) {
         return "ArrayList<>";
     }
-
     public String visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
-        /*
-        List<String> tiposSecuencia = new ArrayList<>();
-        for (Anasint.Evaluacion_variableContext elemento: ctx.evaluacion_variable()) {
-            tiposSecuencia.add(visitEvaluacion_variable(elemento));
-        }
-        if (!tiposSecuencia.stream().allMatch(s -> s.equals(tiposSecuencia.get(0))))
-            throw new IllegalStateException("Secuencia con tipos mixtos " + tiposSecuencia.toString());
-        return "ArrayList<" + tiposSecuencia.get(0) + ">";
-        */
         return "ArrayList<Integer>";
     }
-
-
     public String visitOperando_secuencia_logica (Anasint.Operando_secuencia_logicaContext ctx) {
-        //List<String> tiposSecuencia = new ArrayList<>();
-        /*
-        for (Anasint.Evaluacion_variableContext elemento: ctx.evaluacion_variable()) {
-            tiposSecuencia.add(visitEvaluacion_variable(elemento));
-        }
-        if (!tiposSecuencia.stream().allMatch(s -> s.equals(tiposSecuencia.get(0))))
-            throw new IllegalStateException("Secuencia con tipos mixtos " + tiposSecuencia.toString());
-        return "ArrayList<" + tiposSecuencia.get(0) + ">";
-        */
         return "ArrayList<Boolean>";
     }
 
@@ -245,11 +203,11 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         //sin existir un retorno tirar error
 
         boolean algunPadreFuncion = anyParentIsAFunction(ctx);
-
         //funcion sin retorno alcanzable debido a ruptura
         if (    algunPadreFuncion &&
                 ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class) &&
-                ctx.instruccion_ruptura() != null &&
+                ctx.children.contains(Anasint.RUPTURA) &&
+                //ctx.instruccion_ruptura() != null &&
                 !retornoTree.get(ctx.getParent()).contains(true))
             throw new IllegalStateException("Funcion con ruptura sin retorno alcanzable");
 
@@ -261,9 +219,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         if (retornoTree.get(ctx.getParent()) != null && retornoTree.get(ctx.getParent()).size() == 2)
             throw new IllegalStateException("No se admiten instrucciones después de un retorno");
 
-        return super.visitInstruccion(ctx);
+        return super.visit(ctx);
     }
-
     public Object visitInstruccion_asig (Anasint.Instruccion_asigContext ctx) {
         Scope scope = getUpperScope(ctx);
         List<Anasint.VariableContext> expresionIzquierda = ctx.lista_variables().variable();
@@ -317,7 +274,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return 1;
         //return super.visitInstruccion_asig(ctx);
     }
-
     public String visitInstruccion_retorno (Anasint.Instruccion_retornoContext ctx) {
         boolean algunPadreFuncion = anyParentIsAFunction(ctx);
         if (!algunPadreFuncion)
@@ -348,14 +304,12 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         System.out.println("El arr bool para "+  ctx.getParent().getText() + " es " + retornoTree.get(bloqueAsociadoARetorno).toString());
         return "True";
     }
-
     public Object visitInstruccion_ruptura (Anasint.Instruccion_rupturaContext ctx) {
         ParserRuleContext closest = closestBreakBlock(ctx);
         System.out.println("[ANALIZADOR SEMANTICO] Hemos puesto ruptura en " + closest.getClass());
         rupturaTree.put(closestBreakBlock(ctx), true);
         return super.visitInstruccion_ruptura(ctx);
     }
-
     public Object visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
         String resultado = visitPredicado(ctx.predicado());
         boolean algunPadreFuncion = anyParentIsAFunction(ctx);
@@ -392,7 +346,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return 0;
         //return super.visitInstruccion_control(ctx);
     }
-
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         String resultado = (String) visit(ctx.predicado());
 
@@ -403,7 +356,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         return super.visitInstruccion_bucle(ctx);
     }
-
     public Object visitInstruccionAserto (Anasint.Instruccion_asertoContext ctx) {
         return super.visitInstruccion_aserto(ctx);
     }
@@ -431,8 +383,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                 throw new IllegalStateException("visitSubprograma tipo arg inválido orig: " +
                         subprograma.getEntrada().get(indexArgumento).getTipo() + " , recib: " + tipoArgumento);
 
-            //if (variable.subprograma() != null)
-            //    System.out.println("ES UN SUBPROGRAMA PARAMETER " + scopeGlobal.getFuncion(nombreSubprograma).getSalida().size());
             if (variable.subprograma() != null &&
                     //scopeGlobal.getSubprograma(variable.subprograma().IDENT().getText()).esFuncion() &&
                     !getGlobalScope().getSubprograma(variable.subprograma().IDENT().getText()).esArgumento())
@@ -456,38 +406,18 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return (String) super.visit(ctx);
     }
 
-    public String visitPredicado_cierto (Anasint.Predicado_ciertoContext ctx) {
-        return "Boolean";
-    }
-
-    public String visitPredicado_falso (Anasint.Predicado_falsoContext ctx) {
-        return "Boolean";
-    }
-
-
     public String visitPredicado_base (Anasint.Predicado_baseContext ctx) {
         return visitCondicion(ctx.condicion());
     }
-
     public String visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
         return visitPredicado(ctx.predicado());
     }
-
     public String visitPredicado_envuelto (Anasint.Predicado_envueltoContext ctx) {
         return visitPredicado(ctx.predicado());
     }
-
-
     public String visitPredicado_rec(Anasint.Predicado_recContext ctx) {
-        //Valor predicadoA = (Valor) visitPredicado(ctx.predicado(0));
-        //Valor predicadoB = (Valor) visitPredicado(ctx.predicado(1));
         String tipoCondicionA = visitPredicado(ctx.predicado(0));
         String tipoCondicionB = visitPredicado(ctx.predicado(1));
-
-        System.out.println("PREDICADO RECURSIVO " + ctx.getText() +
-                " operador div " + ctx.operador_condicion_2_ario().getText() +
-                "a " + tipoCondicionA + " b " + tipoCondicionB);
-        //String res = getTipoOperacionIgualdad(tipoCondicionA, tipoCondicionB, ctx.operador_condicion_2_ario().getText());
 
         return getTipoOperacionIgualdad(
                 tipoCondicionA,
@@ -497,11 +427,9 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
     private String getTipoOperacionIgualdad (String a, String b, String operador) {
         String res = "Indefinido";
-        if (!a.equals(b) || a.equals("Indefinido"))
-            return res;
 
-        //if (a == null || b == null)
-        //    return new Valor(new Booleano(true));
+        if (!a.equals(b) || a.equals("Indefinido") || b.equals("Indefinido"))
+            return res;
 
         switch (operador) {
             case "==":
@@ -527,56 +455,41 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             default:
                 res = "Indefinido";
         }
-        System.out.println("getTipoOperacionIgualdad a="+  a + " b=" + b + " res=" + res + " op " + operador);
+        System.out.println("[ANALISIS SEMANTICO] getTipoOperacionIgualdad: " + a + " vs " + b+ " res=" + res + " op " + operador);
 
         return res;
     }
 
     public String visitCondicion (Anasint.CondicionContext ctx) {
-        return (String) super.visit(ctx);
+        return (String) visit(ctx);
     }
 
-
+    /*
+    public String visitCondicion_bol (Anasint.Condicion_bolContext ctx) {
+        return (String) visit(ctx.valor_booleano());
+    }
+    public String visitCondicion_sec (Anasint.Condicion_secContext ctx) {
+        return (String) visit(ctx.operando_secuencia());
+    }
+*/
     public String visitCondicion_base (Anasint.Condicion_baseContext ctx) {
         return (String) visit(ctx.operacion());
     }
-
     public String visitCondicion_envuelta (Anasint.Condicion_envueltaContext ctx) {
         return visitCondicion(ctx.condicion());
     }
-
-
-    public String visitCondicion_sec (Anasint.Condicion_secContext ctx) {
-        String operacionA = visitOperando_secuencia(ctx.operando_secuencia(0));
-        String operacionB = visitOperando_secuencia(ctx.operando_secuencia(1));
-        //System.out.println("visitDigualdad_caso_base de " + ctx.getText() + " res = " + predicadoA +" vs " + predicadoB +" computed " + predicadoA.equals(predicadoB));
-        return getTipoOperacionIgualdad(operacionA, operacionB, ctx.operador_logico_2_ario().getText());
-
+    public String visitCondicion_cierto (Anasint.Condicion_ciertoContext ctx) {
+        return "Boolean";
     }
-
-    public String visitCondicion_bool (Anasint.Condicion_boolContext ctx) {
-        String operacionA = visitValor_booleano(ctx.valor_booleano(0));
-        String operacionB = visitValor_booleano(ctx.valor_booleano(1));
-        //System.out.println("visitDigualdad_caso_base de " + ctx.getText() + " res = " + predicadoA +" vs " + predicadoB +" computed " + predicadoA.equals(predicadoB));
-        return getTipoOperacionIgualdad(operacionA, operacionB, ctx.operador_logico_2_ario().getText());
+    public String visitCondicion_falso (Anasint.Condicion_falsoContext ctx) {
+        return "Boolean";
     }
-
     public String visitCondicion_rec (Anasint.Condicion_recContext ctx) {
-
         return getTipoOperacionIgualdad(
-                (String) visit(ctx.condicion(0)),
-                (String) visit(ctx.condicion(1)),
+                visitCondicion(ctx.condicion(0)),
+                visitCondicion(ctx.condicion(1)),
                 ctx.operador_logico_2_ario().getText());
-
     }
-
-
-
-    private String visitValor_booleano(Anasint.Valor_booleanoContext ctx) {
-        return (String) super.visit(ctx);
-    }
-
-
 
 
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
@@ -614,19 +527,13 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             return "Indefinido";
     }
 
-    public String visitOperando (Anasint.OperandoContext ctx) {
-        return (String) super.visit(ctx);
-    }
-
 
     public String visitValor_booleano_true (Anasint.Valor_booleano_trueContext ctx) {
         return "Boolean";
     }
-
     public String visitValor_booleano_false (Anasint.Valor_booleano_falseContext ctx) {
         return "Boolean";
     }
-
     public String visitOperando_numerico (Anasint.Operando_numericoContext ctx) {
         return "Integer";
     }

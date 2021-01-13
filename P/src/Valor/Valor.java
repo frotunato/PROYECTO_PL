@@ -75,6 +75,8 @@ public class Valor {
         return this.valor;
     }
 
+    public String getTipo () { return this.tipo;}
+
     public Integer getValorNumerico() {
         return valorNumerico;
     }
@@ -102,10 +104,9 @@ public class Valor {
     }
 */
     public boolean equals(Valor o) {
-        if (this == o) return true;
         if (!(o instanceof Valor)) return false;
-        Valor valor = (Valor) o;
-        return o.getValor().equals(o.valor);
+        if (!o.getTipo().equals(this.tipo)) return false;
+        return this.valor.equals(o.valor);
     }
 
     public String toString () {

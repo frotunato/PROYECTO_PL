@@ -114,7 +114,7 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitInstruccion(Anasint.InstruccionContext ctx) { return visitChildren(ctx); }
+	@Override public T visitInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -122,13 +122,6 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitInstruccion_bucle(Anasint.Instruccion_bucleContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -184,21 +177,7 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPredicado_cierto(Anasint.Predicado_ciertoContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitPredicado_negado(Anasint.Predicado_negadoContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitPredicado_falso(Anasint.Predicado_falsoContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -233,6 +212,20 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitCondicion_falso(Anasint.Condicion_falsoContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitCondicion_cierto(Anasint.Condicion_ciertoContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitCondicion_envuelta(Anasint.Condicion_envueltaContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -241,20 +234,6 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitCondicion_rec(Anasint.Condicion_recContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitCondicion_bool(Anasint.Condicion_boolContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitCondicion_sec(Anasint.Condicion_secContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -282,6 +261,13 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitOp_negacion(Anasint.Op_negacionContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitOperando_caso_base(Anasint.Operando_caso_baseContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -290,13 +276,6 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitOperando_numerico(Anasint.Operando_numericoContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitOperando_booleano(Anasint.Operando_booleanoContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -94,43 +94,43 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBloque_variables(Anasint.Bloque_variablesContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#instruccion}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInstruccion(Anasint.InstruccionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Anasint#instruccion_bucle}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInstruccion_bucle(Anasint.Instruccion_bucleContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Anasint#instruccion_llamada_subprograma}.
+	 * Visit a parse tree produced by the {@code instruccion_llamada_subprograma}
+	 * labeled alternative in {@link Anasint#instruccion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#instruccion_control}.
+	 * Visit a parse tree produced by the {@code instruccion_bucle}
+	 * labeled alternative in {@link Anasint#instruccion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstruccion_bucle(Anasint.Instruccion_bucleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code instruccion_control}
+	 * labeled alternative in {@link Anasint#instruccion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitInstruccion_control(Anasint.Instruccion_controlContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#instruccion_ruptura}.
+	 * Visit a parse tree produced by the {@code instruccion_ruptura}
+	 * labeled alternative in {@link Anasint#instruccion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitInstruccion_ruptura(Anasint.Instruccion_rupturaContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#instruccion_asig}.
+	 * Visit a parse tree produced by the {@code instruccion_asig}
+	 * labeled alternative in {@link Anasint#instruccion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitInstruccion_asig(Anasint.Instruccion_asigContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#instruccion_retorno}.
+	 * Visit a parse tree produced by the {@code instruccion_retorno}
+	 * labeled alternative in {@link Anasint#instruccion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -154,26 +154,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEvaluacion_variable(Anasint.Evaluacion_variableContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code predicado_cierto}
-	 * labeled alternative in {@link Anasint#predicado}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPredicado_cierto(Anasint.Predicado_ciertoContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code predicado_negado}
 	 * labeled alternative in {@link Anasint#predicado}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitPredicado_negado(Anasint.Predicado_negadoContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code predicado_falso}
-	 * labeled alternative in {@link Anasint#predicado}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPredicado_falso(Anasint.Predicado_falsoContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code predicado_base}
 	 * labeled alternative in {@link Anasint#predicado}.
@@ -203,6 +189,20 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCondicion_base(Anasint.Condicion_baseContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code condicion_falso}
+	 * labeled alternative in {@link Anasint#condicion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCondicion_falso(Anasint.Condicion_falsoContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code condicion_cierto}
+	 * labeled alternative in {@link Anasint#condicion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCondicion_cierto(Anasint.Condicion_ciertoContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code condicion_envuelta}
 	 * labeled alternative in {@link Anasint#condicion}.
 	 * @param ctx the parse tree
@@ -216,20 +216,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCondicion_rec(Anasint.Condicion_recContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code condicion_bool}
-	 * labeled alternative in {@link Anasint#condicion}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCondicion_bool(Anasint.Condicion_boolContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code condicion_sec}
-	 * labeled alternative in {@link Anasint#condicion}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCondicion_sec(Anasint.Condicion_secContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code op_aritmetica_mult}
 	 * labeled alternative in {@link Anasint#operacion}.
@@ -252,6 +238,13 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOp_aritmetica_envuelta(Anasint.Op_aritmetica_envueltaContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code op_negacion}
+	 * labeled alternative in {@link Anasint#operacion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOp_negacion(Anasint.Op_negacionContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code operando_caso_base}
 	 * labeled alternative in {@link Anasint#operacion}.
 	 * @param ctx the parse tree
@@ -265,13 +258,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOperando_numerico(Anasint.Operando_numericoContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code operando_booleano}
-	 * labeled alternative in {@link Anasint#operando}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperando_booleano(Anasint.Operando_booleanoContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code operando_variable}
 	 * labeled alternative in {@link Anasint#operando}.

@@ -183,13 +183,13 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterInstruccion(Anasint.InstruccionContext ctx) { }
+	@Override public void enterInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitInstruccion(Anasint.InstruccionContext ctx) { }
+	@Override public void exitInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -202,18 +202,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitInstruccion_bucle(Anasint.Instruccion_bucleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitInstruccion_llamada_subprograma(Anasint.Instruccion_llamada_subprogramaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -303,18 +291,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPredicado_cierto(Anasint.Predicado_ciertoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPredicado_cierto(Anasint.Predicado_ciertoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterPredicado_negado(Anasint.Predicado_negadoContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -322,18 +298,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPredicado_negado(Anasint.Predicado_negadoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterPredicado_falso(Anasint.Predicado_falsoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPredicado_falso(Anasint.Predicado_falsoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -387,6 +351,30 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCondicion_falso(Anasint.Condicion_falsoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCondicion_falso(Anasint.Condicion_falsoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCondicion_cierto(Anasint.Condicion_ciertoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCondicion_cierto(Anasint.Condicion_ciertoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCondicion_envuelta(Anasint.Condicion_envueltaContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -406,30 +394,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCondicion_rec(Anasint.Condicion_recContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCondicion_bool(Anasint.Condicion_boolContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCondicion_bool(Anasint.Condicion_boolContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCondicion_sec(Anasint.Condicion_secContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCondicion_sec(Anasint.Condicion_secContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -471,6 +435,18 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOp_negacion(Anasint.Op_negacionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOp_negacion(Anasint.Op_negacionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterOperando_caso_base(Anasint.Operando_caso_baseContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -490,18 +466,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOperando_numerico(Anasint.Operando_numericoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOperando_booleano(Anasint.Operando_booleanoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperando_booleano(Anasint.Operando_booleanoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -27,7 +27,7 @@ UL_POS: 'ultima_posicion';
 VACIA: 'vacia';
 NO: '!';
 SEQUENCE: 'SEQ';
-NUMERO : ('-')?DIGITO+;
+NUMERO : DIGITO+;
 PA : '(';
 CA: '[';
 CC: ']';
