@@ -240,8 +240,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         // cargamos en arrTiposDer los tipos de las expresiones
         for (Anasint.Evaluacion_variableContext varDerecha: expresionDerecha.evaluacion_variable()) {
-            System.out.println("ESTAMOS ASIGNANDO " + varDerecha.getText());
-            if (varDerecha.subprograma() != null) {
+            System.out.println("ESTAMOS ASIGNANDO " + varDerecha.getText() + " clase " + varDerecha.getClass());
+            if (varDerecha.subprograma() != null && varDerecha.subprograma().getClass().equals(Anasint.Subprograma_declaradoContext.class)) {
                 nombreSubprograma = varDerecha.subprograma().getChild(0).getText();
                 if (!getGlobalScope().existeSubprograma(nombreSubprograma))
                     throw new IllegalStateException("Subprograma no definido! " + nombreSubprograma);
@@ -249,10 +249,10 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                     throw new IllegalArgumentException("Los procedimientos no pueden ser usados en asignaciones");
                 else if (getGlobalScope().existeFuncion(nombreSubprograma))
                     arrTiposDer.addAll(getGlobalScope().getSubprograma(nombreSubprograma).getTiposSalida());
-                System.out.println("ACABAMOS DE AÑADIR " + arrTiposDer.get(arrTiposDer.size() - 1));
+                //System.out.println("ACABAMOS DE AÑADIR " + arrTiposDer.get(arrTiposDer.size() - 1));
             } else {
                 arrTiposDer.add(visitEvaluacion_variable(varDerecha));
-                System.out.println("ACABAMOS DE AÑADIR " + arrTiposDer.get(arrTiposDer.size() - 1));
+                //System.out.println("ACABAMOS DE AÑADIR " + arrTiposDer.get(arrTiposDer.size() - 1));
             }
         }
 

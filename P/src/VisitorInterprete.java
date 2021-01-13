@@ -261,7 +261,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         int i = 0;
 
         for (Anasint.Evaluacion_variableContext evalr: ctx.evaluaciones_variables().evaluacion_variable()) {
-            if (evalr.subprograma() != null)
+            if (evalr.subprograma() != null && evalr.subprograma().getClass().equals(Anasint.Subprograma_declaradoContext.class))
                 valores.addAll(visitEvaluacion_variable(evalr).getValores());
             else
                 valores.add(visitEvaluacion_variable(evalr));
@@ -330,6 +330,9 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Valor visitOperando_numerico (Anasint.Operando_numericoContext ctx) {
         return new Valor(Integer.valueOf(ctx.NUMERO().getText()));
     }
+    public Valor visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
+        return (Valor) visit(ctx);
+    }
 
     public Valor visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
         return (Valor) super.visitEvaluacion_variable(ctx);
@@ -375,8 +378,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return (Valor) super.visit(ctx);
     }
 
-    /*
-    public Valor visitUltima_posicion (Anasint.Ultima_posicionContext ctx) {
+
+    public Valor visitSubprograma_ultima_posicion (Anasint.Subprograma_ultima_posicionContext ctx) {
         Valor ultimoValor;
         if (ctx.variable() != null)
             ultimoValor = visitVariable(ctx.variable()).getUltimoValorSecuencia();
@@ -385,16 +388,14 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         System.out.println("visitUltima_posicion es " + ctx.getText() + " = " + ultimoValor);
         return ultimoValor;
     }
-    public Valor visitVacia (Anasint.VaciaContext ctx) {
+    public Valor visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
         Valor res = visitEvaluacion_variable(ctx.evaluacion_variable());
-        boolean vaciaNum = res.getSecuenciaBooleana().size() == 0;
-        boolean vaciaBool = res.getSecuenciaNumerica().size() == 0;
+        boolean vaciaNum = res.getSecuenciaBooleana() == null || res.getSecuenciaBooleana().isEmpty();
+        boolean vaciaBool = res.getSecuenciaNumerica() == null || res.getSecuenciaNumerica().isEmpty();
         return new Valor(vaciaNum && vaciaBool);
     }
-*/
-    public Valor visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
-        return (Valor) visit(ctx);
-    }
+
+
     public Valor visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
         List<Integer> secuencia = new ArrayList<>();
         for (TerminalNode numero: ctx.NUMERO())

@@ -44,17 +44,7 @@ public class Valor {
         return this.valor == null;
     }
 
-/*
-    public Valor (SecuenciaNumerica secuenciaNumerica) {
-        this.valor = secuenciaNumerica;
-        this.secuenciaNumerica = secuenciaNumerica;
-    }
 
-    public Valor (SecuenciaBooleana secuenciaBooleana) {
-        this.valor = secuenciaBooleana;
-        this.secuenciaBooleana = secuenciaBooleana;
-    }
-*/
     public Valor getUltimoValorSecuencia () {
         if (secuenciaNumerica != null)
             return new Valor(secuenciaNumerica.get(secuenciaNumerica.size() - 1));
@@ -104,7 +94,6 @@ public class Valor {
     }
 */
     public boolean equals(Valor o) {
-        if (!(o instanceof Valor)) return false;
         if (!o.getTipo().equals(this.tipo)) return false;
         return this.valor.equals(o.valor);
     }

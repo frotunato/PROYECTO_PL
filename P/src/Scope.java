@@ -1,7 +1,5 @@
 import org.antlr.v4.misc.OrderedHashMap;
-import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -9,11 +7,7 @@ public class Scope {
     private final Map<String, Variable> variables = new OrderedHashMap<>();
     private final Map<String, Subprograma> subprogramas = new OrderedHashMap<>();
     private final String nombre;
-    private ParserRuleContext puntero = null;
 
-    public Collection<Variable> getVariablesDeclaradas () {
-        return variables.values();
-    }
 
     public void declaraVariable (String nombre, String tipo) {
         if (variables.containsKey(nombre))
@@ -48,7 +42,7 @@ public class Scope {
         return variables.get(nombre);
     }
 
-    public Subprograma getSubprograma (String nombre) { return subprogramas.get(nombre); };
+    public Subprograma getSubprograma (String nombre) { return subprogramas.get(nombre); }
 
     public void declaraVariable (Variable variable) {
         if (variables.containsKey(variable.getNombre()))
@@ -82,13 +76,13 @@ public class Scope {
     }
 
     public Boolean existeFuncion (String nombre) {
-        return subprogramas.containsKey(nombre) &&
+        return existeSubprograma(nombre) && subprogramas.containsKey(nombre) &&
                 subprogramas.get(nombre).getTipo().equals("Funcion");
     }
 
     public Boolean existeProcedimiento (String nombre) {
-        return subprogramas.containsKey(nombre) &&
-                subprogramas.get(nombre).getTipo() == "Procedimiento";
+        return existeSubprograma(nombre) && subprogramas.containsKey(nombre) &&
+                subprogramas.get(nombre).getTipo().equals("Procedimiento");
     }
 
     public Boolean existeSubprograma (String nombre) { return subprogramas.containsKey(nombre); }
