@@ -266,12 +266,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperando_variable(Anasint.Operando_variableContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code vle_acceso}
+	 * Visit a parse tree produced by the {@code variable_acceso}
 	 * labeled alternative in {@link Anasint#operando}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVle_acceso(Anasint.Vle_accesoContext ctx);
+	T visitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code operando_subprograma}
 	 * labeled alternative in {@link Anasint#operando}.
@@ -327,11 +327,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValor_booleano_false(Anasint.Valor_booleano_falseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#variable_acceso}.
+	 * Visit a parse tree produced by the {@code subprograma_mostrar}
+	 * labeled alternative in {@link Anasint#subprograma}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVariable_acceso(Anasint.Variable_accesoContext ctx);
+	T visitSubprograma_mostrar(Anasint.Subprograma_mostrarContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code subprograma_ultima_posicion}
 	 * labeled alternative in {@link Anasint#subprograma}.
@@ -353,10 +354,4 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSubprograma_declarado(Anasint.Subprograma_declaradoContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Anasint#mostrar}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMostrar(Anasint.MostrarContext ctx);
 }

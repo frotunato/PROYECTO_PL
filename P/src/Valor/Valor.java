@@ -44,7 +44,6 @@ public class Valor {
         return this.valor == null;
     }
 
-
     public Valor getUltimoValorSecuencia () {
         if (secuenciaNumerica != null)
             return new Valor(secuenciaNumerica.get(secuenciaNumerica.size() - 1));

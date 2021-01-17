@@ -483,13 +483,13 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVle_acceso(Anasint.Vle_accesoContext ctx) { }
+	@Override public void enterVariable_acceso(Anasint.Variable_accesoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVle_acceso(Anasint.Vle_accesoContext ctx) { }
+	@Override public void exitVariable_acceso(Anasint.Variable_accesoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -591,13 +591,13 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVariable_acceso(Anasint.Variable_accesoContext ctx) { }
+	@Override public void enterSubprograma_mostrar(Anasint.Subprograma_mostrarContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVariable_acceso(Anasint.Variable_accesoContext ctx) { }
+	@Override public void exitSubprograma_mostrar(Anasint.Subprograma_mostrarContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -634,18 +634,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSubprograma_declarado(Anasint.Subprograma_declaradoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterMostrar(Anasint.MostrarContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMostrar(Anasint.MostrarContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

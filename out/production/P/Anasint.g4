@@ -7,7 +7,8 @@ options{tokenVocab=Analex;}
 declaracion_variable: (IDENT COMA)* IDENT DP tipo PyC;
 
 lista_variables: (variable COMA)* variable;
-lista_variables_tipadas: (variable_tipada COMA)* variable_tipada;
+//lista_variables_tipadas: (variable_tipada COMA)* variable_tipada;
+lista_variables_tipadas: (tipo IDENT COMA)* tipo IDENT;
 
 variable: IDENT;
 variable_tipada: tipo IDENT;
@@ -36,7 +37,8 @@ instruccion:
 */
 
 instruccion:
-    (mostrar | subprograma) PyC #instruccion_llamada_subprograma |
+    subprograma PyC #instruccion_llamada_subprograma |
+    //(mostrar | subprograma) PyC #instruccion_llamada_subprograma |
     //instruccion_aserto  |
     MIENTRAS PA predicado PC HACER (LLA AVANCE DP subprograma LLC)? instruccion+ FMIENTRAS #instruccion_bucle  |
     SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)? FSI #instruccion_control  |
@@ -96,7 +98,8 @@ operando:
     //valor_booleano #operando_booleano |
     //vacia #operando_vacia |
     variable #operando_variable |
-    variable_acceso  #vle_acceso |
+    //variable_acceso  #vle_acceso |
+    variable CA operacion CC #variable_acceso |
     //ultima_posicion #operando_ultima_posicion |
     subprograma #operando_subprograma
 ;
@@ -118,10 +121,11 @@ valor_booleano:
     FALSE #valor_booleano_false
 ;
 
-variable_acceso: variable CA operacion CC;
+//variable_acceso: variable CA operacion CC;
 
 subprograma:
-    UL_POS PA (variable | operando_secuencia) PC #subprograma_ultima_posicion |
+    MOSTRAR PA evaluacion_variable PC #subprograma_mostrar |
+    UL_POS PA evaluacion_variable/*(variable | operando_secuencia)*/ PC #subprograma_ultima_posicion |
     VACIA PA evaluacion_variable PC #subprograma_vacia |
     IDENT (
         (PA PC) |
@@ -134,4 +138,4 @@ subprograma:
     //UL_POS PA operando_secuencia PC #ultima_posicion_secuencia
 
 //vacia: VACIA PA evaluacion_variable PC; //esto tambien acepta solo listas
-mostrar: MOSTRAR PA evaluacion_variable PC;
+//mostrar: MOSTRAR PA evaluacion_variable PC;

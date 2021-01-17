@@ -11,9 +11,8 @@ public class Principal {
     private static void prueba(int[] t) {
         System.out.println(t[0]);
     }
-
-
     public static void main(String[] args) throws Exception {
+        prueba (new int[]{1,2,3,4});
         CharStream input = CharStreams.fromFileName(args[0]);
         Analex analex = new Analex(input);
         CommonTokenStream tokens = new CommonTokenStream(analex);
@@ -27,11 +26,17 @@ public class Principal {
         System.out.println("//////////// INTERPRETE ////////////");
         VisitorInterprete interprete = new VisitorInterprete();
         interprete.visit(tree);
-/*
-        ParseTreeWalker walker = new ParseTreeWalker();
-        ListenerInterprete interpreteListener = new ListenerInterprete();
-        walker.walk(interpreteListener, tree);
-*/
+        // Pase 3: compilador
+
+        //ParseTreeWalker walker = new ParseTreeWalker();
+        //Compilador compilador = new Compilador();
+        //walker.walk(compilador, tree);
+
+        System.out.println("//////////// COMPILADOR ////////////");
+        VisitorCompilador compilador = new VisitorCompilador();
+        compilador.visit(tree);
+
+
         JFrame frame = new JFrame("Árbol de Análisis");
         JPanel panel = new JPanel();
         TreeViewer viewer = new TreeViewer(Arrays.asList(

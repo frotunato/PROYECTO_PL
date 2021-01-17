@@ -441,17 +441,17 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitOperando_variable(Anasint.Operando_variableContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code vle_acceso}
+	 * Enter a parse tree produced by the {@code variable_acceso}
 	 * labeled alternative in {@link Anasint#operando}.
 	 * @param ctx the parse tree
 	 */
-	void enterVle_acceso(Anasint.Vle_accesoContext ctx);
+	void enterVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code vle_acceso}
+	 * Exit a parse tree produced by the {@code variable_acceso}
 	 * labeled alternative in {@link Anasint#operando}.
 	 * @param ctx the parse tree
 	 */
-	void exitVle_acceso(Anasint.Vle_accesoContext ctx);
+	void exitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code operando_subprograma}
 	 * labeled alternative in {@link Anasint#operando}.
@@ -545,15 +545,17 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitValor_booleano_false(Anasint.Valor_booleano_falseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#variable_acceso}.
+	 * Enter a parse tree produced by the {@code subprograma_mostrar}
+	 * labeled alternative in {@link Anasint#subprograma}.
 	 * @param ctx the parse tree
 	 */
-	void enterVariable_acceso(Anasint.Variable_accesoContext ctx);
+	void enterSubprograma_mostrar(Anasint.Subprograma_mostrarContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#variable_acceso}.
+	 * Exit a parse tree produced by the {@code subprograma_mostrar}
+	 * labeled alternative in {@link Anasint#subprograma}.
 	 * @param ctx the parse tree
 	 */
-	void exitVariable_acceso(Anasint.Variable_accesoContext ctx);
+	void exitSubprograma_mostrar(Anasint.Subprograma_mostrarContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code subprograma_ultima_posicion}
 	 * labeled alternative in {@link Anasint#subprograma}.
@@ -590,14 +592,4 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSubprograma_declarado(Anasint.Subprograma_declaradoContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Anasint#mostrar}.
-	 * @param ctx the parse tree
-	 */
-	void enterMostrar(Anasint.MostrarContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#mostrar}.
-	 * @param ctx the parse tree
-	 */
-	void exitMostrar(Anasint.MostrarContext ctx);
 }

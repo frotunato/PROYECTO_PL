@@ -4,11 +4,38 @@ PROGRAMA
         as,b:LOG;
         s:SEQ(NUM);
     SUBPROGRAMAS
+        /*
+        FUNCION test (NUM a, NUM b2) dev (NUM ij, SEQ(NUM) ij2, NUM ij3)
+            VARIABLES
+                in1,in2,in3:NUM;
+            INSTRUCCIONES
+                dev a+5, [25,3,4], 25;
+        FFUNCION
+        */
+
+        FUNCION test2 (NUM a) dev (NUM kk)
+            VARIABLES
+                pr:SEQ(NUM);
+                pr2:SEQ(LOG);
+            INSTRUCCIONES
+                pr = [1,2,4,5];
+                pr2= [T,T,T,F];
+                kk = 1 + ultima_posicion(pr);
+                //ko = 2;
+                //si ((ultima_posicion([1,2,3,4]) == 4) == cierto) entonces
+                si (vacia([1,2]) == cierto) entonces
+                    kk = kk + 1;
+                sino
+                    kk = kk + 25;
+                fsi
+                dev kk;
+        FFUNCION
+        /*
 
         FUNCION bucle_1_avance(NUM a) dev (NUM ij)
             VARIABLES
                 k:NUM;
-            INSTRUCCIONES
+            INSTRUCCIONESconvierteTipo
                ij = 0;
 
                mientras (ij < 3) hacer
@@ -41,26 +68,43 @@ PROGRAMA
                 //ruptura;
                 dev ij;
         FFUNCION
+        */
     INSTRUCCIONES
-        i = 1;
-        j = -1;
-        s = [1];
+        //i = 1;
+        //j = 2;
+        //s = [7];
+        //i = 1;
+        max = 1+26*7+7+9*7+32+5;
+
+        j = 2+2;
+        j = test2(1);
+        ruptura;
+        //i, j = j, i + 2;
+        ///i, s, j = test(1,2);
+        ///i,j = j, i+2;
+        //i,j,max2,max4, max3 = test2(2),5, test2(4);
+        /*
+        //ruptura;
         as, b = vacia(s), F;
         max, max2 = bucle_1_avance(3), bucle_1_avance(11);
+
+
         //ruptura;
         max = ultima_posicion([1,3,14]);
-        ruptura;
-        max = -26;
-        max = 1+26*7+7+9*7+32+5;
-        max2 = max*(1+2*3+5*7) * (1*6+8);
+        //ruptura;
+        //max = 25;
+        max2 = max*(1+2*3+5*7) * (ultima_posicion([1,2,3]));
+
         //a = 1<2<3<4<5;
         //si ((i>5>2==5 && 1>2) && 1>2 || (25>2) && (1>5)) entonces
-        si (((cierto==((6+5==3+8)==(5+6==7+4))) || (2-3)==0)) entonces
 
-            ruptura;
-            max = 50;
+        si (bucle_1_avance(500) <50) entonces
+
+        //ruptura;
+        max = 1234;
         fsi
-/*
+
+
         mientras (i < 5) hacer
             i = i + 1;
             ruptura;

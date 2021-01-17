@@ -140,8 +140,18 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public List<Variable> visitLista_variables_tipadas (Anasint.Lista_variables_tipadasContext ctx) {
         //System.out.println("first " + ctx.lista_variables_tipadas())
         List<Variable> res = new ArrayList<>();
+        int i = 0;
+        String nombre = "";
+        for (Anasint.TipoContext tipo: ctx.tipo()) {
+            i = tipo.getParent().children.indexOf(tipo);
+            nombre = tipo.parent.getChild(i + 1).getText();
+            res.add(new Variable(nombre, tipo.getText()));
+        }
+        /*
         for (Anasint.Variable_tipadaContext varTipada: ctx.variable_tipada())
             res.add(new Variable(varTipada.IDENT().getText(), varTipada.tipo().getText()));
+        */
+
         //scope.declaraVariable(varTipada.IDENT().getText(), varTipada.tipo().getText());
         return res;
     }
@@ -304,7 +314,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return (Valor) super.visit(ctx);
     }
     public Valor visitCondicion_base (Anasint.Condicion_baseContext ctx) {
-        return visitOperacion(ctx.operacion());
+        return (Valor) visit(ctx.getChild(0));
     }
     public Valor visitCondicion_envuelta (Anasint.Condicion_envueltaContext ctx) {
         return (Valor) visit(ctx.condicion());
@@ -349,8 +359,6 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
 
         // hay que hacer una memoria especial con los parametros de entrada
         // cargados con los valores de parametros
-
-
         List<Variable> argumentosDeclarados = subprograma.getEntrada();
         Map<String, Valor> memoriaSubprograma = new OrderedHashMap<>();
         List<Valor> valoresInvocacionSubprograma = new ArrayList<>();
@@ -374,19 +382,18 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Valor visitVariable (Anasint.VariableContext ctx) {
         return memoria.get(closestInstruccionBlock(ctx)).get(ctx.getText());
     }
-    public Valor visitOperacion (Anasint.OperacionContext ctx) {
-        return (Valor) super.visit(ctx);
-    }
+
 
 
     public Valor visitSubprograma_ultima_posicion (Anasint.Subprograma_ultima_posicionContext ctx) {
-        Valor ultimoValor;
-        if (ctx.variable() != null)
+        Valor ultimoValor = (Valor) visit(ctx.evaluacion_variable());
+        /*if (ctx.variable() != null)
             ultimoValor = visitVariable(ctx.variable()).getUltimoValorSecuencia();
         else
             ultimoValor = visitOperando_secuencia(ctx.operando_secuencia()).getUltimoValorSecuencia();
+        */
         System.out.println("visitUltima_posicion es " + ctx.getText() + " = " + ultimoValor);
-        return ultimoValor;
+        return ultimoValor.getUltimoValorSecuencia();
     }
     public Valor visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
         Valor res = visitEvaluacion_variable(ctx.evaluacion_variable());
@@ -396,6 +403,9 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
 
 
+    public Valor visitOperando_subprograma (Anasint.Operando_subprogramaContext ctx) {
+        return (Valor) visit(ctx.subprograma());
+    }
     public Valor visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
         List<Integer> secuencia = new ArrayList<>();
         for (TerminalNode numero: ctx.NUMERO())
@@ -412,6 +422,9 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return new Valor(new ArrayList<>());
     }
 
+    public Valor visitOperacion (Anasint.OperacionContext ctx) {
+        return (Valor) super.visit(ctx);
+    }
     public Valor visitOp_aritmetica_envuelta (Anasint.Op_aritmetica_envueltaContext ctx) {
         return visitOperacion(ctx.operacion());
     }
@@ -422,7 +435,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return resuelveOperadorAritmetico(
                 visitOperacion(ctx.operacion(0)),
                 visitOperacion(ctx.operacion(1)),
-                "*");    }
+                "*");
+    }
     public Valor visitOp_aritmetica_sr (Anasint.Op_aritmetica_srContext ctx) {
         String operador;
         if (ctx.MAS() != null)

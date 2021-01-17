@@ -289,7 +289,7 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitVle_acceso(Anasint.Vle_accesoContext ctx) { return visitChildren(ctx); }
+	@Override public T visitVariable_acceso(Anasint.Variable_accesoContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -352,7 +352,7 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitVariable_acceso(Anasint.Variable_accesoContext ctx) { return visitChildren(ctx); }
+	@Override public T visitSubprograma_mostrar(Anasint.Subprograma_mostrarContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -374,11 +374,4 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitSubprograma_declarado(Anasint.Subprograma_declaradoContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitMostrar(Anasint.MostrarContext ctx) { return visitChildren(ctx); }
 }

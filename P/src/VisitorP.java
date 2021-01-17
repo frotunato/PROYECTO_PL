@@ -175,10 +175,18 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return res;
     }
     public List<Variable> visitLista_variables_tipadas (Anasint.Lista_variables_tipadasContext ctx) {
-        //System.out.println("first " + ctx.lista_variables_tipadas())
         List<Variable> res = new ArrayList<>();
+        int i;
+        String nombre = "";
+        for (Anasint.TipoContext tipo: ctx.tipo()) {
+            i = tipo.getParent().children.indexOf(tipo);
+            nombre = tipo.parent.getChild(i + 1).getText();
+            res.add(new Variable(nombre, tipo.getText()));
+        }
+        /*
         for (Anasint.Variable_tipadaContext varTipada: ctx.variable_tipada())
             res.add(new Variable(varTipada.IDENT().getText(), varTipada.tipo().getText()));
+        */
         //scope.declaraVariable(varTipada.IDENT().getText(), varTipada.tipo().getText());
         return res;
     }
@@ -255,6 +263,9 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                 //System.out.println("ACABAMOS DE AÑADIR " + arrTiposDer.get(arrTiposDer.size() - 1));
             }
         }
+
+        if (arrTiposIzq.size() != arrTiposDer.size())
+            throw new IllegalStateException("Las asignaciones no tienen el mismo numero de elementos");
 
         //Comprobación del tipo de la expresión y su variable asociada
         for (int i = 0; i < arrTiposIzq.size(); i++) {
@@ -474,7 +485,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 */
     public String visitCondicion_base (Anasint.Condicion_baseContext ctx) {
-        return (String) visit(ctx.operacion());
+        return (String) visit(ctx.getChild(0));
     }
     public String visitCondicion_envuelta (Anasint.Condicion_envueltaContext ctx) {
         return visitCondicion(ctx.condicion());
@@ -574,12 +585,12 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
 
     public String visitSubprograma_ultima_posicion(Anasint.Subprograma_ultima_posicionContext ctx) {
-        String tipoArgumento;
-        if (ctx.variable() != null)
+        String tipoArgumento = (String) visit(ctx.evaluacion_variable());
+        /*if (ctx.variable() != null)
             tipoArgumento = (String) visit(ctx.variable());
         else
             tipoArgumento = (String) visit(ctx.operando_secuencia());
-
+*/
         if (tipoArgumento.equals("Indefinido") ||
                 (!tipoArgumento.contains("Boolean") &&
                 !tipoArgumento.contains("Integer")))
@@ -608,11 +619,11 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return "Boolean";
     }
 
-    public String visitMostrar (Anasint.MostrarContext ctx) {
+    public void visitMostrar (Anasint.Subprograma_mostrarContext ctx) {
         String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
         if (!tipoArgumento.contains("ArrayList"))
             throw new IllegalStateException("operador mostrar solo válido en secuencias");
-        return tipoArgumento;
+        //return tipoArgumento;
     }
 
 }
