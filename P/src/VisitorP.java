@@ -81,7 +81,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             variables de entrada, salida, y las definidas en su bloque VARIABLES son
             añadidas al scope de la función.
          */
-        Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
+        //Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
+        Scope scope = new Scope(ctx.IDENT().getText());
         List<Variable> variablesProcedimiento = visitBloque_variables(ctx.bloque_variables());
 
         List<Variable> variablesEntrada = visitLista_variables_tipadas(ctx.lista_variables_tipadas());
@@ -109,7 +110,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         // Añadimos retornoTree
 
         //comprobamos si algun retorno disponible es válido
-        if (retornoTree.get(ctx.bloque_instrucciones()).contains(true))
+        if (retornoTree.get(ctx.bloque_instrucciones()) != null)
             throw new IllegalArgumentException("El procedimiento no puede tener ningún retorno");
 
         return 0;
@@ -120,7 +121,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             variables de entrada, salida, y las definidas en su bloque VARIABLES son
             añadidas al scope de la función.
          */
-        Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
+        //Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
+        Scope scope = new Scope(ctx.IDENT().getText());
         List<Variable> variables = visitBloque_variables(ctx.bloque_variables());
 
         scope.declaraVariables(variables);
@@ -553,13 +555,14 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         //throw new IllegalStateException("Variable " + ctx.getText() + " no inicializada");
 
+        //hay que distinguir si estamos en scope global o no
+        //durante declaracion de subprogramas no mirar valores globales
         if (!scope.getVariable(ctx.getText()).isInicializada())
             return "Indefinido";
 
         return scope.getVariable(ctx.getText()).getTipo();
         //return super.visitVariable(ctx);
     }
-
 
     public String visitSubprograma_ultima_posicion(Anasint.Subprograma_ultima_posicionContext ctx) {
         String tipoArgumento = (String) visit(ctx.evaluacion_variable());
@@ -582,11 +585,14 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return "Boolean";
     }
 
-    public void visitMostrar (Anasint.Subprograma_mostrarContext ctx) {
+    public String visitSubprograma_mostrar (Anasint.Subprograma_mostrarContext ctx) {
         String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
+        if (ctx.getParent().getClass().equals(Anasint.Evaluacion_variableContext.class))
+            throw new IllegalStateException("Procedimiento mostrar no válido como evaluación");
         if (!tipoArgumento.contains("ArrayList"))
             throw new IllegalStateException("operador mostrar solo válido en secuencias");
         //return tipoArgumento;
+        return null;
     }
 
 }

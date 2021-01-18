@@ -102,6 +102,17 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //return super.visitBloque_instrucciones(ctx);
         return 1;
     }
+    public Object visitBloque_procedimiento (Anasint.Bloque_procedimientoContext ctx) {
+        String nombreProcedimiento = ctx.IDENT().getText();
+        List<Variable> entrada = new ArrayList<>();
+        if (ctx.lista_variables_tipadas() != null)
+            entrada.addAll(visitLista_variables_tipadas(ctx.lista_variables_tipadas()));
+
+        scopeGlobal.declaraSubprograma(nombreProcedimiento, "Procedimiento", entrada, new ArrayList<>());
+        scopeGlobal.getSubprograma(nombreProcedimiento).setPuntero(ctx.bloque_instrucciones());
+
+        return 1;
+    }
     public Object visitBloque_funcion (Anasint.Bloque_funcionContext ctx) {
         String nombreFuncion = ctx.IDENT().getText();
 
@@ -174,6 +185,10 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //if (ctx.instruccion_retorno() != null)
         //    return visitInstruccion_retorno(ctx.instruccion_retorno());
         return super.visit(ctx);
+    }
+    public Object visitInstruccion_llamada_subprograma (Anasint.Instruccion_llamada_subprogramaContext ctx) {
+        visit(ctx.subprograma());
+        return 0;
     }
     public Object visitInstruccion_ruptura (Anasint.Instruccion_rupturaContext ctx) {
         ParserRuleContext closest = closestBreakBlock(ctx);
@@ -405,6 +420,11 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return new Valor(vaciaNum && vaciaBool);
     }
 
+    public Valor visitSubprograma_mostrar (Anasint.Subprograma_mostrarContext ctx) {
+        Valor secuencia = (Valor) visit(ctx.evaluacion_variable());
+        System.out.println("[INTERPRETE] visitSubprograma_mostrar: " + secuencia);
+        return null;
+    }
 
     public Valor visitOperando_subprograma (Anasint.Operando_subprogramaContext ctx) {
         return (Valor) visit(ctx.subprograma());

@@ -100,7 +100,7 @@ valor_booleano:
 
 subprograma:
     MOSTRAR PA evaluacion_variable PC #subprograma_mostrar |
-    UL_POS PA evaluacion_variable/*(variable | operando_secuencia)*/ PC #subprograma_ultima_posicion |
+    UL_POS PA evaluacion_variable PC #subprograma_ultima_posicion |
     VACIA PA evaluacion_variable PC #subprograma_vacia |
     IDENT (
         (PA PC) |

@@ -99,10 +99,19 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
 
     public String visitBloque_subprogramas (Anasint.Bloque_subprogramasContext ctx) {
         //String res = "public static void main(String[] args) throws Exception {\n";
+        String res = "";
         variablesPrivadas = true;
 
-        return (String) super.visitBloque_subprogramas(ctx);
+        for (Anasint.Bloque_procedimientoContext procedimiento: ctx.bloque_procedimiento())
+            res += visit(procedimiento);
+        for (Anasint.Bloque_funcionContext funcion: ctx.bloque_funcion())
+            res += visit(funcion);
+
+        //for (ParseTree subprograma: ctx.children)
+        //    res+= (String) visit(subprograma);
+            //return (String) super.visitBloque_subprogramas(ctx);
         //for (ctx.)
+        return res;
     }
 
     public String visitBloque_instrucciones(Anasint.Bloque_instruccionesContext ctx) {
@@ -173,6 +182,57 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         return res;
     }
 
+    public String visitBloque_procedimiento (Anasint.Bloque_procedimientoContext ctx) {
+        Map<String, String> scopePadre = getUpperScope(ctx);
+        String nombrePrograma = ctx.IDENT().getText();
+        String res, nombre;
+        funciones.put(nombrePrograma, new ArrayList<>());
+        int i = 0;
+        int j;
+        res = "private static void " + nombrePrograma + " (";
+        //la funcion tiene varios args de salida
+        /*
+        if (ctx.lista_variables_tipadas(i).IDENT().size() > 1) {
+            res += "Object[] ";
+            tipoSalida = "Object[]";
+            for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas(1).tipo()) {
+                j = tipo.getParent().children.indexOf(tipo);
+                nombre = tipo.parent.getChild(j + 1).getText();
+                declaracionVariablesSalida += (convierteTipo(tipo.getText()) + " " + nombre +";\n");
+                scopePadre.put(nombre, convierteTipo(tipo.getText()));
+            }
+        }
+        //funcion solo tiene un arg de salida
+        else {
+            Anasint.TipoContext tipo = ctx.lista_variables_tipadas(i).tipo(0);
+            j = tipo.getParent().children.indexOf(tipo);
+            nombre = tipo.parent.getChild(j + 1).getText();
+            tipo.parent.getChild(j + 1).getText();
+            tipoSalida = convierteTipo(tipo.getText());
+            res += convierteTipo(tipo.getText()) + " ";
+            declaracionVariablesSalida += convierteTipo(tipo.getText()) + " " + nombre +";\n";
+            scopePadre.put(nombre, convierteTipo(tipo.getText()));
+        }*/
+        //entrada
+        for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas().tipo()) {
+            j = tipo.getParent().children.indexOf(tipo);
+            nombre = tipo.parent.getChild(j + 1).getText();
+            res += (convierteTipo(tipo.getText()) + " " + nombre);
+            scopePadre.put(nombre, convierteTipo(tipo.getText()));
+            if (tipo.parent.getChild(j+2) != null)
+                res += tipo.parent.getChild(j+2);
+        }
+        res += ") {\n";
+
+        for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas().tipo()) {
+            funciones.get(nombrePrograma).add(convierteTipo(tipo.getText()));
+        }
+        res += visitBloque_variables(ctx.bloque_variables());
+        res += visitBloque_instrucciones(ctx.bloque_instrucciones());
+        res += " }\n";
+        return res;
+    }
+
     public String visitInstruccion_retorno (Anasint.Instruccion_retornoContext ctx) {
         String res = "return ";
         if (ctx.evaluaciones_variables().evaluacion_variable().size() > 1) {
@@ -230,7 +290,9 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         }
         return res;
     }
-
+    public String visitInstruccion_llamada_subprograma (Anasint.Instruccion_llamada_subprogramaContext ctx) {
+        return visit(ctx.subprograma()) + ";\n";
+    }
     public String visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
         String valorPredicado = (String) visit(ctx.predicado());
         //valorPredicado.setValorBooleano(!valorPredicado.getValorBooleano());
@@ -314,6 +376,10 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitSubprograma_ultima_posicion (Anasint.Subprograma_ultima_posicionContext ctx) {
         return ctx.UL_POS().getText() + "(" +
             visit(ctx.evaluacion_variable()) + ")";
+    }
+    public String visitSubprograma_mostrar (Anasint.Subprograma_mostrarContext ctx) {
+        return ctx.MOSTRAR().getText() + "(" +
+                visit(ctx.evaluacion_variable()) + ")";
     }
     public String visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
         return ctx.VACIA().getText() + "(" +

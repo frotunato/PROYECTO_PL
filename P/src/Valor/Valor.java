@@ -11,7 +11,7 @@ public class Valor {
     private Boolean valorBooleano;
     private List<Boolean> secuenciaBooleana;
     private List<Integer> secuenciaNumerica;
-    private List<Object> secuenciaGenerica = new ArrayList<>();
+    private List<Object> secuenciaGenerica;
     private List<Valor> valores = new ArrayList<>();
 
     public Valor (Integer valorNumerico) {
@@ -35,9 +35,10 @@ public class Valor {
         this.valor = secuenciaNumerica;
         secuenciaBooleana = new ArrayList<>(secuencia);
     }
+
     public Valor (List<Object> secuenciaGenerica) {
         this.valor = secuenciaGenerica;
-        this.secuenciaGenerica.addAll(secuenciaGenerica);
+        secuenciaGenerica = new ArrayList<>();
     }
 
     public boolean getEsNulo () {
@@ -90,9 +91,6 @@ public class Valor {
 
     public Boolean getValorBooleano () { return this.valorBooleano; }
 
-    public List<Object> getSecuenciaGenerica () {
-        return this.secuenciaGenerica;
-    }
 /*
     public SecuenciaBooleana getSecuenciaBooleana() {
         return secuenciaBooleana;

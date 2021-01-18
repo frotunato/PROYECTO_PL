@@ -12,7 +12,13 @@ PROGRAMA
                 dev a+5, [25,3,4], 25;
         FFUNCION
         */
-
+        PROCEDIMIENTO test4 (NUM proc1)
+            VARIABLES
+                proc26:NUM;
+            INSTRUCCIONES
+                proc26 = -1;
+                proc26 = proc26 * proc1;
+        FPROCEDIMIENTO
         FUNCION test2 (NUM a) dev (NUM kk)
             VARIABLES
                 pr:SEQ(NUM);
@@ -73,9 +79,10 @@ PROGRAMA
         //i = 1;
         //j = 2;
         s = [7,2,5,6];
+        test4(25);
         //i = 1;
         max = 1+26*7+7+9*7+32+5;
-
+        mostrar(s);
         j = 2+2;
         j = test2(test2(2));
         j = j + s[1];
