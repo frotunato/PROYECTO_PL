@@ -54,6 +54,16 @@ public class Valor {
         //return new Valor(this.secuenciaGenerica.get(this.secuenciaGenerica.size() - 1));
     }
 
+    public Valor getValorSecuencia (Integer i) {
+        if (secuenciaNumerica != null)
+            return new Valor(secuenciaNumerica.get(i));
+        else if (secuenciaBooleana != null)
+            return new Valor(secuenciaBooleana.get(i));
+        else
+            return null;
+        //return new Valor(this.secuenciaGenerica.get(this.secuenciaGenerica.size() - 1));
+    }
+
     public List<Valor> getValores () { return this.valores; }
 
     public void setValores (List<Valor> nValores) {

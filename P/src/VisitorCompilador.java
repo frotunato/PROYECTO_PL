@@ -172,10 +172,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
             res += "private static " + tipoSalida + " salida_" + nombrePrograma + ";\n";
         return res;
     }
-    /*
-    public String visitInstruccion (Anasint.InstruccionContext ctx) {
-        return (String) super.visit(ctx);
-    }*/
+
     public String visitInstruccion_retorno (Anasint.Instruccion_retornoContext ctx) {
         String res = "return ";
         if (ctx.evaluaciones_variables().evaluacion_variable().size() > 1) {
@@ -189,20 +186,14 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         return res + ";\n";
     }
     public String visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
-        List<Anasint.InstruccionContext> instruccionesSi = new ArrayList<>();
-        List<Anasint.InstruccionContext> instruccionesSino = new ArrayList<>();
-        boolean encontradoSino = false;
         String valorPredicado = (String) visit(ctx.predicado());
         String res = "if (" + valorPredicado + ") {\n";
-
         //dividimos las instrucciones en dos partes, si/sino
         for (ParseTree hijo: ctx.children) {
-            if (hijo.equals(ctx.SINO())) {
-                encontradoSino = true;
+            if (hijo.equals(ctx.SINO()))
                 res += "} else {\n";
-            } else if (Anasint.InstruccionContext.class.isAssignableFrom(hijo.getClass())) {
-                res += visit((Anasint.InstruccionContext) hijo);
-            }
+            else if (Anasint.InstruccionContext.class.isAssignableFrom(hijo.getClass()))
+                res += visit(hijo);
         }
         res += "}\n";
         //si el predicado es cierto (condicion), entramos a las instrucciones
@@ -299,7 +290,6 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
                visit(ctx.operacion(1));
     }
 
-
     public String visitOperando_numerico (Anasint.Operando_numericoContext ctx) {
         return ctx.getText();
     }
@@ -324,15 +314,6 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitSubprograma_ultima_posicion (Anasint.Subprograma_ultima_posicionContext ctx) {
         return ctx.UL_POS().getText() + "(" +
             visit(ctx.evaluacion_variable()) + ")";
-
-        /*
-        if (ctx.variable() != null)
-            ultimoValor = visitVariable(ctx.variable()).getUltimoValorSecuencia();
-        else
-            ultimoValor = visitOperando_secuencia(ctx.operando_secuencia()).getUltimoValorSecuencia();
-        System.out.println("visitUltima_posicion es " + ctx.getText() + " = " + ultimoValor);
-        return ultimoValor;
-        */
     }
     public String visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
         return ctx.VACIA().getText() + "(" +
@@ -341,6 +322,10 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
 
     public String visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
         return visitVariable(ctx.variable()) + "[" + visit(ctx.operacion()) + "]";
+    }
+
+    public String visitVariable (Anasint.VariableContext ctx) {
+        return ctx.getText();
     }
 
     public String visitEvaluacion_variable(Anasint.Evaluacion_variableContext ctx) {

@@ -34,12 +34,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariable(Anasint.VariableContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#variable_tipada}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariable_tipada(Anasint.Variable_tipadaContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

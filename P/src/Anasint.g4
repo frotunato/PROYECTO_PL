@@ -7,11 +7,10 @@ options{tokenVocab=Analex;}
 declaracion_variable: (IDENT COMA)* IDENT DP tipo PyC;
 
 lista_variables: (variable COMA)* variable;
-//lista_variables_tipadas: (variable_tipada COMA)* variable_tipada;
 lista_variables_tipadas: (tipo IDENT COMA)* tipo IDENT;
 
 variable: IDENT;
-variable_tipada: tipo IDENT;
+//variable_tipada: tipo IDENT;
 
 tipo: tipo_elemental | tipo_no_elemental;
 tipo_no_elemental: SEQUENCE PA tipo_elemental PC;
@@ -24,17 +23,6 @@ bloque_procedimiento: PROCEDIMIENTO IDENT PA lista_variables_tipadas? PC bloque_
 bloque_instrucciones: INSTRUCCIONES instruccion+ (EOF | (FFUNCION | FPROCEDIMIENTO));
 bloque_variables: VARIABLES declaracion_variable*;
 
-//separar en bloques?
-/*
-instruccion:
-    instruccion_llamada_subprograma |
-    instruccion_aserto  |
-    instruccion_bucle  |
-    instruccion_control  |
-    instruccion_ruptura  |
-    instruccion_asig |
-    instruccion_retorno;
-*/
 
 instruccion:
     subprograma PyC #instruccion_llamada_subprograma |
@@ -46,21 +34,12 @@ instruccion:
     lista_variables ASIG evaluaciones_variables PyC #instruccion_asig |
     RETORNO evaluaciones_variables PyC #instruccion_retorno;
 
-/*
-instruccion_bucle: MIENTRAS PA predicado PC HACER (LLA AVANCE DP subprograma LLC)? instruccion+ FMIENTRAS;
-instruccion_llamada_subprograma: (mostrar | subprograma) PyC;
-instruccion_control: SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)? FSI;
-instruccion_ruptura: RUPTURA PyC;
-instruccion_asig: lista_variables ASIG evaluaciones_variables PyC;
-instruccion_retorno: RETORNO evaluaciones_variables PyC;
-*/
 
 instruccion_aserto:
     LLA (
         (CIERTO | FALSO) |
         ((PARATODO | EXISTE) PA IDENT DP CA operando COMA operando CC COMA predicado PC))
     LLC;
-
 
 evaluaciones_variables: evaluacion_variable (COMA evaluacion_variable)*;
 
@@ -95,16 +74,12 @@ operacion:
 
 operando:
     NUMERO #operando_numerico |
-    //valor_booleano #operando_booleano |
-    //vacia #operando_vacia |
     variable #operando_variable |
     //variable_acceso  #vle_acceso |
     variable CA operacion CC #variable_acceso |
     //ultima_posicion #operando_ultima_posicion |
     subprograma #operando_subprograma
 ;
-
-
 
 operando_secuencia:
     (CA CC) #operando_secuencia_vacia |
@@ -132,10 +107,3 @@ subprograma:
         (PA evaluacion_variable PC) |
         (PA (evaluacion_variable (COMA evaluacion_variable)*) PC)
     ) #subprograma_declarado;
-
-//PA (evaluacion_variable (COMA evaluacion_variable)*)? PC;
-//ultima_posicion: UL_POS PA (variable | operando_secuencia) PC
-    //UL_POS PA operando_secuencia PC #ultima_posicion_secuencia
-
-//vacia: VACIA PA evaluacion_variable PC; //esto tambien acepta solo listas
-//mostrar: MOSTRAR PA evaluacion_variable PC;

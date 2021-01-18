@@ -340,8 +340,11 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Valor visitOperando_numerico (Anasint.Operando_numericoContext ctx) {
         return new Valor(Integer.valueOf(ctx.NUMERO().getText()));
     }
-    public Valor visitOperando_secuencia (Anasint.Operando_secuenciaContext ctx) {
-        return (Valor) visit(ctx);
+    public Valor visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
+        Valor variable = (Valor) visit(ctx.variable());
+        Valor indice = (Valor) visit(ctx.operacion());
+        return variable.getValorSecuencia(indice.getValorNumerico());
+        //return new Valor(memoria.get(ctx.variable().getText()))
     }
 
     public Valor visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {

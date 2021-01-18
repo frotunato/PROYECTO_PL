@@ -11,7 +11,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     ParseTreeProperty<List<Boolean>> retornoTree = new ParseTreeProperty<>();
     ParseTreeProperty<Boolean> rupturaTree = new ParseTreeProperty<>();
 
-
     private Scope getGlobalScope () {
         return scopeTree.get(raiz);
     }
@@ -153,7 +152,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             Aquí entramos en el bloque de instrucciones de la función, y comenzamos a
             realizar las diferentes comprobaciones de tipo y existencia en scope.
          */
-        retornoTree.put(ctx.bloque_instrucciones(), new ArrayList<Boolean>());
+        retornoTree.put(ctx.bloque_instrucciones(), new ArrayList<>());
 
         visitBloque_variables(ctx.bloque_variables());
         visitBloque_instrucciones(ctx.bloque_instrucciones());
@@ -177,7 +176,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     public List<Variable> visitLista_variables_tipadas (Anasint.Lista_variables_tipadasContext ctx) {
         List<Variable> res = new ArrayList<>();
         int i;
-        String nombre = "";
+        String nombre;
         for (Anasint.TipoContext tipo: ctx.tipo()) {
             i = tipo.getParent().children.indexOf(tipo);
             nombre = tipo.parent.getChild(i + 1).getText();
@@ -323,15 +322,13 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return super.visitInstruccion_ruptura(ctx);
     }
     public Object visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
-        String resultado = visitPredicado(ctx.predicado());
+        String resultado = (String) visit(ctx.predicado());
         boolean algunPadreFuncion = anyParentIsAFunction(ctx);
         ParserRuleContext bloqueAsociadoARetorno = closestReturnBlock(ctx);
 
         //Comprobamos que algun nodo padre es una funcion. Evaluamos retorno si lo tiene.
-        if (algunPadreFuncion) {
-            System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_control " + algunPadreFuncion);
+        if (algunPadreFuncion)
             retornoTree.put(bloqueAsociadoARetorno, new ArrayList<>());
-        }
 
         System.out.println("visitInstruccion_control " + ctx.getText() + " Is any parent a function?" + algunPadreFuncion);
 
@@ -414,22 +411,18 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
       return tipoRes;
     }
 
-    public String visitPredicado (Anasint.PredicadoContext ctx) {
-        return (String) super.visit(ctx);
-    }
-
     public String visitPredicado_base (Anasint.Predicado_baseContext ctx) {
-        return visitCondicion(ctx.condicion());
+        return (String) visit(ctx.condicion());
     }
     public String visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
-        return visitPredicado(ctx.predicado());
+        return (String) visit(ctx.predicado());
     }
     public String visitPredicado_envuelto (Anasint.Predicado_envueltoContext ctx) {
-        return visitPredicado(ctx.predicado());
+        return (String) visit(ctx.predicado());
     }
     public String visitPredicado_rec(Anasint.Predicado_recContext ctx) {
-        String tipoCondicionA = visitPredicado(ctx.predicado(0));
-        String tipoCondicionB = visitPredicado(ctx.predicado(1));
+        String tipoCondicionA = (String) visit(ctx.predicado(0));
+        String tipoCondicionB = (String) visit(ctx.predicado(1));
 
         return getTipoOperacionIgualdad(
                 tipoCondicionA,
@@ -472,23 +465,11 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return res;
     }
 
-    public String visitCondicion (Anasint.CondicionContext ctx) {
-        return (String) visit(ctx);
-    }
-
-    /*
-    public String visitCondicion_bol (Anasint.Condicion_bolContext ctx) {
-        return (String) visit(ctx.valor_booleano());
-    }
-    public String visitCondicion_sec (Anasint.Condicion_secContext ctx) {
-        return (String) visit(ctx.operando_secuencia());
-    }
-*/
     public String visitCondicion_base (Anasint.Condicion_baseContext ctx) {
         return (String) visit(ctx.getChild(0));
     }
     public String visitCondicion_envuelta (Anasint.Condicion_envueltaContext ctx) {
-        return visitCondicion(ctx.condicion());
+        return (String) visit(ctx.condicion());
     }
     public String visitCondicion_cierto (Anasint.Condicion_ciertoContext ctx) {
         return "Boolean";
@@ -498,11 +479,10 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
     public String visitCondicion_rec (Anasint.Condicion_recContext ctx) {
         return getTipoOperacionIgualdad(
-                visitCondicion(ctx.condicion(0)),
-                visitCondicion(ctx.condicion(1)),
+                (String) visit(ctx.condicion(0)),
+                (String) visit(ctx.condicion(1)),
                 ctx.operador_logico_2_ario().getText());
     }
-
 
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
         if (ctx.subprograma() != null &&
@@ -511,19 +491,16 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                 !ctx.getParent().getClass().equals(Anasint.Evaluaciones_variablesContext.class))
                 throw new IllegalStateException("Variables retorno multiple solo en definicion");
 
-        return super.visitEvaluacion_variable(ctx).toString();
-    }
-
-    public String visitOperacion (Anasint.OperacionContext ctx) {
-        return (String) super.visit(ctx);
+        return (String) visit(ctx.getChild(0));
+        //return super.visitEvaluacion_variable(ctx).toString();
     }
 
     public String visitOp_aritmetica_envuelta (Anasint.Op_aritmetica_envueltaContext ctx) {
-        return visitOperacion(ctx.operacion());
+        return (String) visit(ctx.operacion());
     }
     public String visitOp_aritmetica_mult (Anasint.Op_aritmetica_multContext ctx) {
-        String operacionA = visitOperacion(ctx.operacion(0));
-        String operacionB = visitOperacion(ctx.operacion(1));
+        String operacionA = (String) visit(ctx.operacion(0));
+        String operacionB = (String) visit(ctx.operacion(1));
         if (operacionA.equals(operacionB) && !operacionA.equals("Indefinido"))
             return "Integer";
         else
@@ -531,8 +508,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     public String visitOp_aritmetica_sr (Anasint.Op_aritmetica_srContext ctx) {
-        String operacionA = visitOperacion(ctx.operacion(0));
-        String operacionB = visitOperacion(ctx.operacion(1));
+        String operacionA = (String) visit(ctx.operacion(0));
+        String operacionB = (String) visit(ctx.operacion(1));
         if (operacionA.equals(operacionB) && !operacionA.equals("Indefinido"))
             return "Integer";
         else
@@ -551,8 +528,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     public String visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
-        String tipoVariable = visitVariable(ctx.variable());
-        String tipoAcceso = visitOperacion(ctx.operacion());
+        String tipoVariable = (String) visit(ctx.variable());
+        String tipoAcceso = (String) visit(ctx.operacion());
         if (!tipoAcceso.equals("Integer")) {
             throw new IllegalArgumentException("Indice de acceso a secuencia no numérico");
         }
@@ -586,11 +563,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
     public String visitSubprograma_ultima_posicion(Anasint.Subprograma_ultima_posicionContext ctx) {
         String tipoArgumento = (String) visit(ctx.evaluacion_variable());
-        /*if (ctx.variable() != null)
-            tipoArgumento = (String) visit(ctx.variable());
-        else
-            tipoArgumento = (String) visit(ctx.operando_secuencia());
-*/
         if (tipoArgumento.equals("Indefinido") ||
                 (!tipoArgumento.contains("Boolean") &&
                 !tipoArgumento.contains("Integer")))
@@ -601,15 +573,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         return tipoArgumento.replace("ArrayList<", "").replace(">", "");
     }
-
-/*
-    public String visitUltima_posicion_variable (Anasint.Ultima_posicion_variableContext ctx) {
-        return visitVariable(ctx.variable());
-    }
-    public String visitUltima_posicion_op_secuencia (Anasint.Ultima_posicion_secuenciaContext ctx) {
-        return visitOperando_secuencia(ctx.operando_secuencia());
-    }
-*/
 
     public String visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
         System.out.println("visitVacia " + ctx.getText());

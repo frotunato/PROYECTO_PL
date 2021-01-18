@@ -47,16 +47,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitVariable(Anasint.VariableContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#variable_tipada}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariable_tipada(Anasint.Variable_tipadaContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#variable_tipada}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariable_tipada(Anasint.Variable_tipadaContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 */
