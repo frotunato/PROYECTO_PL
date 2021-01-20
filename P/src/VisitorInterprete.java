@@ -6,7 +6,6 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +90,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
     public Object visitBloque_instrucciones (Anasint.Bloque_instruccionesContext ctx) {
         if (memoria.get(ctx) == null)
-            memoria.put(ctx, new HashMap<>());
+            memoria.put(ctx, new OrderedHashMap<>());
+        //deberiamos cargar en memoria las variables que tengamos
         for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
             //System.out.println("Ruptura? " + !instruccion.getTokens(Anasint.RUPTURA).isEmpty());
             if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty())
@@ -110,7 +110,11 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
 
         scopeGlobal.declaraSubprograma(nombreProcedimiento, "Procedimiento", entrada, new ArrayList<>());
         scopeGlobal.getSubprograma(nombreProcedimiento).setPuntero(ctx.bloque_instrucciones());
+        Map<String, Valor> valoresIniciales = new OrderedHashMap<>();
+        for (Variable v: entrada)
+            valoresIniciales.put(v.getNombre(),new Valor());
 
+        memoria.put(ctx.bloque_instrucciones(), valoresIniciales);
         return 1;
     }
     public Object visitBloque_funcion (Anasint.Bloque_funcionContext ctx) {
@@ -137,6 +141,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         for (Anasint.Declaracion_variableContext variable: ctx.declaracion_variable()) {
             variables.addAll(visitDeclaracion_variable(variable));
         }
+        if (ctx.getParent().getClass().equals(Anasint.Bloque_programaContext.class))
+            scopeGlobal.declaraVariables(variables);
         return variables;
         //return super.visitBloque_variables(ctx);
     }
@@ -175,6 +181,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //rupturaBloque.removeFrom(ctx);
         //    return 1;
         //}
+
 
         if (retornosFuncion.get(closestInstruccionBlock(ctx)) != null) {
             System.out.println("[INTERPRETE] visitBloque_instrucciones RETORNO memoria de " + ctx.getText() + " " + retornosFuncion.get(closestInstruccionBlock(ctx)).toString());
@@ -374,7 +381,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //Cada vez que entramos en la funcion, limpiamos los datos del nodo
         retornosFuncion.removeFrom(subprograma.getPuntero());
         memoria.removeFrom(subprograma.getPuntero());
-
+        Map<String, Valor> memoriaGlobal = memoria.get(closestInstruccionBlock(ctx));
         // hay que hacer una memoria especial con los parametros de entrada
         // cargados con los valores de parametros
         List<Variable> argumentosDeclarados = subprograma.getEntrada();
@@ -394,6 +401,11 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
 
         memoria.put(subprograma.getPuntero(), memoriaSubprograma);
         visitBloque_instrucciones((Anasint.Bloque_instruccionesContext) subprograma.getPuntero());
+
+        System.out.println("debemos actualizar las variables globales que hayamos tocado");
+        for (String nombreVariable: memoriaSubprograma.keySet())
+            if (scopeGlobal.existeVariable(nombreVariable))
+                memoriaGlobal.put(nombreVariable, memoriaSubprograma.get(nombreVariable));
 
         return retornosFuncion.get(subprograma.getPuntero());
     }

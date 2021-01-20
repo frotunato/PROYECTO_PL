@@ -44,21 +44,21 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitTipo(Anasint.TipoContext ctx) { return visitChildren(ctx); }
+	@Override public T visitTipo_numerico(Anasint.Tipo_numericoContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitTipo_no_elemental(Anasint.Tipo_no_elementalContext ctx) { return visitChildren(ctx); }
+	@Override public T visitTipo_booleano(Anasint.Tipo_booleanoContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitTipo_elemental(Anasint.Tipo_elementalContext ctx) { return visitChildren(ctx); }
+	@Override public T visitTipo_secuencia(Anasint.Tipo_secuenciaContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -245,6 +245,19 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
             res += ctx.evaluaciones_variables().evaluacion_variable(0).getText();
         return res + ";\n";
     }
+
+    public String visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
+        String valorPredicado = (String) visit(ctx.predicado());
+        String res = "while (" + valorPredicado + ") {\n";
+        //dividimos las instrucciones en dos partes, si/sino
+       for (Anasint.InstruccionContext instruccion: ctx.instruccion())
+           res += visit(instruccion);
+        res += "}\n";
+        //si el predicado es cierto (condicion), entramos a las instrucciones
+        System.out.println("[INTERPRETE] visitInstruccion_bucle: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
+        return res;
+    }
+
     public String visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
         String valorPredicado = (String) visit(ctx.predicado());
         String res = "if (" + valorPredicado + ") {\n";

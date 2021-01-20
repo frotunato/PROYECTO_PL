@@ -12,9 +12,16 @@ lista_variables_tipadas: (tipo IDENT COMA)* tipo IDENT;
 variable: IDENT;
 //variable_tipada: tipo IDENT;
 
+tipo:
+    INTEGER #tipo_numerico |
+    BOOLEAN #tipo_booleano |
+    SEQUENCE PA (INTEGER | BOOLEAN) PC #tipo_secuencia
+    ;
+    /*
 tipo: tipo_elemental | tipo_no_elemental;
 tipo_no_elemental: SEQUENCE PA tipo_elemental PC;
 tipo_elemental: INTEGER | BOOLEAN;
+*/
 
 bloque_programa: PROGRAMA bloque_variables bloque_subprogramas bloque_instrucciones;
 bloque_subprogramas: SUBPROGRAMAS (bloque_funcion | bloque_procedimiento)*;

@@ -11,6 +11,39 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     ParseTreeProperty<List<Boolean>> retornoTree = new ParseTreeProperty<>();
     ParseTreeProperty<Boolean> rupturaTree = new ParseTreeProperty<>();
 
+    private String getTipoOperacionIgualdad (String a, String b, String operador) {
+        String res = "Indefinido";
+        if (!a.equals(b) || a.equals("Indefinido") || b.equals("Indefinido"))
+            return res;
+
+        switch (operador) {
+            case "==":
+            case "!=":
+                res = "Boolean";
+                break;
+            case ">=":
+            case ">" :
+            case "<=":
+            case "<" :
+                if (a.equals("Integer"))
+                    res = "Boolean";
+                else
+                    res = "Indefinido";
+                break;
+            case "&&":
+            case "||":
+                if (a.equals("Boolean"))
+                    res = "Boolean";
+                else
+                    res = "Indefinido";
+                break;
+            default:
+                res = "Indefinido";
+        }
+        System.out.println("[ANALISIS SEMANTICO] getTipoOperacionIgualdad: " + a + " vs " + b+ " res=" + res + " op " + operador);
+
+        return res;
+    }
     private Scope getGlobalScope () {
         return scopeTree.get(raiz);
     }
@@ -81,8 +114,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             variables de entrada, salida, y las definidas en su bloque VARIABLES son
             añadidas al scope de la función.
          */
-        //Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
-        Scope scope = new Scope(ctx.IDENT().getText());
+        Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
+        //Scope scope = new Scope(ctx.IDENT().getText());
         List<Variable> variablesProcedimiento = visitBloque_variables(ctx.bloque_variables());
 
         List<Variable> variablesEntrada = visitLista_variables_tipadas(ctx.lista_variables_tipadas());
@@ -121,8 +154,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             variables de entrada, salida, y las definidas en su bloque VARIABLES son
             añadidas al scope de la función.
          */
-        //Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
-        Scope scope = new Scope(ctx.IDENT().getText());
+        Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
+        //Scope scope = new Scope(ctx.IDENT().getText());
         List<Variable> variables = visitBloque_variables(ctx.bloque_variables());
 
         scope.declaraVariables(variables);
@@ -184,11 +217,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             nombre = tipo.parent.getChild(i + 1).getText();
             res.add(new Variable(nombre, tipo.getText()));
         }
-        /*
-        for (Anasint.Variable_tipadaContext varTipada: ctx.variable_tipada())
-            res.add(new Variable(varTipada.IDENT().getText(), varTipada.tipo().getText()));
-        */
-        //scope.declaraVariable(varTipada.IDENT().getText(), varTipada.tipo().getText());
         return res;
     }
 
@@ -355,7 +383,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         }
         //le pasa lo mismo, visitariamos 2 veces
         return 0;
-        //return super.visitInstruccion_control(ctx);
     }
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         String resultado = (String) visit(ctx.predicado());
@@ -366,9 +393,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
 
         return super.visitInstruccion_bucle(ctx);
-    }
-    public Object visitInstruccionAserto (Anasint.Instruccion_asertoContext ctx) {
-        return super.visitInstruccion_aserto(ctx);
     }
 
 
@@ -405,7 +429,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         if (subprograma.getTipo().equals("Funcion")) {
             if (!subprograma.esArgumento() &&
-                    ctx.getParent().getClass().equals(Anasint.Instruccion_bucleContext.class))
+                ctx.getParent().getClass().equals(Anasint.Instruccion_bucleContext.class))
                 throw new IllegalStateException("La función de avance solo puede tener un parámetro de retorno");
             tipoRes = subprograma.getSalida().get(0).getTipo();
         }
@@ -425,46 +449,10 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     public String visitPredicado_rec(Anasint.Predicado_recContext ctx) {
         String tipoCondicionA = (String) visit(ctx.predicado(0));
         String tipoCondicionB = (String) visit(ctx.predicado(1));
-
         return getTipoOperacionIgualdad(
                 tipoCondicionA,
                 tipoCondicionB,
                 ctx.operador_condicion_2_ario().getText());
-    }
-
-    private String getTipoOperacionIgualdad (String a, String b, String operador) {
-        String res = "Indefinido";
-
-        if (!a.equals(b) || a.equals("Indefinido") || b.equals("Indefinido"))
-            return res;
-
-        switch (operador) {
-            case "==":
-            case "!=":
-                res = "Boolean";
-                break;
-            case ">=":
-            case ">" :
-            case "<=":
-            case "<" :
-                if (a.equals("Integer"))
-                    res = "Boolean";
-                else
-                    res = "Indefinido";
-                break;
-            case "&&":
-            case "||":
-                if (a.equals("Boolean"))
-                    res = "Boolean";
-                else
-                    res = "Indefinido";
-                break;
-            default:
-                res = "Indefinido";
-        }
-        System.out.println("[ANALISIS SEMANTICO] getTipoOperacionIgualdad: " + a + " vs " + b+ " res=" + res + " op " + operador);
-
-        return res;
     }
 
     public String visitCondicion_base (Anasint.Condicion_baseContext ctx) {
@@ -494,7 +482,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                 throw new IllegalStateException("Variables retorno multiple solo en definicion");
 
         return (String) visit(ctx.getChild(0));
-        //return super.visitEvaluacion_variable(ctx).toString();
     }
 
     public String visitOp_aritmetica_envuelta (Anasint.Op_aritmetica_envueltaContext ctx) {

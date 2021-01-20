@@ -34,23 +34,26 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariable(Anasint.VariableContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#tipo}.
+	 * Visit a parse tree produced by the {@code tipo_numerico}
+	 * labeled alternative in {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTipo(Anasint.TipoContext ctx);
+	T visitTipo_numerico(Anasint.Tipo_numericoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#tipo_no_elemental}.
+	 * Visit a parse tree produced by the {@code tipo_booleano}
+	 * labeled alternative in {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTipo_no_elemental(Anasint.Tipo_no_elementalContext ctx);
+	T visitTipo_booleano(Anasint.Tipo_booleanoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#tipo_elemental}.
+	 * Visit a parse tree produced by the {@code tipo_secuencia}
+	 * labeled alternative in {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTipo_elemental(Anasint.Tipo_elementalContext ctx);
+	T visitTipo_secuencia(Anasint.Tipo_secuenciaContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#bloque_programa}.
 	 * @param ctx the parse tree

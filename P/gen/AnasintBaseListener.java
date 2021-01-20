@@ -63,37 +63,37 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTipo(Anasint.TipoContext ctx) { }
+	@Override public void enterTipo_numerico(Anasint.Tipo_numericoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTipo(Anasint.TipoContext ctx) { }
+	@Override public void exitTipo_numerico(Anasint.Tipo_numericoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTipo_no_elemental(Anasint.Tipo_no_elementalContext ctx) { }
+	@Override public void enterTipo_booleano(Anasint.Tipo_booleanoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTipo_no_elemental(Anasint.Tipo_no_elementalContext ctx) { }
+	@Override public void exitTipo_booleano(Anasint.Tipo_booleanoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTipo_elemental(Anasint.Tipo_elementalContext ctx) { }
+	@Override public void enterTipo_secuencia(Anasint.Tipo_secuenciaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTipo_elemental(Anasint.Tipo_elementalContext ctx) { }
+	@Override public void exitTipo_secuencia(Anasint.Tipo_secuenciaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

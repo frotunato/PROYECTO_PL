@@ -14,6 +14,10 @@ public class Valor {
     private List<Object> secuenciaGenerica;
     private List<Valor> valores = new ArrayList<>();
 
+    public Valor () {
+        this.valor = null;
+    }
+
     public Valor (Integer valorNumerico) {
         this.valor = valorNumerico;
         this.tipo = "Integer";

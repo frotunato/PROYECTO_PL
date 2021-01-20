@@ -1,5 +1,6 @@
 import org.antlr.v4.misc.OrderedHashMap;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,8 @@ public class Scope {
     public Variable getVariable (String nombre) {
         return variables.get(nombre);
     }
+
+    public List<Variable> getVariables () { return new ArrayList<>(variables.values()); }
 
     public Subprograma getSubprograma (String nombre) { return subprogramas.get(nombre); }
 

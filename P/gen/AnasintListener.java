@@ -47,35 +47,41 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitVariable(Anasint.VariableContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#tipo}.
+	 * Enter a parse tree produced by the {@code tipo_numerico}
+	 * labeled alternative in {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 */
-	void enterTipo(Anasint.TipoContext ctx);
+	void enterTipo_numerico(Anasint.Tipo_numericoContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#tipo}.
+	 * Exit a parse tree produced by the {@code tipo_numerico}
+	 * labeled alternative in {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 */
-	void exitTipo(Anasint.TipoContext ctx);
+	void exitTipo_numerico(Anasint.Tipo_numericoContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#tipo_no_elemental}.
+	 * Enter a parse tree produced by the {@code tipo_booleano}
+	 * labeled alternative in {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 */
-	void enterTipo_no_elemental(Anasint.Tipo_no_elementalContext ctx);
+	void enterTipo_booleano(Anasint.Tipo_booleanoContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#tipo_no_elemental}.
+	 * Exit a parse tree produced by the {@code tipo_booleano}
+	 * labeled alternative in {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 */
-	void exitTipo_no_elemental(Anasint.Tipo_no_elementalContext ctx);
+	void exitTipo_booleano(Anasint.Tipo_booleanoContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#tipo_elemental}.
+	 * Enter a parse tree produced by the {@code tipo_secuencia}
+	 * labeled alternative in {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 */
-	void enterTipo_elemental(Anasint.Tipo_elementalContext ctx);
+	void enterTipo_secuencia(Anasint.Tipo_secuenciaContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#tipo_elemental}.
+	 * Exit a parse tree produced by the {@code tipo_secuencia}
+	 * labeled alternative in {@link Anasint#tipo}.
 	 * @param ctx the parse tree
 	 */
-	void exitTipo_elemental(Anasint.Tipo_elementalContext ctx);
+	void exitTipo_secuencia(Anasint.Tipo_secuenciaContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#bloque_programa}.
 	 * @param ctx the parse tree

@@ -1,4 +1,5 @@
 public class Test {
+    private static Integer llk;
     private static int ultima_posicion(int[] entrada) {
         return entrada[entrada.length - 1];
     }
@@ -8,6 +9,8 @@ public class Test {
     }
 
     private static boolean vacia(boolean[] entrada) {
+        int t;
+        t = llk * 5;
         return entrada.length == 0;
     }
 
@@ -23,38 +26,30 @@ public class Test {
         System.out.println(entrada);
     }
 
-    private static int i, j, max2, max, max3, max4;
-    private static boolean as, b;
-    private static int[] s;
+    private static int global_i, global_j, global_k;
+    private static int[] global_s;
 
-    private static void test4(int proc1) {
-        int proc26;
-        proc26 = -1;
-        proc26 = proc26 * proc1;
+    private static void test2(int a) {
+        int acum, limite;
+        acum = a + 25;
+        limite = 10;
+        while (limite < 10) {
+            limite = limite - 1;
+            acum = a * acum;
+        }
+        global_i = a * acum;
     }
 
-    private static int test2(int a) {
-        int kk;
-        int[] pr;
-        boolean[] pr2;
-        pr = new int[]{1, 2, 4, 5};
-        pr2 = new boolean[]{true, true, true, false};
-        kk = pr[0] + ultima_posicion(pr);
-        if (vacia(new int[]{1, 2}) == true) {
-            kk = kk + 1;
-        } else {
-            kk = kk + 25;
-        }
-        return kk;
+    private static int test(int a, int b) {
+        int c;
+        int global_i2;
+        c = a + b;
+        return c + 1;
     }
 
     public static void main(String[] args) throws Exception {
-        s = new int[]{7, 2, 5, 6};
-        max = 1 + 26 * 7 + 7 + 9 * 7 + 32 + 5;
-        mostrar(s);
-        j = 2 + 2;
-        j = test2(test2(2));
-        j = j + s[1];
-        return;
+        test2(25);
+        global_i = test(1, 2);
+        vacia(new boolean[]{true, false});
     }
 }
