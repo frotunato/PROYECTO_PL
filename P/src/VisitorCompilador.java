@@ -8,6 +8,8 @@ import java.util.*;
 public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     String programa = "";
     boolean variablesPrivadas = false;
+    boolean variablesBajoCondicion = false;
+    String variablesCondicion = "";
     ParseTreeProperty<Map<String, String>> scope = new ParseTreeProperty<>();
     Map<String, List<String>> funciones = new OrderedHashMap<>();
 
@@ -23,10 +25,10 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     private String convierteTipo (String tipoP) {
         String res = "";
         switch (tipoP) {
-            case "NUM" -> res = "int";
-            case "LOG" -> res = "boolean";
-            case "SEQ(NUM)" -> res = "int[]";
-            case "SEQ(LOG)" -> res = "boolean[]";
+            case "NUM" -> res = "Integer";
+            case "LOG" -> res = "Boolean";
+            case "SEQ(NUM)" -> res = "Integer[]";
+            case "SEQ(LOG)" -> res = "Boolean[]";
         }
         return res;
     }
@@ -43,29 +45,29 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
     private String ultimaPosicion () {
         return
-                "private static int ultima_posicion (int[] entrada) {\n" +
+                "private static Integer ultima_posicion (Integer[] entrada) {\n" +
                 "   return entrada[entrada.length-1];\n" +
                 "}\n" +
-                "private static boolean ultima_posicion (boolean[] entrada) {\n" +
+                "private static Boolean ultima_posicion (Boolean[] entrada) {\n" +
                 "   return entrada[entrada.length-1];\n" +
                 "}\n"
                 ;
     }
     private String vacia () {
         return
-                "private static boolean vacia (boolean[] entrada) {\n" +
+                "private static Boolean vacia (Boolean[] entrada) {\n" +
                 "   return entrada.length == 0;\n" +
                 "}\n" +
-                "private static boolean vacia (int[] entrada) {\n" +
+                "private static Boolean vacia (Integer[] entrada) {\n" +
                 "   return entrada.length == 0;\n" +
                 "}\n";
     }
     private String mostrar () {
         return
-                "private static void mostrar (boolean[] entrada) {\n" +
+                "private static void mostrar (Boolean[] entrada) {\n" +
                 "   System.out.println(entrada);\n" +
                 "}\n" +
-                "private static void mostrar (int[] entrada) {\n" +
+                "private static void mostrar (Integer[] entrada) {\n" +
                 "   System.out.println(entrada);\n" +
                 "}\n";
     }
@@ -73,7 +75,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitBloque_programa(Anasint.Bloque_programaContext ctx) {
         scope.put(ctx, new OrderedHashMap<>());
         variablesPrivadas = false;
-        programa += "public class Test {\n";
+        programa += "import java.util.Arrays;\n public class Test {\n";
         programa += ultimaPosicion();
         programa += vacia();
         programa += mostrar();
@@ -259,8 +261,16 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
 
     public String visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
+        variablesBajoCondicion = true;
+        variablesCondicion = "!Arrays.asList(";
         String valorPredicado = (String) visit(ctx.predicado());
-        String res = "if (" + valorPredicado + ") {\n";
+        variablesBajoCondicion = false;
+        String precondicion = "";
+        System.out.println("[COMPILADOR] visitInstruccion_control: " + variablesCondicion.toString());
+        variablesCondicion = quitaUltimaComa(variablesCondicion) + ").contains(null) && (";
+        //for (String variableCondicion: variablesCondicion)
+            //precondicion += variablesCondicion.pop() + "!=null"
+        String res = "if (" + variablesCondicion + valorPredicado + ")) {\n";
         //dividimos las instrucciones en dos partes, si/sino
         for (ParseTree hijo: ctx.children) {
             if (hijo.equals(ctx.SINO()))
@@ -369,7 +379,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         return ctx.getText();
     }
     public String visitOperando_variable (Anasint.Operando_variableContext ctx) {
-        return ctx.getText();
+        return (String) visit(ctx.variable());
     }
     public String visitValor_booleano_true (Anasint.Valor_booleano_trueContext ctx) {
         return "true";
@@ -404,6 +414,8 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
 
     public String visitVariable (Anasint.VariableContext ctx) {
+        if (variablesBajoCondicion)
+            variablesCondicion += ctx.getText() + ",";
         return ctx.getText();
     }
 
@@ -425,11 +437,11 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
 
     public String visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
-        return "new int[]" + ctx.getText().replace("[","{").replace("]", "}");
+        return "new Integer[]" + ctx.getText().replace("[","{").replace("]", "}");
     }
 
     public String visitOperando_secuencia_logica (Anasint.Operando_secuencia_logicaContext ctx) {
-        String res = "new boolean[]{";
+        String res = "new Boolean[]{";
             for (Anasint.Valor_booleanoContext bool: ctx.valor_booleano()) {
                 res += visit(bool) + ",";
             }

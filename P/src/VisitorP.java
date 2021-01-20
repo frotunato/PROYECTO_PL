@@ -10,6 +10,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     ParseTreeProperty<Scope> scopeTree = new ParseTreeProperty<>();
     ParseTreeProperty<List<Boolean>> retornoTree = new ParseTreeProperty<>();
     ParseTreeProperty<Boolean> rupturaTree = new ParseTreeProperty<>();
+    boolean compruebaVariableInicializada = false;
 
     private String getTipoOperacionIgualdad (String a, String b, String operador) {
         String res = "Indefinido";
@@ -115,20 +116,26 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             añadidas al scope de la función.
          */
         Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
+        String nombreProcedimiento = ctx.IDENT().getText();
         //Scope scope = new Scope(ctx.IDENT().getText());
         List<Variable> variablesProcedimiento = visitBloque_variables(ctx.bloque_variables());
 
         List<Variable> variablesEntrada = visitLista_variables_tipadas(ctx.lista_variables_tipadas());
 
         for (Variable variableEntrada: variablesEntrada)
-            variableEntrada.setSoloLectura();
+            if (variablesProcedimiento.contains(variableEntrada))
+                throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitBloque_procedimiento:" +
+                        " la variable " + variableEntrada.getNombre() +
+                        " ya esta definida en el procedimiento " + nombreProcedimiento);
+            else
+                variableEntrada.setSoloLectura();
 
         scope.declaraVariables(variablesProcedimiento);
         scope.declaraVariables(variablesEntrada);
         scope.inicializaVariables(variablesEntrada);
         //scope.inicializaVariables(salida);
 
-        getGlobalScope().declaraSubprograma(ctx.IDENT().getText(), "Procedimiento", variablesEntrada, new ArrayList<>());
+        getGlobalScope().declaraSubprograma(nombreProcedimiento, "Procedimiento", variablesEntrada, new ArrayList<>());
         //scopeGlobal.declaraFuncion(ctx.IDENT().getText(), entrada, salida);
         scopeTree.put(ctx, scope);
 
@@ -155,10 +162,11 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             añadidas al scope de la función.
          */
         Scope scope = new Scope(getGlobalScope(), ctx.IDENT().getText());
+        String nombreFuncion = ctx.IDENT().getText();
         //Scope scope = new Scope(ctx.IDENT().getText());
-        List<Variable> variables = visitBloque_variables(ctx.bloque_variables());
+        List<Variable> variablesFuncion = visitBloque_variables(ctx.bloque_variables());
 
-        scope.declaraVariables(variables);
+        scope.declaraVariables(variablesFuncion);
 
         List<Anasint.Lista_variables_tipadasContext> variablesEntradaSalida =  ctx.lista_variables_tipadas();
         List<Variable> entrada = new ArrayList<>();
@@ -174,12 +182,18 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         for (Variable variableEntrada: entrada)
             variableEntrada.setSoloLectura();
 
+        for (Variable variable: variablesFuncion)
+           if (salida.contains(variable) || entrada.contains(variable))
+               throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitBloque_funcion:" +
+                       " la variable " + variable.getNombre() +
+                       " ya esta definida en la función " + nombreFuncion);
+
         scope.declaraVariables(entrada);
         scope.declaraVariables(salida);
         scope.inicializaVariables(entrada);
         //scope.inicializaVariables(salida);
 
-        getGlobalScope().declaraSubprograma(ctx.IDENT().getText(), "Funcion", entrada, salida);
+        getGlobalScope().declaraSubprograma(nombreFuncion, "Funcion", entrada, salida);
         //scopeGlobal.declaraFuncion(ctx.IDENT().getText(), entrada, salida);
         scopeTree.put(ctx, scope);
 
@@ -268,13 +282,15 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         // cargamos en arrTiposIzq los tipos de las variables a asignar
         for (Anasint.VariableContext variableIzquierda: expresionIzquierda) {
-            visitVariable(variableIzquierda);
-            if (scope.getVariable(variableIzquierda.getText()).isSoloLectura()) {
+            String tipoVariable = visitVariable(variableIzquierda);
+            if (scope.getVariable(variableIzquierda.getText()).isSoloLectura())
                 throw new IllegalArgumentException("Se ha intentado asignar una variable de solo lectura");
-            }
-            arrTiposIzq.add(scope.getVariable(variableIzquierda.getText()).getTipo());
+            arrTiposIzq.add(tipoVariable);
+            //arrTiposIzq.add(scope.getVariable(variableIzquierda.getText()).getTipo());
         }
-
+        //comprobamos que las posibles variables usadas en expresiones
+        //de asignacion esten inicializadas previamente
+        compruebaVariableInicializada = true;
         // cargamos en arrTiposDer los tipos de las expresiones
         for (Anasint.Evaluacion_variableContext varDerecha: expresionDerecha.evaluacion_variable()) {
             System.out.println("ESTAMOS ASIGNANDO " + varDerecha.getText() + " clase " + varDerecha.getClass());
@@ -286,10 +302,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                     throw new IllegalArgumentException("Los procedimientos no pueden ser usados en asignaciones");
                 else if (getGlobalScope().existeFuncion(nombreSubprograma))
                     arrTiposDer.addAll(getGlobalScope().getSubprograma(nombreSubprograma).getTiposSalida());
-                //System.out.println("ACABAMOS DE AÑADIR " + arrTiposDer.get(arrTiposDer.size() - 1));
             } else {
                 arrTiposDer.add(visitEvaluacion_variable(varDerecha));
-                //System.out.println("ACABAMOS DE AÑADIR " + arrTiposDer.get(arrTiposDer.size() - 1));
             }
         }
 
@@ -306,7 +320,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                         " vs Der: " + arrTiposDer.toString());
             }
         }
-
+        compruebaVariableInicializada = false;
         //Asignacion paralela
         for (Anasint.VariableContext variableIzquierda: expresionIzquierda)
             scope.inicializaVariable(variableIzquierda.getText());
@@ -353,14 +367,17 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
     public Object visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
         String resultado = (String) visit(ctx.predicado());
+
+        if (resultado.equals("Indefinido"))
+            throw new Error ("[ANALIZADOR SEMANTICO] visitInstruccion_control: El predicado debe ser una expresión booleana");
+
         boolean algunPadreFuncion = anyParentIsAFunction(ctx);
         ParserRuleContext bloqueAsociadoARetorno = closestReturnBlock(ctx);
-
         //Comprobamos que algun nodo padre es una funcion. Evaluamos retorno si lo tiene.
         if (algunPadreFuncion)
             retornoTree.put(bloqueAsociadoARetorno, new ArrayList<>());
 
-        System.out.println("visitInstruccion_control " + ctx.getText() + " Is any parent a function?" + algunPadreFuncion);
+        System.out.println("visitInstruccion_control " + ctx.getText()  + " res predicado:" + resultado);
 
         if (!resultado.equals("Boolean"))
             System.out.println("visitInstruccion_control PREDICADO NO BOOLEANO " + ctx.predicado().getText());
@@ -368,9 +385,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         // si comento esto, no se mete por donde deberia!
         // if, visitar to do y analizar. no al reves
-        for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
+        for (Anasint.InstruccionContext instruccion: ctx.instruccion())
             visitInstruccion(instruccion);
-        } //he comentado esto y el retorno a 0, igual no es lo suyo
 
         //aqui ya se han procesado todas las instrucciones, analizamos retornos
         System.out.println("RETORNO MAESTRO " + ctx.getText() + " ret "+  retornoTree.get(ctx) + "algun padre funcion " + algunPadreFuncion);
@@ -381,7 +397,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             else
                 retornoTree.get(bloqueAsociadoARetorno).add(false);
         }
-        //le pasa lo mismo, visitariamos 2 veces
         return 0;
     }
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
@@ -537,15 +552,21 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         if (!scope.existeVariable(ctx.IDENT().getText()))
             throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitVariable Variable " + ctx.getText() + " no declarada");
 
-        if (!scope.getVariable(ctx.getText()).isInicializada())
-            System.out.println("[ANALIZADOR SEMANTICO] visitVariable Variable " + ctx.getText() + " no inicializada");
+        //if (variablesAInicializar.contains(ctx.getText()))
+        //    throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitVariable Variable " + ctx.getText() + " no inicializada, no se puede asignar a si misma");
+
+        if (!scope.getVariable(ctx.getText()).isInicializada() &&
+                compruebaVariableInicializada)
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitVariable Variable " + ctx.getText() + " no inicializada, no se puede asignar a si misma");
 
         //throw new IllegalStateException("Variable " + ctx.getText() + " no inicializada");
 
         //hay que distinguir si estamos en scope global o no
         //durante declaracion de subprogramas no mirar valores globales
-        if (!scope.getVariable(ctx.getText()).isInicializada())
-            return "Indefinido";
+
+        //ESTO ES MENTIRA, NO ES COSA DEL SEMANTICO
+        //if (!scope.getVariable(ctx.getText()).isInicializada())
+        //    return "Indefinido";
 
         return scope.getVariable(ctx.getText()).getTipo();
         //return super.visitVariable(ctx);

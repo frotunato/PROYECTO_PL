@@ -1,27 +1,35 @@
-PROGRAMA
+PROGRAMA //memoria global
     VARIABLES
+        a:NUM;
         global_i, global_j, global_k:NUM;
         global_s:SEQ(NUM);
+        global_error:LOG;
     SUBPROGRAMAS
-        PROCEDIMIENTO test2 (NUM a)
+        PROCEDIMIENTO test2 (NUM b)
             VARIABLES
-                acum,limite:NUM;
+                a,acum,limite:NUM;
             INSTRUCCIONES
+                a = b;
                 acum = a + 25;
                 limite = 0;
-                mientras (limite < 10) hacer
+                mientras (limite < 2) hacer
                     limite = limite + 1;
-                    acum = a * acum;
+                    a = a * acum;
                 fmientras
                 global_j = acum;
         FPROCEDIMIENTO
         FUNCION test (NUM a, NUM b) dev (NUM c)
             VARIABLES
-                global_i2:NUM;
+                global_i2,c2:NUM;
             INSTRUCCIONES
-                c = a + b;
+                c = 0;
+                si (global_error == T || global_k > 1) entonces
+                    global_i = 25;
+                    c = global_i + b;
+                fsi
                 dev c+1;
         FFUNCION
     INSTRUCCIONES
+        a = 100;
         test2(25);
-        global_i = test(global_j,2);
+        global_i = 25 + test(global_j,2);

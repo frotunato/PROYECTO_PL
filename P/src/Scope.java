@@ -48,8 +48,8 @@ public class Scope {
     public Subprograma getSubprograma (String nombre) { return subprogramas.get(nombre); }
 
     public void declaraVariable (Variable variable) {
-        if (variables.containsKey(variable.getNombre()))
-            throw new IllegalStateException("La variable " + variable.getNombre() + " ya ha sido declarada con anterioridad");
+        //if (variables.containsKey(variable.getNombre()))
+        //    throw new IllegalStateException("La variable " + variable.getNombre() + " ya ha sido declarada con anterioridad");
         variables.put(variable.getNombre(), variable);
         System.out.println("[SCOPE, declaraVariable]: " + variable.getNombre() + " " + variable.getTipo());
 
@@ -65,6 +65,13 @@ public class Scope {
             throw new IllegalStateException("El subprograma nativo " + nombre + " ya ha sido declarado con anterioridad");
         subprogramas.put(nombre, new Subprograma(nombre, tipo));
         System.out.println("[SCOPE, declaraSubprogramaNativo]: " + nombre);
+    }
+
+    public void declaraSubprograma (Subprograma subprograma) {
+        if (subprogramas.containsKey(subprograma.getNombre()))
+            throw new IllegalStateException("El subprograma " + nombre + " ya ha sido declarado con anterioridad");
+        subprogramas.put(subprograma.getNombre(), subprograma);
+        System.out.println("[SCOPE, declaraSubprograma]: " + nombre +  ", inpt: " + subprograma.getEntrada().toString() + ", out: " + subprograma.getEntrada().toString());
     }
 
     public void declaraSubprograma (String nombre, String tipo, List<Variable> varsEntrada, List<Variable> varsSalida) {

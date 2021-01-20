@@ -1,55 +1,54 @@
+import java.util.Arrays;
 public class Test {
-    private static Integer llk;
-    private static int ultima_posicion(int[] entrada) {
-        return entrada[entrada.length - 1];
+    private static Integer ultima_posicion (int[] entrada) {
+        return entrada[entrada.length-1];
     }
-
-    private static boolean ultima_posicion(boolean[] entrada) {
-        return entrada[entrada.length - 1];
+    private static Boolean ultima_posicion (boolean[] entrada) {
+        return entrada[entrada.length-1];
     }
-
-    private static boolean vacia(boolean[] entrada) {
-        int t;
-        t = llk * 5;
+    private static Boolean vacia (Boolean[] entrada) {
         return entrada.length == 0;
     }
-
-    private static boolean vacia(int[] entrada) {
+    private static Boolean vacia (Integer[] entrada) {
         return entrada.length == 0;
     }
-
-    private static void mostrar(boolean[] entrada) {
+    private static void mostrar (boolean[] entrada) {
         System.out.println(entrada);
     }
-
-    private static void mostrar(int[] entrada) {
+    private static void mostrar (int[] entrada) {
         System.out.println(entrada);
     }
+    private static Integer a;
+    private static Integer global_i,global_j,global_k;
+    private static Integer[] global_s;
+    private static Boolean global_error;
 
-    private static int global_i, global_j, global_k;
-    private static int[] global_s;
-
-    private static void test2(int a) {
-        int acum, limite;
-        acum = a + 25;
-        limite = 10;
-        while (limite < 10) {
-            limite = limite - 1;
-            acum = a * acum;
+    private static void test2 (Integer b) {
+        Integer a,acum,limite;
+        a=b;
+        acum=a+25;
+        limite=0;
+        while (limite < 2) {
+            limite=limite+1;
+            a=a*acum;
         }
-        global_i = a * acum;
+        global_j=acum;
     }
+    private static Integer test (Integer a,Integer b) {
+        Integer c;
+        Integer global_i2,c2;
+        c=0;
 
-    private static int test(int a, int b) {
-        int c;
-        int global_i2;
-        c = a + b;
-        return c + 1;
+        if (!Arrays.asList(global_error,global_k).contains(null) && (global_error == true || 1 < 2)) {
+            global_i=25;
+            c=global_i+b;
+        }
+        return c+1;
     }
 
     public static void main(String[] args) throws Exception {
+        a=100;
         test2(25);
-        global_i = test(1, 2);
-        vacia(new boolean[]{true, false});
+        global_i=test(global_j,2);
     }
 }

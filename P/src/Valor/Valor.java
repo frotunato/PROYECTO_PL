@@ -31,13 +31,13 @@ public class Valor {
     }
 
     public Valor(List<Integer> secuencia, Integer dummy) {
-        this.valor = secuenciaNumerica;
         secuenciaNumerica = new ArrayList<>(secuencia);
+        this.valor = secuenciaNumerica;
         //ecuenciaNumerica.addAll(secuencia);
     }
     public Valor(List<Boolean> secuencia, Boolean dummy) {
-        this.valor = secuenciaNumerica;
         secuenciaBooleana = new ArrayList<>(secuencia);
+        this.valor = secuenciaBooleana;
     }
 
     public Valor (List<Object> secuenciaGenerica) {

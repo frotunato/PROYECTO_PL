@@ -10,7 +10,7 @@ public class Subprograma {
 
     private List<Variable> entrada = new ArrayList<>();
     private List<Variable> salida = new ArrayList<>();
-
+    private List<Variable> declaradas = new ArrayList<>();
 
     public Subprograma (String nNombre, String nTipo) {
         this.nombre = nNombre;
@@ -28,6 +28,16 @@ public class Subprograma {
         this.tipo = nTipo;
         this.entrada.addAll(nEntrada);
         this.salida.addAll(nSalida);
+    }
+
+    public Subprograma (String nNombre, String nTipo, List<Variable> nEntrada, List<Variable> nSalida, List<Variable> declaradas) {
+        if (nTipo.equals("Funcion") && nSalida.size() == 0)
+            throw new IllegalArgumentException("Un subprograma debe tener argumentos de salida");
+        this.nombre = nNombre;
+        this.tipo = nTipo;
+        this.entrada.addAll(nEntrada);
+        this.salida.addAll(nSalida);
+        this.declaradas.addAll(declaradas);
     }
 
     public ParserRuleContext getPuntero () { return this.puntero; }
@@ -48,6 +58,42 @@ public class Subprograma {
 
     public List<Variable> getEntrada() {
         return entrada;
+    }
+
+    public void addDeclarada (Variable vDeclarada) {
+        declaradas.add(vDeclarada);
+    }
+
+    public List<Variable> getDeclaradas () {
+        return declaradas;
+    }
+
+    public boolean existeVariable (String nombre) {
+        boolean res = false;
+        boolean paro = false;
+        for (Variable variable: salida) {
+            if (variable.getNombre().equals(nombre)) {
+                res = true;
+                paro = true;
+                break;
+            }
+        }
+        if (!paro)
+            for (Variable variable: entrada) {
+                if (variable.getNombre().equals(nombre)) {
+                    res = true;
+                    paro = true;
+                    break;
+                }
+            }
+        if (!paro)
+            for (Variable variable: declaradas) {
+                if (variable.getNombre().equals(nombre)) {
+                    res = true;
+                    break;
+                }
+            }
+        return res;
     }
 
     public List<String> getTiposEntrada () {

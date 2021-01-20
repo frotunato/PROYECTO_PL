@@ -1,5 +1,7 @@
 import Valor.Valor;
 
+import java.util.Objects;
+
 public class Variable {
     private String nombre;
     private String tipo;
@@ -53,4 +55,16 @@ public class Variable {
         inicializada = true;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Variable variable = (Variable) o;
+        return nombre.equals(variable.nombre) && tipo.equals(variable.tipo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre, tipo);
+    }
 }
