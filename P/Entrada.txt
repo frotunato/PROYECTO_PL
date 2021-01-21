@@ -46,12 +46,29 @@ PROGRAMA //memoria global
                 fsi
                 dev 2;
         FFUNCION
+        FUNCION test3 (NUM a) dev (NUM c)
+            VARIABLES
+                global_i2,c2:NUM;
+            INSTRUCCIONES
+                c = 0;
+                si (a > 10) entonces
+                    si (a > 15) entonces
+                        dev 15;
+                    sino
+                        dev 11;
+                    fsi
+                sino
+                    c = 25;
+                    ruptura;
+                    dev 0;
+                fsi
+        FFUNCION
     INSTRUCCIONES
-        a = 100;
+        a = 100 + 255;
         global_s = [6,18];
         //resultado, a = busca_max(global_s, 2);
-
-        resultado, a, global_i = busca_max(global_s, test(25,27)), test(12,37);
+        a = test3(25);
+        //resultado, a, global_i = busca_max(global_s, test(25,27)), test(12,37);
 
         //test2(25);
 

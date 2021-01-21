@@ -13,7 +13,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
 
     ParseTreeProperty<Map<String, Object>> memoria = new ParseTreeProperty<>();
     ParseTreeProperty<Object> retornosFuncion = new ParseTreeProperty<>();
-
+    boolean retorno = false;
+    boolean ruptura = false;
     private Boolean resuelveOperadorLogico (Object a, Object b, Anasint.Operador_logico_2_arioContext ctx) {
         String operador = ctx.getText();
         boolean res = false;
@@ -92,21 +93,27 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //en la memoria las variables; en el resto de caso, es decir,
         //en una invocacion de subprograma, se hace antes de invocar
         //no aqui
+        Object retornoInstruccion = null;
         if (ctx.getParent().getClass().equals(Anasint.Bloque_programaContext.class))
             for (Variable variable: scopeGlobal.getVariables())
                 memoria.get(ctx).put(variable.getNombre(), null);
         for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
             //System.out.println("Ruptura? " + !instruccion.getTokens(Anasint.RUPTURA).isEmpty());
-            if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty())
-            //if (instruccion.instruccion_ruptura() != null)
+            retornoInstruccion = visit(instruccion);
+            //if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
+                //if (instruccion.instruccion_ruptura() != null)
+            //    break;
+                //else if (!instruccion.getTokens(Anasint.RETORNO).isEmpty())
+                //return visit(instruccion);
+            //}
+            if (retorno || ruptura) {
                 break;
-            else if (!instruccion.getTokens(Anasint.RETORNO).isEmpty())
-                return visit(instruccion);
-            else
-                visit(instruccion);
+            }
         }
         //return super.visitBloque_instrucciones(ctx);
-        return null;
+        retorno = false;
+        ruptura = false;
+        return retornoInstruccion;
     }
     public Object visitBloque_procedimiento (Anasint.Bloque_procedimientoContext ctx) {
         String nombreProcedimiento = ctx.IDENT().getText();
@@ -160,16 +167,10 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         // con las variables que hemos declarado inic. a null
             //memoria.put(bloque_instrucciones, new OrderedHashMap<>());
 
-        /*
-        for (Variable variable: variables)
-            memoria.get(ctx.getParent()).put(variable.getNombre(), new Valor());
-        */
-
         if (ctx.getParent().getClass().equals(Anasint.Bloque_programaContext.class)) {
             scopeGlobal.declaraVariables(variables);
         }
         return variables;
-        //return super.visitBloque_variables(ctx);
     }
 
     public List<Variable> visitDeclaracion_variable(Anasint.Declaracion_variableContext ctx) {
@@ -180,7 +181,6 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
 
     public List<Variable> visitLista_variables_tipadas (Anasint.Lista_variables_tipadasContext ctx) {
-        //System.out.println("first " + ctx.lista_variables_tipadas())
         List<Variable> res = new ArrayList<>();
         int i;
         String nombre;
@@ -189,28 +189,14 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             nombre = tipo.parent.getChild(i + 1).getText();
             res.add(new Variable(nombre, tipo.getText()));
         }
-        /*
-        for (Anasint.Variable_tipadaContext varTipada: ctx.variable_tipada())
-            res.add(new Variable(varTipada.IDENT().getText(), varTipada.tipo().getText()));
-        */
-
-        //scope.declaraVariable(varTipada.IDENT().getText(), varTipada.tipo().getText());
         return res;
     }
 
     public Object visitInstruccion (Anasint.InstruccionContext ctx) {
-        //esto hace que ignoremos todas las intrucciones detras de ruptura
-        //a nivel de bloque instruccion mas externo
-        //if (rupturaBloque.get(ctx.getParent()) != null && rupturaBloque.get(ctx.getParent())) {
-        //    System.out.println("[INTERPRETE] visitBloque_instrucciones RUPTURA " + ctx.getText());
-        //rupturaBloque.removeFrom(ctx);
-        //    return 1;
-        //}
-
-
-        if (retornosFuncion.get(closestInstruccionBlock(ctx)) != null) {
-            System.out.println("[INTERPRETE] visitBloque_instrucciones RETORNO memoria de " + ctx.getText() + " " + retornosFuncion.get(closestInstruccionBlock(ctx)).toString());
-            System.out.println("[INTERPRETE] visitBloque_instrucciones RETORNO La instruccion no deberia visitarse, un retorno se ha visitado ya " + ctx.getText());
+        //if (retornosFuncion.get(closestInstruccionBlock(ctx)) != null) {
+        if (retorno) {
+            System.out.println("[INTERPRETE] visitInstruccion RETORNO memoria de " + ctx.getText() + " " + retornosFuncion.get(closestInstruccionBlock(ctx)).toString());
+            System.out.println("[INTERPRETE] visitInstruccion RETORNO La instruccion no deberia visitarse, un retorno se ha visitado ya " + ctx.getText());
             return 1;
         }
 
@@ -224,6 +210,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
     public Object visitInstruccion_ruptura (Anasint.Instruccion_rupturaContext ctx) {
         ParserRuleContext closest = closestBreakBlock(ctx);
+        ruptura = true;
         System.out.println("[INTERPRETE] Hemos puesto ruptura en " + closest.getClass());
         //rupturaBloque.put(closestBreakBlock(ctx), true);
         return 1;
@@ -231,30 +218,44 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     // esto no deberia hacerse aqui, solo funciona para bucles!
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         //System.out.println("[INTERPRETE] visitInstruccion_bucle " + ctx.predicado().getText());
-        boolean ruptura = false;
+        //boolean ruptura = false;
+        Object retornoInstruccion = null;
         while (!ruptura && visitPredicado(ctx.predicado())) {
             System.out.println("[INTERPRETE] visitInstruccion_bucle predicado (" +
                     ctx.predicado().getText() + ") = " +
                     visitPredicado(ctx.predicado()));
             for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
                 System.out.println("[INTERPRETE] visitInstruccion_bucle: " + instruccion.getText());
+                retornoInstruccion = visit(instruccion);
+                if (retorno) {
+                    retorno = false;
+                    break;
+                }
+                else if (ruptura) {
+                    ruptura = false;
+                    break;
+                } /*else
                 if (!instruccion.getTokens(Anasint.RETORNO).isEmpty())
                     //if (instruccion.instruccion_retorno() != null)
-                    return visitInstruccion(instruccion);
+                    return visit(instruccion);
+                    //return visitInstruccion(instruccion);
                 else if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
                     //else if (instruccion.instruccion_ruptura() != null) {
                     ruptura = true;
                     break;
                 } else
-                    visitInstruccion(instruccion);
+                    visit(instruccion);
+                    //visitInstruccion(instruccion);
+                    */
             }
         }
-        return 1;
+        return retornoInstruccion;
     }
     public Object visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
         List<Anasint.InstruccionContext> instruccionesSi = new ArrayList<>();
         List<Anasint.InstruccionContext> instruccionesSino = new ArrayList<>();
         boolean encontradoSino = false;
+        Object retornoInstruccion = null;
         //dividimos las instrucciones en dos partes, si/sino
         for (ParseTree hijo: ctx.children) {
             if (hijo.equals(ctx.SINO()))
@@ -273,42 +274,44 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             //se visitan instrucciones si
             for (Anasint.InstruccionContext instruccion: instruccionesSi) {
                 System.out.println("[INTERPRETE] visitInstruccion: instr si entonces ");
-                if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
-                //if (instruccion.instruccion_ruptura() != null) {
+                retornoInstruccion = visitInstruccion(instruccion);
+                if (retorno) {
+                    retorno = false;
+                    System.out.println("[INTERPRETE] visitInstruccion_control NO visitamos la instruccion porque tiene retorno");
+                    break;
+                }
+                else if (ruptura) {
+                    ruptura = false;
                     System.out.println("[INTERPRETE] visitInstruccion_control NO visitamos la instruccion porque tiene ruptura");
                     break;
                 }
-                visitInstruccion(instruccion);
-                System.out.println("[INTERPRETE] visitInstruccion_control instr si " + instruccion.getText());
             }
             //se visitan las instrucciones sino
         else
             for (Anasint.InstruccionContext instruccion: instruccionesSino) {
-               if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
-                // if (instruccion.instruccion_ruptura() != null) {
+                retornoInstruccion = visitInstruccion(instruccion);
+                if (retorno) {
+                    retorno = false;
+                    System.out.println("[INTERPRETE] visitInstruccion_control NO visitamos la instruccion porque tiene retorno");
+                    break;
+                }
+                else if (ruptura) {
+                    ruptura = false;
                     System.out.println("[INTERPRETE] visitInstruccion_control NO visitamos la instruccion porque tiene ruptura");
                     break;
                 }
-                visitInstruccion(instruccion);
                 System.out.println("[INTERPRETE] visitInstruccion_control instr sino " + instruccion.getText());
             }
-        return 1;
+        return retornoInstruccion;
     }
     public Object visitInstruccion_retorno (Anasint.Instruccion_retornoContext ctx) {
-        Object res;
-
         List<Object> valoresRetorno = new ArrayList<>();
-
-        for (Anasint.Evaluacion_variableContext evalVariable: ctx.evaluaciones_variables().evaluacion_variable()) {
+        for (Anasint.Evaluacion_variableContext evalVariable: ctx.evaluaciones_variables().evaluacion_variable())
             valoresRetorno.add(visitEvaluacion_variable(evalVariable));
-        }
-
-        res = valoresRetorno.get(0);
-        //res.setValores(valoresRetorno);
 
         retornosFuncion.put(closestInstruccionBlock(ctx), valoresRetorno);
-
-        System.out.println("[INTERPRETE] visitInstruccion_retorno " + res);
+        retorno = true;
+        System.out.println("[INTERPRETE] visitInstruccion_retorno " + valoresRetorno.toString());
         return valoresRetorno;
     }
     public Object visitInstruccion_asig (Anasint.Instruccion_asigContext ctx) {
@@ -516,18 +519,13 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return resuelveOperadorAritmetico(
                 visitOperacion(ctx.operacion(0)),
                 visitOperacion(ctx.operacion(1)),
-                "*");
+                ctx.getChild(1).getText());
     }
     public Integer visitOp_aritmetica_sr (Anasint.Op_aritmetica_srContext ctx) {
-        String operador;
-        if (ctx.MAS() != null)
-            operador = "+";
-        else
-            operador = "-";
         return resuelveOperadorAritmetico(
                 visitOperacion(ctx.operacion(0)),
                 visitOperacion(ctx.operacion(1)),
-                operador);
+                ctx.getChild(1).getText());
     }
 
 }

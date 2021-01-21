@@ -374,6 +374,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         boolean algunPadreFuncion = anyParentIsAFunction(ctx);
         ParserRuleContext bloqueAsociadoARetorno = closestReturnBlock(ctx);
+
         //Comprobamos que algun nodo padre es una funcion. Evaluamos retorno si lo tiene.
         if (algunPadreFuncion)
             retornoTree.put(bloqueAsociadoARetorno, new ArrayList<>());
