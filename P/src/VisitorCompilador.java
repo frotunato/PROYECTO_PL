@@ -192,32 +192,9 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         String nombrePrograma = ctx.IDENT().getText();
         String res, nombre;
         funciones.put(nombrePrograma, new ArrayList<>());
-        int i = 0;
         int j;
         res = "private static void " + nombrePrograma + " (";
-        //la funcion tiene varios args de salida
-        /*
-        if (ctx.lista_variables_tipadas(i).IDENT().size() > 1) {
-            res += "Object[] ";
-            tipoSalida = "Object[]";
-            for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas(1).tipo()) {
-                j = tipo.getParent().children.indexOf(tipo);
-                nombre = tipo.parent.getChild(j + 1).getText();
-                declaracionVariablesSalida += (convierteTipo(tipo.getText()) + " " + nombre +";\n");
-                scopePadre.put(nombre, convierteTipo(tipo.getText()));
-            }
-        }
-        //funcion solo tiene un arg de salida
-        else {
-            Anasint.TipoContext tipo = ctx.lista_variables_tipadas(i).tipo(0);
-            j = tipo.getParent().children.indexOf(tipo);
-            nombre = tipo.parent.getChild(j + 1).getText();
-            tipo.parent.getChild(j + 1).getText();
-            tipoSalida = convierteTipo(tipo.getText());
-            res += convierteTipo(tipo.getText()) + " ";
-            declaracionVariablesSalida += convierteTipo(tipo.getText()) + " " + nombre +";\n";
-            scopePadre.put(nombre, convierteTipo(tipo.getText()));
-        }*/
+
         //entrada
         for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas().tipo()) {
             j = tipo.getParent().children.indexOf(tipo);
@@ -273,7 +250,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         variablesCondicion = "!Arrays.asList(";
         String valorPredicado = (String) visit(ctx.predicado());
         variablesBajoCondicion = false;
-        System.out.println("[COMPILADOR] visitInstruccion_control: " + variablesCondicion.toString());
+        System.out.println("[COMPILADOR] visitInstruccion_control: " + variablesCondicion);
         variablesCondicion = quitaUltimaComa(variablesCondicion) + ").contains(null) && (";
         //for (String variableCondicion: variablesCondicion)
             //precondicion += variablesCondicion.pop() + "!=null"

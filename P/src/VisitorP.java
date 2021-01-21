@@ -487,19 +487,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
         System.out.println("[ANALIZADOR SEMANTICO] visitEvaluacion_variable: " + ctx.getText());
-        //si la evaluacion es una variable, comprobamos existencia, que sea valida
-        //como argumento
-        /*
-        if (ctx.subprograma() != null) {
-            if (getGlobalScope().existeFuncion(ctx.subprograma().getChild(0).getText()) &&
-                    !getGlobalScope().getSubprograma(ctx.subprograma().getChild(0).getText()).esArgumento() && //piede fallar, quitar !
-                    !ctx.getParent().getClass().equals(Anasint.Evaluaciones_variablesContext.class))
-                throw new IllegalStateException("Variables retorno multiple solo en definicion");
-            else if (getGlobalScope().existeProcedimiento(ctx.subprograma().getChild(0).getText()))
-                throw new IllegalStateException("Los procedimientos no pueden formar parte de una evaluación de variable");
-        }
-        */
-        return (String) visit(ctx.getChild(0));
+        return (String) super.visitEvaluacion_variable(ctx);
     }
 
     public String visitOp_aritmetica_envuelta (Anasint.Op_aritmetica_envueltaContext ctx) {
@@ -522,7 +510,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         else
             return "Indefinido";
     }
-
 
     public String visitValor_booleano_true (Anasint.Valor_booleano_trueContext ctx) {
         return "Boolean";

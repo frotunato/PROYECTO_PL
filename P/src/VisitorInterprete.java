@@ -38,8 +38,6 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
 
     private Integer resuelveOperadorAritmetico (Object a, Object b, String operador) {
         int res = 0;
-        //if (a == null || b == null)
-        //    return new Valor(new Numero(0));
         switch (operador) {
             case "+" -> res = (Integer) a + (Integer) b;
             case "-" -> res = (Integer) a - (Integer) b;
@@ -98,19 +96,11 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             for (Variable variable: scopeGlobal.getVariables())
                 memoria.get(ctx).put(variable.getNombre(), null);
         for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
-            //System.out.println("Ruptura? " + !instruccion.getTokens(Anasint.RUPTURA).isEmpty());
             retornoInstruccion = visit(instruccion);
-            //if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
-                //if (instruccion.instruccion_ruptura() != null)
-            //    break;
-                //else if (!instruccion.getTokens(Anasint.RETORNO).isEmpty())
-                //return visit(instruccion);
-            //}
             if (retorno || ruptura) {
                 break;
             }
         }
-        //return super.visitBloque_instrucciones(ctx);
         retorno = false;
         ruptura = false;
         return retornoInstruccion;
@@ -126,12 +116,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         if (!scopeGlobal.existeSubprograma(nombreProcedimiento)) {
             scopeGlobal.declaraSubprograma(procedimiento);
         }
-
-        //Map<String, Valor> valoresIniciales = new OrderedHashMap<>();
-
-        //memoria.get(ctx.bloque_instrucciones()).putAll(valoresIniciales);
-        //memoria.put(ctx, valoresIniciales);
-        return 1;
+        return null;
     }
     public Object visitBloque_funcion (Anasint.Bloque_funcionContext ctx) {
         String nombreFuncion = ctx.IDENT().getText();
@@ -193,15 +178,11 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
 
     public Object visitInstruccion (Anasint.InstruccionContext ctx) {
-        //if (retornosFuncion.get(closestInstruccionBlock(ctx)) != null) {
         if (retorno) {
             System.out.println("[INTERPRETE] visitInstruccion RETORNO memoria de " + ctx.getText() + " " + retornosFuncion.get(closestInstruccionBlock(ctx)).toString());
             System.out.println("[INTERPRETE] visitInstruccion RETORNO La instruccion no deberia visitarse, un retorno se ha visitado ya " + ctx.getText());
-            return 1;
+            return null;
         }
-
-        //if (ctx.instruccion_retorno() != null)
-        //    return visitInstruccion_retorno(ctx.instruccion_retorno());
         return super.visit(ctx);
     }
     public Object visitInstruccion_llamada_subprograma (Anasint.Instruccion_llamada_subprogramaContext ctx) {
@@ -217,7 +198,6 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     // esto no deberia hacerse aqui, solo funciona para bucles!
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         //System.out.println("[INTERPRETE] visitInstruccion_bucle " + ctx.predicado().getText());
-        //boolean ruptura = false;
         Object retornoInstruccion = null;
         while (!ruptura && visitPredicado(ctx.predicado())) {
             System.out.println("[INTERPRETE] visitInstruccion_bucle predicado (" +
@@ -400,8 +380,6 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
 
     public Object visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
-        //if (ctx.subprograma() != null)
-        //    return ((List<Object>) super.visitEvaluacion_variable(ctx)).get(0);
         return super.visitEvaluacion_variable(ctx);
     }
     public Object visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
@@ -467,11 +445,6 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
 
     public Object visitSubprograma_ultima_posicion (Anasint.Subprograma_ultima_posicionContext ctx) {
         List<Object> ultimoValor = (List<Object>) visit(ctx.evaluacion_variable());
-        /*if (ctx.variable() != null)
-            ultimoValor = visitVariable(ctx.variable()).getUltimoValorSecuencia();
-        else
-            ultimoValor = visitOperando_secuencia(ctx.operando_secuencia()).getUltimoValorSecuencia();
-        */
         System.out.println("visitUltima_posicion es " + ctx.getText() + " = " + ultimoValor);
         return ultimoValor.get(ultimoValor.size() - 1);
     }
