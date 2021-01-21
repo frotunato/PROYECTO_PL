@@ -68,10 +68,10 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     private String mostrar () {
         return
                 "private static void mostrar (Boolean[] entrada) {\n" +
-                "   System.out.println(entrada);\n" +
+                "   System.out.println(\"Mostrar: \" + Arrays.toString(entrada));\n" +
                 "}\n" +
                 "private static void mostrar (Integer[] entrada) {\n" +
-                "   System.out.println(entrada);\n" +
+                "   System.out.println(\"Mostrar: \" + Arrays.toString(entrada));\n" +
                 "}\n";
     }
 
