@@ -11,6 +11,8 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     ParseTreeProperty<List<Boolean>> retornoTree = new ParseTreeProperty<>();
     ParseTreeProperty<Boolean> rupturaTree = new ParseTreeProperty<>();
     boolean compruebaVariableInicializada = false;
+    boolean retornoMultiplePermitido = false;
+    List<Boolean> retornosBloque = new ArrayList<>();
 
     private String getTipoOperacionIgualdad (String a, String b, String operador) {
         String res = "Indefinido";
@@ -64,18 +66,18 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             return false;
     }
     private ParserRuleContext closestReturnBlock (ParserRuleContext ctx) {
-        if (ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class) ||
-                ctx.getParent().getClass().equals(Anasint.Instruccion_controlContext.class) ||
-                ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class))
-            return ctx.getParent();
+        if (ctx.getClass().equals(Anasint.Bloque_funcionContext.class) ||
+                ctx.getClass().equals(Anasint.Instruccion_controlContext.class) ||
+                ctx.getClass().equals(Anasint.Bloque_instruccionesContext.class))
+            return ctx;
         else
             return closestReturnBlock(ctx.getParent());
     }
     private ParserRuleContext closestBreakBlock (ParserRuleContext ctx) {
         if (//ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class) ||
-                ctx.getParent().getClass().equals(Anasint.Instruccion_controlContext.class) ||
-                ctx.getParent().getClass().equals(Anasint.Instruccion_bucleContext.class) ||
-                ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class))
+                ctx.getClass().equals(Anasint.Instruccion_controlContext.class) ||
+                ctx.getClass().equals(Anasint.Instruccion_bucleContext.class) ||
+                ctx.getClass().equals(Anasint.Bloque_instruccionesContext.class))
             return ctx.getParent();
         else
             return closestBreakBlock(ctx.getParent());
@@ -260,15 +262,15 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                 !ctx.getTokens(Anasint.RUPTURA).isEmpty() &&
                 //ctx.instruccion_ruptura() != null &&
                 !retornoTree.get(ctx.getParent()).contains(true))
-            throw new IllegalStateException("Funcion con ruptura sin retorno alcanzable");
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitInstruccion: Funcion con ruptura sin retorno alcanzable");
 
         //instrucciones despues de ruptura
         if (rupturaTree.get(ctx.getParent()) != null)
-            System.out.println("No se admiten instrucciones después de una ruptura");
+            System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion: No se admiten instrucciones después de una ruptura");
 
             //throw new IllegalStateException("No se admiten instrucciones después de una ruptura");
         if (retornoTree.get(ctx.getParent()) != null && retornoTree.get(ctx.getParent()).size() == 2)
-            throw new IllegalStateException("No se admiten instrucciones después de un retorno");
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitInstruccion: No se admiten instrucciones después de un retorno");
 
         return super.visit(ctx);
     }
@@ -293,14 +295,16 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         compruebaVariableInicializada = true;
         // cargamos en arrTiposDer los tipos de las expresiones
         for (Anasint.Evaluacion_variableContext varDerecha: expresionDerecha.evaluacion_variable()) {
-            System.out.println("ESTAMOS ASIGNANDO " + varDerecha.getText() + " clase " + varDerecha.getClass());
+            System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_asig: ESTAMOS ASIGNANDO " + varDerecha.getText() + " clase " + varDerecha.getClass());
             if (varDerecha.subprograma() != null && varDerecha.subprograma().getClass().equals(Anasint.Subprograma_declaradoContext.class)) {
+                retornoMultiplePermitido = true;
                 visitEvaluacion_variable(varDerecha);
+                retornoMultiplePermitido = false;
                 nombreSubprograma = varDerecha.subprograma().getChild(0).getText();
                 if (!getGlobalScope().existeSubprograma(nombreSubprograma))
-                    throw new IllegalStateException("Subprograma no definido! " + nombreSubprograma);
+                    throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitInstruccion_asig: Subprograma no definido! " + nombreSubprograma);
                 if (getGlobalScope().existeProcedimiento(nombreSubprograma))
-                    throw new IllegalArgumentException("Los procedimientos no pueden ser usados en asignaciones");
+                    throw new IllegalArgumentException("[ANALIZADOR SEMANTICO] visitInstruccion_asig: Los procedimientos no pueden ser usados en asignaciones");
                 else if (getGlobalScope().existeFuncion(nombreSubprograma))
                     arrTiposDer.addAll(getGlobalScope().getSubprograma(nombreSubprograma).getTiposSalida());
             } else {
@@ -309,15 +313,15 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         }
 
         if (arrTiposIzq.size() != arrTiposDer.size())
-            throw new IllegalStateException("Las asignaciones no tienen el mismo numero de elementos");
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitInstruccion_asig: Las asignaciones no tienen el mismo numero de elementos");
 
         //Comprobación del tipo de la expresión y su variable asociada
         for (int i = 0; i < arrTiposIzq.size(); i++) {
             System.out.println(arrTiposIzq.size() + " " + arrTiposIzq.get(i));
             if (arrTiposIzq.get(i).contains("ArrayList") && arrTiposDer.get(i).equals("ArrayList<>")) {
-                System.out.println("Lista tipada vs generica ");
+                System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_asig: Lista tipada vs generica ");
             } else if (!arrTiposIzq.get(i).equals(arrTiposDer.get(i))) {
-                throw new IllegalStateException("Asignación no valida... Izq: " + arrTiposIzq.toString() +
+                throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitInstruccion_asig: Asignación no valida... Izq: " + arrTiposIzq.toString() +
                         " vs Der: " + arrTiposDer.toString());
             }
         }
@@ -333,121 +337,113 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     public String visitInstruccion_retorno (Anasint.Instruccion_retornoContext ctx) {
         boolean algunPadreFuncion = anyParentIsAFunction(ctx);
         if (!algunPadreFuncion)
-            throw new IllegalStateException("Retorno solo válido dentro de función");
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitInstruccion_retorno: Retorno solo válido dentro de función");
 
         Scope scope = getUpperScope(ctx);
         List<String> tiposSalidaDefinidos = getGlobalScope().getSubprograma(scope.getNombre()).getTiposSalida();
         List<String> tiposSalidaPrograma = new ArrayList<>();
-
+        //tenemos que comprobar en el retorno que devolvemos lo declarado
         for (Anasint.Evaluacion_variableContext variablesRetorno: ctx.evaluaciones_variables().evaluacion_variable()) {
             tiposSalidaPrograma.add(visitEvaluacion_variable(variablesRetorno));
         }
 
         if (!tiposSalidaDefinidos.equals(tiposSalidaPrograma))
-            throw new IllegalStateException("Instruccion retorno inválida (no devuelve los tipos especificados)");
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitInstruccion_retorno: Instruccion retorno inválida (no devuelve los tipos especificados)");
 
-        System.out.println("Estamos en la funcion" + scope.getNombre() +
+        System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_retorno: Estamos en la funcion" + scope.getNombre() +
                 " obtenidos " + tiposSalidaPrograma);
 
         ParserRuleContext bloqueAsociadoARetorno = closestReturnBlock(ctx);
-        //List<String> tiposParametrosRetorno = new ArrayList<>();
-        if (retornoTree.get(bloqueAsociadoARetorno) == null) {
-            retornoTree.put(bloqueAsociadoARetorno, new ArrayList<>());
-            System.out.println("El padre no tiene un arr bool para guardar ret " + bloqueAsociadoARetorno.getClass() + " instr " + ctx.getText());
-        } else
-            System.out.println("El padre tiene un arr bool para guardar retornos, " + retornoTree.get(bloqueAsociadoARetorno).toString());
+
         retornoTree.get(bloqueAsociadoARetorno).add(true);
-        System.out.println("El arr bool para "+  ctx.getParent().getText() + " es " + retornoTree.get(bloqueAsociadoARetorno).toString());
-        return "True";
+        System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_retorno: El arr bool para "+  ctx.getParent().getText() + " es " + retornoTree.get(bloqueAsociadoARetorno).toString());
+        return null;
     }
     public Object visitInstruccion_ruptura (Anasint.Instruccion_rupturaContext ctx) {
         ParserRuleContext closest = closestBreakBlock(ctx);
-        System.out.println("[ANALIZADOR SEMANTICO] Hemos puesto ruptura en " + closest.getClass());
+        System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_retorno: Hemos puesto ruptura en " + closest.getClass());
         rupturaTree.put(closestBreakBlock(ctx), true);
         return super.visitInstruccion_ruptura(ctx);
     }
     public Object visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
         String resultado = (String) visit(ctx.predicado());
 
-        if (resultado.equals("Indefinido"))
-            throw new Error ("[ANALIZADOR SEMANTICO] visitInstruccion_control: El predicado debe ser una expresión booleana");
-
         boolean algunPadreFuncion = anyParentIsAFunction(ctx);
-        ParserRuleContext bloqueAsociadoARetorno = closestReturnBlock(ctx);
 
         //Comprobamos que algun nodo padre es una funcion. Evaluamos retorno si lo tiene.
+        //esto igual sobra
         if (algunPadreFuncion)
-            retornoTree.put(bloqueAsociadoARetorno, new ArrayList<>());
+            retornoTree.put(ctx, new ArrayList<>());
 
-        System.out.println("visitInstruccion_control " + ctx.getText()  + " res predicado:" + resultado);
-
-        if (!resultado.equals("Boolean"))
-            System.out.println("visitInstruccion_control PREDICADO NO BOOLEANO " + ctx.predicado().getText());
+        //predicado cierto, falso o indefinido, no numero
+        if (resultado.equals("Integer"))
+            System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_control: PREDICADO NO BOOLEANO/INDEFINIDO " + ctx.predicado().getText());
             //throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
 
-        // si comento esto, no se mete por donde deberia!
-        // if, visitar to do y analizar. no al reves
         for (Anasint.InstruccionContext instruccion: ctx.instruccion())
-            visitInstruccion(instruccion);
+            visit(instruccion);
+
+        System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_control: " + ctx.getText() + " lista de retornos: "+  retornoTree.get(ctx));
+
 
         //aqui ya se han procesado todas las instrucciones, analizamos retornos
-        System.out.println("RETORNO MAESTRO " + ctx.getText() + " ret "+  retornoTree.get(ctx) + "algun padre funcion " + algunPadreFuncion);
-
+        //solo si se trata de una funcion, claro, y de si existen retornos dentro
+        ParserRuleContext bloquePadreAsociadoARetorno = closestReturnBlock(ctx.getParent());
+        //añadimos si los retornos de esta instr. control son validos al padre
+        //si no validos, false. si validos, true
         if (algunPadreFuncion && retornoTree.get(ctx) != null) {
             if (!retornoTree.get(ctx).contains(false) && retornoTree.get(ctx).size() == 2)
-                retornoTree.get(bloqueAsociadoARetorno).add(true);
+                retornoTree.get(bloquePadreAsociadoARetorno).add(true);
             else
-                retornoTree.get(bloqueAsociadoARetorno).add(false);
+                retornoTree.get(bloquePadreAsociadoARetorno).add(false);
         }
         return 0;
     }
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         String resultado = (String) visit(ctx.predicado());
-
-        if (!resultado.equals("Boolean"))
-            throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
-
+        if (resultado.equals("Integer"))
+            System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_bucle: PREDICADO NO BOOLEANO/INDEFINIDO " + ctx.predicado().getText());
         return super.visitInstruccion_bucle(ctx);
     }
-
 
     public String visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
         String tipoArgumento;
         int indexArgumento = 0;
         String tipoRes = "Indefinido";
         String nombreSubprograma = ctx.IDENT().getText();
-        System.out.println("visitSubprograma " + ctx.IDENT().getText());
+        System.out.println("[ANALIZADOR SEMANTICO] visitSubprograma_declarado: " + ctx.IDENT().getText());
         //comprobamos la existencia del subprograma
+
         if (!getGlobalScope().existeSubprograma(nombreSubprograma))
-            throw new IllegalArgumentException("El subprograma no está definido");
+            throw new IllegalArgumentException("[ANALIZADOR SEMANTICO] visitSubprograma_declarado: El subprograma no está definido");
 
         Subprograma subprograma = getGlobalScope().getSubprograma(nombreSubprograma);
 
         if (subprograma.getEntrada().size() != ctx.evaluacion_variable().size())
-            throw new IllegalArgumentException("El número de argumentos del subprograma " + ctx.IDENT().getText() + " no es correcto, esperando " + subprograma.getEntrada().size() + ", obtenemos " +  ctx.evaluacion_variable().size() + " " + ctx.getText());
-
+            throw new IllegalArgumentException("[ANALIZADOR SEMANTICO] visitSubprograma_declarado: El número de argumentos del subprograma " + nombreSubprograma + " no es correcto, esperando " + subprograma.getEntrada().size() + ", obtenemos " +  ctx.evaluacion_variable().size() + " " + ctx.getText());
+        else if (!subprograma.esArgumento() && !retornoMultiplePermitido)
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitSubprograma_declarado: No se permiten funciones de retorno multiple fuera de una asignacion (" + nombreSubprograma + ")");
         //comprobamos si los tipos de entrada son los adecuados
+        retornoMultiplePermitido = false;
         for (Anasint.Evaluacion_variableContext variable: ctx.evaluacion_variable()) {
             tipoArgumento = visitEvaluacion_variable(variable);
-
+            //comprobamos los tipos de argumentos recibidos con los del programa declarado
             if (!tipoArgumento.equals(subprograma.getEntrada().get(indexArgumento).getTipo()))
-                throw new IllegalStateException("visitSubprograma tipo arg inválido orig: " +
+                throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitSubprograma_declarado: tipo arg inválido orig: " +
                         subprograma.getEntrada().get(indexArgumento).getTipo() + " , recib: " + tipoArgumento);
 
+            /*
             if (variable.subprograma() != null &&
                     //scopeGlobal.getSubprograma(variable.subprograma().IDENT().getText()).esFuncion() &&
                     !getGlobalScope().getSubprograma(variable.subprograma().getChild(0).getText()).esArgumento())
-                throw new IllegalStateException("visitSubprograma argumento parametro funcion DEV > 1 como parametro");
-            System.out.println("visitSubprograma argumento " + variable.getText());
+                throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitSubprograma_declarado: argumento parametro funcion DEV > 1 como parametro");
+            */
+            System.out.println("[ANALIZADOR SEMANTICO] visitSubprograma_declarado:" + variable.getText());
             indexArgumento++;
         }
 
-        if (subprograma.getTipo().equals("Funcion")) {
-            if (!subprograma.esArgumento() &&
-                ctx.getParent().getClass().equals(Anasint.Instruccion_bucleContext.class))
-                throw new IllegalStateException("La función de avance solo puede tener un parámetro de retorno");
+        if (subprograma.esArgumento())
             tipoRes = subprograma.getSalida().get(0).getTipo();
-        }
 
       return tipoRes;
     }
@@ -490,7 +486,10 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
-        System.out.println("EVALUACION VARIABLE " + ctx.getText());
+        System.out.println("[ANALIZADOR SEMANTICO] visitEvaluacion_variable: " + ctx.getText());
+        //si la evaluacion es una variable, comprobamos existencia, que sea valida
+        //como argumento
+        /*
         if (ctx.subprograma() != null) {
             if (getGlobalScope().existeFuncion(ctx.subprograma().getChild(0).getText()) &&
                     !getGlobalScope().getSubprograma(ctx.subprograma().getChild(0).getText()).esArgumento() && //piede fallar, quitar !
@@ -499,6 +498,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             else if (getGlobalScope().existeProcedimiento(ctx.subprograma().getChild(0).getText()))
                 throw new IllegalStateException("Los procedimientos no pueden formar parte de una evaluación de variable");
         }
+        */
         return (String) visit(ctx.getChild(0));
     }
 
@@ -538,18 +538,18 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         String tipoVariable = (String) visit(ctx.variable());
         String tipoAcceso = (String) visit(ctx.operacion());
         if (!tipoAcceso.equals("Integer")) {
-            throw new IllegalArgumentException("Indice de acceso a secuencia no numérico");
+            throw new IllegalArgumentException("[ANALIZADOR SEMANTICO] visitVariable_acceso: Indice de acceso a secuencia no numérico");
         }
         else if (!tipoVariable.contains("ArrayList")) {
             throw new IllegalStateException("La variable " + ctx.variable().IDENT() + " no es de tipo secuencia");
         }
-        System.out.println("Visiting variable acceso " + ctx.getText() + " tipo " + tipoVariable.replace("ArrayList<", "").replace(">", ""));
+        System.out.println("[ANALIZADOR SEMANTICO] visitVariable_acceso: " + ctx.getText() + " tipo " + tipoVariable.replace("ArrayList<", "").replace(">", ""));
         return tipoVariable.replace("ArrayList<", "").replace(">", "");
     }
 
     public String visitVariable (Anasint.VariableContext ctx) {
         Scope scope = getUpperScope(ctx);
-        System.out.println("Checking variable " + ctx.getText() + " on scope ");
+        System.out.println("[ANALIZADOR SEMANTICO] visitVariable: " + ctx.getText() + " on scope ");
         //System.out.println("PARENT=?=?" + ctx.getParent().getClass() + " to " + Anasint.Operando_universalContext.class);
 
         if (!scope.existeVariable(ctx.IDENT().getText()))
@@ -592,16 +592,16 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         System.out.println("visitVacia " + ctx.getText());
         String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
         if (!tipoArgumento.contains("ArrayList"))
-            throw new IllegalStateException("operador vacia solo válido en secuencias");
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitSubprograma_vacia: operador vacia solo válido en secuencias");
         return "Boolean";
     }
 
     public String visitSubprograma_mostrar (Anasint.Subprograma_mostrarContext ctx) {
         String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
         if (ctx.getParent().getClass().equals(Anasint.Evaluacion_variableContext.class))
-            throw new IllegalStateException("Procedimiento mostrar no válido como evaluación");
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitSubprograma_mostrar: Procedimiento mostrar no válido como evaluación");
         if (!tipoArgumento.contains("ArrayList"))
-            throw new IllegalStateException("operador mostrar solo válido en secuencias");
+            throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitSubprograma_mostrar: operador mostrar solo válido en secuencias");
         //return tipoArgumento;
         return null;
     }

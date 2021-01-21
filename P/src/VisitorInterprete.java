@@ -65,17 +65,17 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
 
     private ParserRuleContext closestInstruccionBlock (ParserRuleContext ctx) {
-        if (ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class))
-            return ctx.getParent();
+        if (ctx.getClass().equals(Anasint.Bloque_instruccionesContext.class))
+            return ctx;
         else
             return closestInstruccionBlock(ctx.getParent());
     }
     private ParserRuleContext closestBreakBlock (ParserRuleContext ctx) {
         if (//ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class) ||
-                ctx.getParent().getClass().equals(Anasint.Instruccion_controlContext.class) ||
-                        ctx.getParent().getClass().equals(Anasint.Instruccion_bucleContext.class) ||
-                        ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class))
-            return ctx.getParent();
+                ctx.getClass().equals(Anasint.Instruccion_controlContext.class) ||
+                        ctx.getClass().equals(Anasint.Instruccion_bucleContext.class) ||
+                        ctx.getClass().equals(Anasint.Bloque_instruccionesContext.class))
+            return ctx;
         else
             return closestBreakBlock(ctx.getParent());
     }
@@ -205,8 +205,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return super.visit(ctx);
     }
     public Object visitInstruccion_llamada_subprograma (Anasint.Instruccion_llamada_subprogramaContext ctx) {
-        visit(ctx.subprograma());
-        return 0;
+        return visit(ctx.subprograma());
     }
     public Object visitInstruccion_ruptura (Anasint.Instruccion_rupturaContext ctx) {
         ParserRuleContext closest = closestBreakBlock(ctx);
@@ -269,7 +268,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         }
         //si el predicado es cierto (condicion), entramos a las instrucciones
         boolean valorPredicado = visitPredicado(ctx.predicado());
-        System.out.println("[INTERPRETE] visitInstruccion: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
+        System.out.println("[INTERPRETE] visitInstruccion: " + ctx.getText() + " + valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
         if (valorPredicado)
             //se visitan instrucciones si
             for (Anasint.InstruccionContext instruccion: instruccionesSi) {

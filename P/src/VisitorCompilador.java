@@ -33,7 +33,10 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         return res;
     }
     private String quitaUltimaComa (String str) {
-        return str.substring(0 ,str.lastIndexOf(","));
+        int lastIndex = str.lastIndexOf(",");
+        if (lastIndex >= 0)
+            return str.substring(0 ,str.lastIndexOf(","));
+        else return str;
     }
     private Map<String, String> getUpperScope (ParserRuleContext ctx) {
         if (scope.get(ctx) != null)
@@ -261,7 +264,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
            res += visit(instruccion);
         res += "}\n";
         //si el predicado es cierto (condicion), entramos a las instrucciones
-        System.out.println("[INTERPRETE] visitInstruccion_bucle: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
+        System.out.println("[COMPILADOR] visitInstruccion_bucle: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
         return res;
     }
 
@@ -284,7 +287,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         }
         res += "}\n";
         //si el predicado es cierto (condicion), entramos a las instrucciones
-        System.out.println("[INTERPRETE] visitInstruccion: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
+        System.out.println("[COMPILADOR] visitInstruccion: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
         return res;
     }
     public String visitInstruccion_ruptura (Anasint.Instruccion_rupturaContext ctx) {
