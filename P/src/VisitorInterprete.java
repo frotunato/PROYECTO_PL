@@ -1,4 +1,3 @@
-import Valor.Valor;
 import org.antlr.v4.misc.OrderedHashMap;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -12,55 +11,55 @@ import java.util.Map;
 public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     Scope scopeGlobal = new Scope("global");
 
-    ParseTreeProperty<Map<String, Valor>> memoria = new ParseTreeProperty<>();
-    ParseTreeProperty<Valor> retornosFuncion = new ParseTreeProperty<>();
+    ParseTreeProperty<Map<String, Object>> memoria = new ParseTreeProperty<>();
+    ParseTreeProperty<Object> retornosFuncion = new ParseTreeProperty<>();
 
-    private Valor resuelveOperadorLogico (Valor a, Valor b, Anasint.Operador_logico_2_arioContext ctx) {
+    private Boolean resuelveOperadorLogico (Object a, Object b, Anasint.Operador_logico_2_arioContext ctx) {
         String operador = ctx.getText();
         boolean res = false;
 
-        if (a.getEsNulo() || b.getEsNulo()) {
+        if (a == null || b == null) {
             System.out.println("resuelveOperadorLogico Evaluando " + a + " vs " + b + "a nulo...");
-
-            return new Valor(false);
+            return false;
         } else {
             switch (operador) {
                 case "==" -> res = a.equals(b);
                 case "!=" -> res = !a.equals(b);
-                case ">=" -> res = a.getValorNumerico() >= b.getValorNumerico();
-                case ">" -> res = a.getValorNumerico() > b.getValorNumerico();
-                case "<=" -> res = a.getValorNumerico() <= b.getValorNumerico();
-                case "<" -> res = a.getValorNumerico() < b.getValorNumerico();
+                case ">=" -> res = (Integer) a >= (Integer) b;
+                case ">" -> res = (Integer) a > (Integer) b;
+                case "<=" -> res = (Integer) a <= (Integer) b;
+                case "<" -> res = (Integer) a < (Integer) b;
             }
             System.out.println("resuelveOperadorLogico Evaluando " + a + " vs " + b + "(" + res + ")");
-            return new Valor(res);
+            return res;
         }
     }
-    private Valor resuelveOperadorAritmetico (Valor a, Valor b, String operador) {
+
+    private Integer resuelveOperadorAritmetico (Object a, Object b, String operador) {
         int res = 0;
         //if (a == null || b == null)
         //    return new Valor(new Numero(0));
         switch (operador) {
-            case "+" -> res = a.getValorNumerico() + b.getValorNumerico();
-            case "-" -> res = a.getValorNumerico() - b.getValorNumerico();
-            case "*" -> res = a.getValorNumerico() * b.getValorNumerico();
+            case "+" -> res = (Integer) a + (Integer) b;
+            case "-" -> res = (Integer) a - (Integer) b;
+            case "*" -> res = (Integer) a * (Integer) b;
         }
-        return new Valor(res);
+        return res;
     }
-    private Valor resuelveOperadorCondicion (Valor a, Valor b, Anasint.Operador_condicion_2_arioContext ctx) {
+    private Boolean resuelveOperadorCondicion (Object a, Object b, Anasint.Operador_condicion_2_arioContext ctx) {
         String operador = ctx.getText();
         boolean res = false;
         System.out.println("resuelveOperadorCondicion Evaluando " + a + " vs " + b);
 
-        if (a.getValorBooleano() == null || b.getValorBooleano() == null) {
+        if (a == null || b == null) {
             System.out.println("Resolucion condicion fallida");
-            return new Valor(false);
+            return false;
         } else {
             switch (operador) {
-                case "&&" -> res = a.getValorBooleano() && b.getValorBooleano();
-                case "||" -> res = a.getValorBooleano() || b.getValorBooleano();
+                case "&&" -> res = (Boolean) a && (Boolean) b;
+                case "||" -> res = (Boolean) a || (Boolean) b;
             }
-            return new Valor(res);
+            return res;
         }
     }
 
@@ -95,16 +94,19 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //no aqui
         if (ctx.getParent().getClass().equals(Anasint.Bloque_programaContext.class))
             for (Variable variable: scopeGlobal.getVariables())
-                memoria.get(ctx).put(variable.getNombre(), new Valor());
+                memoria.get(ctx).put(variable.getNombre(), null);
         for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
             //System.out.println("Ruptura? " + !instruccion.getTokens(Anasint.RUPTURA).isEmpty());
             if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty())
             //if (instruccion.instruccion_ruptura() != null)
                 break;
-            visit(instruccion);
+            else if (!instruccion.getTokens(Anasint.RETORNO).isEmpty())
+                return visit(instruccion);
+            else
+                visit(instruccion);
         }
         //return super.visitBloque_instrucciones(ctx);
-        return 1;
+        return null;
     }
     public Object visitBloque_procedimiento (Anasint.Bloque_procedimientoContext ctx) {
         String nombreProcedimiento = ctx.IDENT().getText();
@@ -180,8 +182,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public List<Variable> visitLista_variables_tipadas (Anasint.Lista_variables_tipadasContext ctx) {
         //System.out.println("first " + ctx.lista_variables_tipadas())
         List<Variable> res = new ArrayList<>();
-        int i = 0;
-        String nombre = "";
+        int i;
+        String nombre;
         for (Anasint.TipoContext tipo: ctx.tipo()) {
             i = tipo.getParent().children.indexOf(tipo);
             nombre = tipo.parent.getChild(i + 1).getText();
@@ -230,10 +232,10 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         //System.out.println("[INTERPRETE] visitInstruccion_bucle " + ctx.predicado().getText());
         boolean ruptura = false;
-        while (!ruptura && visitPredicado(ctx.predicado()).getValorBooleano()) {
+        while (!ruptura && visitPredicado(ctx.predicado())) {
             System.out.println("[INTERPRETE] visitInstruccion_bucle predicado (" +
                     ctx.predicado().getText() + ") = " +
-                    visitPredicado(ctx.predicado()).getValorBooleano());
+                    visitPredicado(ctx.predicado()));
             for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
                 System.out.println("[INTERPRETE] visitInstruccion_bucle: " + instruccion.getText());
                 if (!instruccion.getTokens(Anasint.RETORNO).isEmpty())
@@ -253,7 +255,6 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         List<Anasint.InstruccionContext> instruccionesSi = new ArrayList<>();
         List<Anasint.InstruccionContext> instruccionesSino = new ArrayList<>();
         boolean encontradoSino = false;
-        Map<String, Valor> mm = memoria.get(closestInstruccionBlock(ctx));
         //dividimos las instrucciones en dos partes, si/sino
         for (ParseTree hijo: ctx.children) {
             if (hijo.equals(ctx.SINO()))
@@ -266,7 +267,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             }
         }
         //si el predicado es cierto (condicion), entramos a las instrucciones
-        boolean valorPredicado = visitPredicado(ctx.predicado()).getValorBooleano();
+        boolean valorPredicado = visitPredicado(ctx.predicado());
         System.out.println("[INTERPRETE] visitInstruccion: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
         if (valorPredicado)
             //se visitan instrucciones si
@@ -293,32 +294,38 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             }
         return 1;
     }
-    public Valor visitInstruccion_retorno (Anasint.Instruccion_retornoContext ctx) {
-        Valor res;
+    public Object visitInstruccion_retorno (Anasint.Instruccion_retornoContext ctx) {
+        Object res;
 
-        List<Valor> valoresRetorno = new ArrayList<>();
+        List<Object> valoresRetorno = new ArrayList<>();
 
         for (Anasint.Evaluacion_variableContext evalVariable: ctx.evaluaciones_variables().evaluacion_variable()) {
             valoresRetorno.add(visitEvaluacion_variable(evalVariable));
         }
 
         res = valoresRetorno.get(0);
-        res.setValores(valoresRetorno);
+        //res.setValores(valoresRetorno);
 
-        retornosFuncion.put(closestInstruccionBlock(ctx), res);
+        retornosFuncion.put(closestInstruccionBlock(ctx), valoresRetorno);
 
         System.out.println("[INTERPRETE] visitInstruccion_retorno " + res);
-        return res;
+        return valoresRetorno;
     }
     public Object visitInstruccion_asig (Anasint.Instruccion_asigContext ctx) {
-        List<Valor> valores = new ArrayList<>();
-
+        List<Object> valores = new ArrayList<>();
+        String nombre;
         //lo enchufamos al bloque padre (instruccion)
         int i = 0;
 
         for (Anasint.Evaluacion_variableContext evalr: ctx.evaluaciones_variables().evaluacion_variable()) {
-            if (evalr.subprograma() != null && evalr.subprograma().getClass().equals(Anasint.Subprograma_declaradoContext.class))
-                valores.addAll(visitEvaluacion_variable(evalr).getValores());
+            if (evalr.subprograma() != null && evalr.subprograma().getClass().equals(Anasint.Subprograma_declaradoContext.class)) {
+                nombre = evalr.subprograma().getChild(0).getText();
+                Object retornoFuncion = visitEvaluacion_variable(evalr);
+                if (scopeGlobal.getSubprograma(nombre).getSalida().size() > 1)
+                    valores.addAll((List<Object>) retornoFuncion);
+                else
+                    valores.add(retornoFuncion);
+            }
             else
                 valores.add(visitEvaluacion_variable(evalr));
         }
@@ -334,81 +341,80 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return 1;
     }
 
-    public Valor visitPredicado (Anasint.PredicadoContext ctx) {
-        return (Valor) super.visit(ctx);
+    public Boolean visitPredicado (Anasint.PredicadoContext ctx) {
+        return (Boolean) super.visit(ctx);
     }
-    public Valor visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
-        Valor valorPredicado = visitPredicado(ctx.predicado());
-        valorPredicado.setValorBooleano(!valorPredicado.getValorBooleano());
-        return valorPredicado;
+    public Boolean visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
+        return !visitPredicado(ctx.predicado());
     }
-    public Valor visitPredicado_envuelto (Anasint.Predicado_envueltoContext ctx) {
+    public Boolean visitPredicado_envuelto (Anasint.Predicado_envueltoContext ctx) {
         return visitPredicado(ctx.predicado());
     }
-    public Valor visitPredicado_base (Anasint.Predicado_baseContext ctx) {
+    public Boolean visitPredicado_base (Anasint.Predicado_baseContext ctx) {
         return visitCondicion(ctx.condicion());
     }
-    public Valor visitPredicado_rec(Anasint.Predicado_recContext ctx) {
-        Valor predicadoA = visitPredicado(ctx.predicado(0));
-        Valor predicadoB = visitPredicado(ctx.predicado(1));
+    public Boolean visitPredicado_rec(Anasint.Predicado_recContext ctx) {
+        Boolean predicadoA = visitPredicado(ctx.predicado(0));
+        Boolean predicadoB = visitPredicado(ctx.predicado(1));
         System.out.println("predicado rec me llega " + predicadoA  + " " + predicadoB + " " + ctx.getText());
         return resuelveOperadorCondicion(predicadoA,
                 predicadoB, ctx.operador_condicion_2_ario());
     }
 
-    public Valor visitCondicion (Anasint.CondicionContext ctx) {
-        return (Valor) super.visit(ctx);
+    public Boolean visitCondicion (Anasint.CondicionContext ctx) {
+        return (Boolean) super.visit(ctx);
     }
-    public Valor visitCondicion_base (Anasint.Condicion_baseContext ctx) {
-        return (Valor) visit(ctx.getChild(0));
+    public Object visitCondicion_base (Anasint.Condicion_baseContext ctx) {
+        return visit(ctx.getChild(0));
     }
-    public Valor visitCondicion_envuelta (Anasint.Condicion_envueltaContext ctx) {
-        return (Valor) visit(ctx.condicion());
+    public Boolean visitCondicion_envuelta (Anasint.Condicion_envueltaContext ctx) {
+        return (Boolean) visit(ctx.condicion());
     }
-    public Valor visitCondicion_rec (Anasint.Condicion_recContext ctx) {
-        Valor condicionA = (Valor) visit(ctx.condicion(0));
-        Valor condicionB = (Valor) visit(ctx.condicion(1));
+    public Boolean visitCondicion_rec (Anasint.Condicion_recContext ctx) {
+        Object condicionA = visit(ctx.condicion(0));
+        Object condicionB = visit(ctx.condicion(1));
         return resuelveOperadorLogico(condicionA, condicionB, ctx.operador_logico_2_ario());
     }
-    public Valor visitCondicion_cierto (Anasint.Condicion_ciertoContext ctx) {
-        return new Valor(true);
+    public Boolean visitCondicion_cierto (Anasint.Condicion_ciertoContext ctx) {
+        return true;
     }
-    public Valor visitCondicion_falso (Anasint.Condicion_falsoContext ctx) {
-        return new Valor(false);
-    }
-
-    public Valor visitValor_booleano_true (Anasint.Valor_booleano_trueContext ctx) {
-        return new Valor(true);
-    }
-    public Valor visitValor_booleano_false (Anasint.Valor_booleano_falseContext ctx) {
-        return new Valor(false);
-    }
-    public Valor visitOperando_numerico (Anasint.Operando_numericoContext ctx) {
-        return new Valor(Integer.valueOf(ctx.NUMERO().getText()));
-    }
-    public Valor visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
-        Valor variable = (Valor) visit(ctx.variable());
-        Valor indice = (Valor) visit(ctx.operacion());
-        return variable.getValorSecuencia(indice.getValorNumerico());
-        //return new Valor(memoria.get(ctx.variable().getText()))
+    public Boolean visitCondicion_falso (Anasint.Condicion_falsoContext ctx) {
+        return false;
     }
 
-    public Valor visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
-        return (Valor) super.visitEvaluacion_variable(ctx);
+    public Boolean visitValor_booleano_true (Anasint.Valor_booleano_trueContext ctx) {
+        return true;
     }
-    public Valor visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
+    public Boolean visitValor_booleano_false (Anasint.Valor_booleano_falseContext ctx) {
+        return false;
+    }
+    public Integer visitOperando_numerico (Anasint.Operando_numericoContext ctx) {
+        return Integer.valueOf(ctx.NUMERO().getText());
+    }
+    public Object visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
+        List<Object> variable = (List<Object>) visit(ctx.variable());
+        Integer indice = (Integer) visit(ctx.operacion());
+        return variable.get(indice);
+    }
+
+    public Object visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
+        //if (ctx.subprograma() != null)
+        //    return ((List<Object>) super.visitEvaluacion_variable(ctx)).get(0);
+        return super.visitEvaluacion_variable(ctx);
+    }
+    public Object visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
         String nombre = ctx.IDENT().getText();
         //String nombre = ctx.getChild(0).getText();
         Subprograma subprograma = scopeGlobal.getSubprograma(nombre);
         System.out.println("Visitando programa " + ctx.getText() + " tiene memoria? " + memoria.get(subprograma.getPuntero()));
 
         // Cada vez que entramos en la funcion, limpiamos los datos del nodo
-        retornosFuncion.removeFrom(subprograma.getPuntero());
+        //retornosFuncion.removeFrom(subprograma.getPuntero());
         memoria.removeFrom(subprograma.getPuntero());
-        Map<String, Valor> memoriaGlobal = memoria.get(closestInstruccionBlock(ctx));
+        Map<String, Object> memoriaGlobal = memoria.get(closestInstruccionBlock(ctx));
         List<Variable> argumentosDeclarados = subprograma.getEntrada();
-        Map<String, Valor> memoriaSubprograma = new OrderedHashMap<>();
-        List<Valor> valoresInvocacionSubprograma = new ArrayList<>();
+        Map<String, Object> memoriaSubprograma = new OrderedHashMap<>();
+        List<Object> valoresInvocacionSubprograma = new ArrayList<>();
 
         //estos son los valores con los que se ha invocado al subprograma
         for (Anasint.Evaluacion_variableContext valorArgumento :ctx.evaluacion_variable())
@@ -418,7 +424,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
 
         //estas son las variables definidas del programa en scope
         for (Variable variableDeclarada: scopeGlobal.getSubprograma(nombre).getDeclaradas())
-            memoriaSubprograma.put(variableDeclarada.getNombre(), new Valor());
+            memoriaSubprograma.put(variableDeclarada.getNombre(), null);
 
         //hay que cargar tambien los valores de la memoria padre
         for (String variableGlobal: memoriaGlobal.keySet())
@@ -434,7 +440,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         memoria.put(subprograma.getPuntero(), memoriaSubprograma);
 
         //ejecutamos el bloque de instrucciones del programa
-        visit(subprograma.getPuntero());
+        Object salidaSubprograma = visit(subprograma.getPuntero());
 
         //actualizamos las variables globales, prevalecen privadas
         //si tienen mismo nombre que globales
@@ -443,72 +449,76 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             if (!scopeGlobal.getSubprograma(nombre).existeVariable(nombreVariable) &&
                 scopeGlobal.existeVariable(nombreVariable))
                 memoriaGlobal.put(nombreVariable, memoriaSubprograma.get(nombreVariable));
-        return retornosFuncion.get(subprograma.getPuntero());
+
+        //si es funcion, analizamos si retorno multiple o no
+        if (salidaSubprograma != null && subprograma.esFuncion())
+            if (subprograma.getSalida().size() > 1)
+                return salidaSubprograma;
+            else
+                return ((List<Object>) salidaSubprograma).get(0);
+        else
+            return null;
     }
-    public Valor visitVariable (Anasint.VariableContext ctx) {
+    public Object visitVariable (Anasint.VariableContext ctx) {
         return memoria.get(closestInstruccionBlock(ctx)).get(ctx.getText());
     }
 
-
-
-    public Valor visitSubprograma_ultima_posicion (Anasint.Subprograma_ultima_posicionContext ctx) {
-        Valor ultimoValor = (Valor) visit(ctx.evaluacion_variable());
+    public Object visitSubprograma_ultima_posicion (Anasint.Subprograma_ultima_posicionContext ctx) {
+        List<Object> ultimoValor = (List<Object>) visit(ctx.evaluacion_variable());
         /*if (ctx.variable() != null)
             ultimoValor = visitVariable(ctx.variable()).getUltimoValorSecuencia();
         else
             ultimoValor = visitOperando_secuencia(ctx.operando_secuencia()).getUltimoValorSecuencia();
         */
         System.out.println("visitUltima_posicion es " + ctx.getText() + " = " + ultimoValor);
-        return ultimoValor.getUltimoValorSecuencia();
+        return ultimoValor.get(ultimoValor.size() - 1);
     }
-    public Valor visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
-        Valor res = visitEvaluacion_variable(ctx.evaluacion_variable());
-        boolean vaciaNum = res.getSecuenciaBooleana() == null || res.getSecuenciaBooleana().isEmpty();
-        boolean vaciaBool = res.getSecuenciaNumerica() == null || res.getSecuenciaNumerica().isEmpty();
-        return new Valor(vaciaNum && vaciaBool);
+    public Boolean visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
+        List<Object> res = (List<Object>) visitEvaluacion_variable(ctx.evaluacion_variable());
+        return (res == null || res.isEmpty());
     }
 
-    public Valor visitSubprograma_mostrar (Anasint.Subprograma_mostrarContext ctx) {
-        Valor secuencia = (Valor) visit(ctx.evaluacion_variable());
+    public Object visitSubprograma_mostrar (Anasint.Subprograma_mostrarContext ctx) {
+        List<Object> secuencia = (List<Object>) visit(ctx.evaluacion_variable());
         System.out.println("[INTERPRETE] visitSubprograma_mostrar: " + secuencia);
         return null;
     }
 
-    public Valor visitOperando_subprograma (Anasint.Operando_subprogramaContext ctx) {
-        return (Valor) visit(ctx.subprograma());
+    public Object visitOperando_subprograma (Anasint.Operando_subprogramaContext ctx) {
+        return visit(ctx.subprograma());
     }
-    public Valor visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
+    public List<Integer> visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
         List<Integer> secuencia = new ArrayList<>();
         for (TerminalNode numero: ctx.NUMERO())
             secuencia.add(Integer.valueOf(numero.getText()));
-        return new Valor(secuencia, 0);
+        return secuencia;
     }
-    public Valor visitOperando_secuencia_logica (Anasint.Operando_secuencia_logicaContext ctx) {
+    public List<Boolean> visitOperando_secuencia_logica (Anasint.Operando_secuencia_logicaContext ctx) {
         List<Boolean> secuencia = new ArrayList<>();
         for (Anasint.Valor_booleanoContext booleano: ctx.valor_booleano())
             secuencia.add(booleano.getText().equals("T"));
-        return new Valor(secuencia, true);
+        return secuencia;
     }
-    public Valor visitOperando_secuencia_vacia (Anasint.Operando_secuencia_vaciaContext ctx) {
-        return new Valor(new ArrayList<>());
+    public Object visitOperando_secuencia_vacia (Anasint.Operando_secuencia_vaciaContext ctx) {
+        return new ArrayList<>();
     }
 
-    public Valor visitOperacion (Anasint.OperacionContext ctx) {
-        return (Valor) super.visit(ctx);
+    public Integer visitOperacion (Anasint.OperacionContext ctx) {
+        return (Integer) super.visit(ctx);
     }
-    public Valor visitOp_aritmetica_envuelta (Anasint.Op_aritmetica_envueltaContext ctx) {
+    public Integer visitOp_aritmetica_envuelta (Anasint.Op_aritmetica_envueltaContext ctx) {
         return visitOperacion(ctx.operacion());
     }
-    public Valor visitOp_aritmetica_negacion (Anasint.Op_aritmetica_negacionContext ctx) {
-        return new Valor(visitOperacion(ctx.operacion()).getValorNumerico()*-1);
+    public Integer visitOp_aritmetica_negacion (Anasint.Op_aritmetica_negacionContext ctx) {
+        return visitOperacion(ctx.operacion()) * -1;
     }
-    public Valor visitOp_aritmetica_mult (Anasint.Op_aritmetica_multContext ctx) {
+    public Integer visitOp_aritmetica_mult (Anasint.Op_aritmetica_multContext ctx) {
         return resuelveOperadorAritmetico(
                 visitOperacion(ctx.operacion(0)),
                 visitOperacion(ctx.operacion(1)),
                 "*");
     }
-    public Valor visitOp_aritmetica_sr (Anasint.Op_aritmetica_srContext ctx) {
+    public Integer visitOp_aritmetica_sr (Anasint.Op_aritmetica_srContext ctx) {
         String operador;
         if (ctx.MAS() != null)
             operador = "+";

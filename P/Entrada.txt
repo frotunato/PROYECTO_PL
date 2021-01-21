@@ -18,7 +18,7 @@ PROGRAMA //memoria global
                     fsi
                     i = i + 1;
                 fmientras
-            dev tmp, tmp + 1;
+            dev 5, 6;
         FFUNCION
         PROCEDIMIENTO test2 (NUM b)
             VARIABLES
@@ -44,12 +44,14 @@ PROGRAMA //memoria global
                     global_i = 25;
                     c = global_i + b;
                 fsi
-                dev c+1;
+                dev 2;
         FFUNCION
     INSTRUCCIONES
         a = 100;
-        global_s = [6,18,2,5,7,9,1,10,0];
-        resultado, a = busca_max(global_s, test(25,27));
+        global_s = [6,18];
+        //resultado, a = busca_max(global_s, 2);
+
+        resultado, a, global_i = busca_max(global_s, test(25,27)), test(12,37);
 
         //test2(25);
 

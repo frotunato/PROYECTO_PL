@@ -1,10 +1,7 @@
 package Valor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 public class Valor {
+    /*
     private String tipo;
     private Object valor;
     private Integer valorNumerico;
@@ -95,15 +92,7 @@ public class Valor {
 
     public Boolean getValorBooleano () { return this.valorBooleano; }
 
-/*
-    public SecuenciaBooleana getSecuenciaBooleana() {
-        return secuenciaBooleana;
-    }
 
-    public SecuenciaNumerica getSecuenciaNumerica() {
-        return secuenciaNumerica;
-    }
-*/
     public boolean equals(Valor o) {
         if (!o.getTipo().equals(this.tipo)) return false;
         return this.valor.equals(o.valor);
@@ -134,5 +123,5 @@ public class Valor {
     @Override
     public int hashCode() {
         return Objects.hash(valorNumerico, valorBooleano, secuenciaBooleana, secuenciaNumerica);
-    }
+    }*/
 }
