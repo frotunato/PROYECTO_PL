@@ -249,8 +249,13 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
 
     public String visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
+        variablesBajoCondicion = true;
+        variablesCondicion = "!Arrays.asList(";
         String valorPredicado = (String) visit(ctx.predicado());
-        String res = "while (" + valorPredicado + ") {\n";
+        variablesBajoCondicion = false;
+        variablesCondicion = quitaUltimaComa(variablesCondicion) + ").contains(null) && (";
+
+        String res = "while (" + variablesCondicion + valorPredicado + ")) {\n";
         //dividimos las instrucciones en dos partes, si/sino
        for (Anasint.InstruccionContext instruccion: ctx.instruccion())
            res += visit(instruccion);
@@ -265,7 +270,6 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         variablesCondicion = "!Arrays.asList(";
         String valorPredicado = (String) visit(ctx.predicado());
         variablesBajoCondicion = false;
-        String precondicion = "";
         System.out.println("[COMPILADOR] visitInstruccion_control: " + variablesCondicion.toString());
         variablesCondicion = quitaUltimaComa(variablesCondicion) + ").contains(null) && (";
         //for (String variableCondicion: variablesCondicion)
@@ -422,14 +426,6 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitEvaluacion_variable(Anasint.Evaluacion_variableContext ctx) {
         System.out.println("[COMPILADOR] visitEvaluacion_variable: " + ctx.getText() + "= " + ctx.getChild(0).getClass().toString());
         return (String) visit(ctx.getChild(0));
-        /*
-        if (ctx.subprograma() != null) { //&& funcionesAsignadas.isEmpty()) {
-            return ctx.getText();
-        } else if (ctx.operando_secuencia() != null)
-            return (String) visit(ctx.operando_secuencia());
-        else
-            return ctx.getText();
-        */
     }
 
     public String visitOperando_subprograma (Anasint.Operando_subprogramaContext ctx) {

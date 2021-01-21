@@ -10,43 +10,28 @@ lista_variables: (variable COMA)* variable;
 lista_variables_tipadas: (tipo IDENT COMA)* tipo IDENT;
 
 variable: IDENT;
-//variable_tipada: tipo IDENT;
 
 tipo:
     INTEGER #tipo_numerico |
     BOOLEAN #tipo_booleano |
     SEQUENCE PA (INTEGER | BOOLEAN) PC #tipo_secuencia
     ;
-    /*
-tipo: tipo_elemental | tipo_no_elemental;
-tipo_no_elemental: SEQUENCE PA tipo_elemental PC;
-tipo_elemental: INTEGER | BOOLEAN;
-*/
 
-bloque_programa: PROGRAMA bloque_variables bloque_subprogramas bloque_instrucciones;
+bloque_programa: PROGRAMA bloque_variables bloque_subprogramas bloque_instrucciones (COMENTARIO_LINEA* | COMENTARIO_BLOQUE?) EOF?;
 bloque_subprogramas: SUBPROGRAMAS (bloque_funcion | bloque_procedimiento)*;
 bloque_funcion: FUNCION IDENT PA lista_variables_tipadas? PC RETORNO PA lista_variables_tipadas PC bloque_variables bloque_instrucciones;
 bloque_procedimiento: PROCEDIMIENTO IDENT PA lista_variables_tipadas? PC bloque_variables bloque_instrucciones;
-bloque_instrucciones: INSTRUCCIONES instruccion+ (EOF | (FFUNCION | FPROCEDIMIENTO));
+bloque_instrucciones: INSTRUCCIONES instruccion+ (FFUNCION | FPROCEDIMIENTO)?;
 bloque_variables: VARIABLES declaracion_variable*;
 
 
 instruccion:
     subprograma PyC #instruccion_llamada_subprograma |
-    //(mostrar | subprograma) PyC #instruccion_llamada_subprograma |
-    //instruccion_aserto  |
-    MIENTRAS PA predicado PC HACER (LLA AVANCE DP subprograma LLC)? instruccion+ FMIENTRAS #instruccion_bucle  |
+    MIENTRAS PA predicado PC HACER instruccion+ FMIENTRAS #instruccion_bucle  |
     SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)? FSI #instruccion_control  |
     RUPTURA PyC #instruccion_ruptura  |
     lista_variables ASIG evaluaciones_variables PyC #instruccion_asig |
     RETORNO evaluaciones_variables PyC #instruccion_retorno;
-
-
-instruccion_aserto:
-    LLA (
-        (CIERTO | FALSO) |
-        ((PARATODO | EXISTE) PA IDENT DP CA operando COMA operando CC COMA predicado PC))
-    LLC;
 
 evaluaciones_variables: evaluacion_variable (COMA evaluacion_variable)*;
 
@@ -62,8 +47,7 @@ predicado:
     condicion #predicado_base |
     PA predicado PC #predicado_envuelto |
     NO predicado #predicado_negado |
-    predicado operador_condicion_2_ario predicado #predicado_rec
-;
+    predicado operador_condicion_2_ario predicado #predicado_rec;
 
 condicion:
     CIERTO #condicion_cierto |
@@ -82,9 +66,7 @@ operacion:
 operando:
     NUMERO #operando_numerico |
     variable #operando_variable |
-    //variable_acceso  #vle_acceso |
     variable CA operacion CC #variable_acceso |
-    //ultima_posicion #operando_ultima_posicion |
     subprograma #operando_subprograma
 ;
 
@@ -102,8 +84,6 @@ valor_booleano:
     TRUE #valor_booleano_true |
     FALSE #valor_booleano_false
 ;
-
-//variable_acceso: variable CA operacion CC;
 
 subprograma:
     MOSTRAR PA evaluacion_variable PC #subprograma_mostrar |

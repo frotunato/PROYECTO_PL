@@ -149,13 +149,6 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitInstruccion_aserto(Anasint.Instruccion_asertoContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitEvaluaciones_variables(Anasint.Evaluaciones_variablesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

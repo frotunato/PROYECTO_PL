@@ -234,17 +234,18 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             System.out.println("[INTERPRETE] visitInstruccion_bucle predicado (" +
                     ctx.predicado().getText() + ") = " +
                     visitPredicado(ctx.predicado()).getValorBooleano());
-            for (Anasint.InstruccionContext instruccion: ctx.instruccion())
+            for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
+                System.out.println("[INTERPRETE] visitInstruccion_bucle: " + instruccion.getText());
                 if (!instruccion.getTokens(Anasint.RETORNO).isEmpty())
-                //if (instruccion.instruccion_retorno() != null)
-                    return 1;
+                    //if (instruccion.instruccion_retorno() != null)
+                    return visitInstruccion(instruccion);
                 else if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
-                //else if (instruccion.instruccion_ruptura() != null) {
+                    //else if (instruccion.instruccion_ruptura() != null) {
                     ruptura = true;
                     break;
-                }
-                else
+                } else
                     visitInstruccion(instruccion);
+            }
         }
         return 1;
     }
@@ -322,7 +323,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
                 valores.add(visitEvaluacion_variable(evalr));
         }
 
-        //acceder caso especial funcion
+        //acceder caso especial funcion ??
         for (Anasint.VariableContext variable: ctx.lista_variables().variable()) {
             String nombreVariable = variable.getText();
             memoria.get(closestInstruccionBlock(variable)).put(nombreVariable, valores.get(i));

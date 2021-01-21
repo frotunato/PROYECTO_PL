@@ -243,18 +243,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterInstruccion_aserto(Anasint.Instruccion_asertoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitInstruccion_aserto(Anasint.Instruccion_asertoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterEvaluaciones_variables(Anasint.Evaluaciones_variablesContext ctx) { }
 	/**
 	 * {@inheritDoc}

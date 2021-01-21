@@ -1,9 +1,11 @@
 // Analizador léxico lenguaje K
 lexer grammar Analex;
 
+FIN_LINEA: '\r'?'\n' ->skip;
+COMENTARIO_BLOQUE : '/*' .*? '*/' -> skip ;
+COMENTARIO_LINEA : '//' .*? FIN_LINEA -> skip ;
 BLANCO: ' ' ->skip;
 TABULADOR: '\t'->skip;
-FIN_LINEA: '\r'?'\n' ->skip;
 fragment DIGITO: [0-9];
 fragment LETRA:[a-zA-Z];
 fragment UNDERSCORE:'_';
@@ -34,7 +36,6 @@ CC: ']';
 MOSTRAR: 'mostrar';
 MIENTRAS: 'mientras';
 FMIENTRAS: 'fmientras';
-AVANCE: 'avance';
 SI: 'si';
 SINO: 'sino';
 FSI: 'fsi';
@@ -43,8 +44,6 @@ HACER: 'hacer';
 DP: ':';
 PC : ')';
 LLA: '{';
-PARATODO: 'PARATODO';
-EXISTE: 'EXISTE';
 LLC: '}';
 PyC : ';';
 COMA : ',';
@@ -60,8 +59,5 @@ MENOR: '<';
 MAS: '+';
 MENOS: '-';
 MULT: '*';
-DIV: '/';
 IDENT : LETRA(LETRA|DIGITO|UNDERSCORE)*;
-COMENTARIO_BLOQUE : '/*' .*? '*/' -> skip ;
-COMENTARIO_LINEA : '//' .*? FIN_LINEA -> skip ;
 

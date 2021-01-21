@@ -133,12 +133,6 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInstruccion_retorno(Anasint.Instruccion_retornoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#instruccion_aserto}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInstruccion_aserto(Anasint.Instruccion_asertoContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Anasint#evaluaciones_variables}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -295,6 +295,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         for (Anasint.Evaluacion_variableContext varDerecha: expresionDerecha.evaluacion_variable()) {
             System.out.println("ESTAMOS ASIGNANDO " + varDerecha.getText() + " clase " + varDerecha.getClass());
             if (varDerecha.subprograma() != null && varDerecha.subprograma().getClass().equals(Anasint.Subprograma_declaradoContext.class)) {
+                visitEvaluacion_variable(varDerecha);
                 nombreSubprograma = varDerecha.subprograma().getChild(0).getText();
                 if (!getGlobalScope().existeSubprograma(nombreSubprograma))
                     throw new IllegalStateException("Subprograma no definido! " + nombreSubprograma);
@@ -402,8 +403,6 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         String resultado = (String) visit(ctx.predicado());
 
-        if (ctx.subprograma() != null && !getGlobalScope().existeFuncion(ctx.subprograma().getChild(0).getText()))
-            throw new IllegalStateException("El subprograma de avance debe ser una función");
         if (!resultado.equals("Boolean"))
             throw new IllegalStateException("PREDICADO NO BOOLEANO " + ctx.predicado().getText());
 
@@ -490,12 +489,15 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     }
 
     public String visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {
-        if (ctx.subprograma() != null &&
-                getGlobalScope().existeFuncion(ctx.subprograma().getChild(0).getText()) &&
-                !getGlobalScope().getSubprograma(ctx.subprograma().getChild(0).getText()).esArgumento() && //piede fallar, quitar !
-                !ctx.getParent().getClass().equals(Anasint.Evaluaciones_variablesContext.class))
+        System.out.println("EVALUACION VARIABLE " + ctx.getText());
+        if (ctx.subprograma() != null) {
+            if (getGlobalScope().existeFuncion(ctx.subprograma().getChild(0).getText()) &&
+                    !getGlobalScope().getSubprograma(ctx.subprograma().getChild(0).getText()).esArgumento() && //piede fallar, quitar !
+                    !ctx.getParent().getClass().equals(Anasint.Evaluaciones_variablesContext.class))
                 throw new IllegalStateException("Variables retorno multiple solo en definicion");
-
+            else if (getGlobalScope().existeProcedimiento(ctx.subprograma().getChild(0).getText()))
+                throw new IllegalStateException("Los procedimientos no pueden formar parte de una evaluación de variable");
+        }
         return (String) visit(ctx.getChild(0));
     }
 

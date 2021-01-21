@@ -1,10 +1,25 @@
 PROGRAMA //memoria global
     VARIABLES
         a:NUM;
-        global_i, global_j, global_k:NUM;
+        global_i, global_j, global_f, global_k:NUM;
         global_s:SEQ(NUM);
         global_error:LOG;
+        resultado:NUM;
     SUBPROGRAMAS
+        FUNCION busca_max(SEQ(NUM) lista, NUM tope) dev (NUM max, NUM max2)
+            VARIABLES
+                i,tmp:NUM;
+            INSTRUCCIONES
+                tmp = 0;
+                i = 0;
+                mientras (i < tope) hacer
+                    si (lista[i] > tmp) entonces
+                        tmp = lista[i];
+                    fsi
+                    i = i + 1;
+                fmientras
+            dev tmp, tmp + 1;
+        FFUNCION
         PROCEDIMIENTO test2 (NUM b)
             VARIABLES
                 a,acum,limite:NUM;
@@ -12,10 +27,12 @@ PROGRAMA //memoria global
                 a = b;
                 acum = a + 25;
                 limite = 0;
+
                 mientras (limite < 2) hacer
                     limite = limite + 1;
                     a = a * acum;
                 fmientras
+
                 global_j = acum;
         FPROCEDIMIENTO
         FUNCION test (NUM a, NUM b) dev (NUM c)
@@ -23,7 +40,7 @@ PROGRAMA //memoria global
                 global_i2,c2:NUM;
             INSTRUCCIONES
                 c = 0;
-                si (global_error == T || global_k > 1) entonces
+                si (global_error == T || global_k > global_f) entonces
                     global_i = 25;
                     c = global_i + b;
                 fsi
@@ -31,5 +48,9 @@ PROGRAMA //memoria global
         FFUNCION
     INSTRUCCIONES
         a = 100;
-        test2(25);
-        global_i = 25 + test(global_j,2);
+        global_s = [6,18,2,5,7,9,1,10,0];
+        resultado, a = busca_max(global_s, test(25,27));
+
+        //test2(25);
+
+        //global_i = 25 + test(global_j,2);

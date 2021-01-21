@@ -1,11 +1,8 @@
-import Valor.Valor;
-
 import java.util.Objects;
 
 public class Variable {
     private String nombre;
     private String tipo;
-    private Valor valor;
     private boolean inicializada = false;
     private boolean soloLectura = false;
 
@@ -22,10 +19,6 @@ public class Variable {
         }
     }
 
-    public Variable (String nNombre, Valor nValor) {
-        this.nombre = nNombre;
-        this.valor = nValor;
-    }
 
     public String getNombre() {
         return this.nombre;
@@ -34,10 +27,6 @@ public class Variable {
     public String getTipo() {
         return tipo;
     }
-
-    public Valor getValor() { return this.valor; }
-
-    //public void setValor (Object nValor) { this.valor = nValor; }
 
     public boolean isSoloLectura () {
         return soloLectura;

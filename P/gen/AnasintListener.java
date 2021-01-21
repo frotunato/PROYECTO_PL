@@ -215,16 +215,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitInstruccion_retorno(Anasint.Instruccion_retornoContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#instruccion_aserto}.
-	 * @param ctx the parse tree
-	 */
-	void enterInstruccion_aserto(Anasint.Instruccion_asertoContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Anasint#instruccion_aserto}.
-	 * @param ctx the parse tree
-	 */
-	void exitInstruccion_aserto(Anasint.Instruccion_asertoContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Anasint#evaluaciones_variables}.
 	 * @param ctx the parse tree
 	 */
