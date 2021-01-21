@@ -6,6 +6,7 @@ PROGRAMA //memoria global
         global_error:LOG;
         resultado:NUM;
     SUBPROGRAMAS
+        /*
 
         FUNCION busca_max(SEQ(NUM) lista, NUM tope) dev (NUM max, NUM max2)
             VARIABLES
@@ -28,7 +29,6 @@ PROGRAMA //memoria global
                 fmientras
             dev 5, 6;
         FFUNCION
-        /*
         PROCEDIMIENTO test2 (NUM b)
             VARIABLES
                 a,acum,limite:NUM;
@@ -75,7 +75,9 @@ PROGRAMA //memoria global
                     mostrar([1,1,1,1]);
                     c = 2;
                 fsi
+                { !falso }
                 dev c;
+                /*
                 si (a > 10) entonces
                     si (a > 15) entonces
                         dev 15;
@@ -87,12 +89,17 @@ PROGRAMA //memoria global
                     //ruptura;
                     dev 0;
                 fsi
+                */
         FFUNCION
     INSTRUCCIONES
-        a = 100 + 255;
-        global_s = [6,18];
+        a = 11;
+        global_s = [1,2,3,4,5,6,7,6,18];
+        resultado = 0;
         //resultado, a = busca_max(global_s, 2);
-        a = test3(test3(23) + 1);
+        { PARATODO(p:[0,a],global_s[p]>=resultado) }
+
+        //a = test3(35);
+        //a = test3(test3(23) + 1);
         //resultado, a, global_i = busca_max(global_s, test(25,27)), test(12,37);
 
         //test2(25);

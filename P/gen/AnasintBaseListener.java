@@ -243,6 +243,30 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterInstruccion_aserto_simple(Anasint.Instruccion_aserto_simpleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInstruccion_aserto_simple(Anasint.Instruccion_aserto_simpleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInstruccion_aserto_cuantificado(Anasint.Instruccion_aserto_cuantificadoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInstruccion_aserto_cuantificado(Anasint.Instruccion_aserto_cuantificadoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterEvaluaciones_variables(Anasint.Evaluaciones_variablesContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -562,6 +586,30 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitValor_booleano_false(Anasint.Valor_booleano_falseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCuantificador_universal(Anasint.Cuantificador_universalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCuantificador_universal(Anasint.Cuantificador_universalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCuantificador_existencial(Anasint.Cuantificador_existencialContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCuantificador_existencial(Anasint.Cuantificador_existencialContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

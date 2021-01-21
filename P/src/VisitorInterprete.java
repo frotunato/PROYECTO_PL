@@ -5,8 +5,11 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.System.currentTimeMillis;
 
 public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     Scope scopeGlobal = new Scope("global");
@@ -15,6 +18,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     ParseTreeProperty<Object> retornosFuncion = new ParseTreeProperty<>();
     boolean retorno = false;
     boolean ruptura = false;
+    Map<String, Boolean> resultadosAsertos = new HashMap<>();
     private Boolean resuelveOperadorLogico (Object a, Object b, Anasint.Operador_logico_2_arioContext ctx) {
         String operador = ctx.getText();
         boolean res = false;
@@ -199,7 +203,11 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         //System.out.println("[INTERPRETE] visitInstruccion_bucle " + ctx.predicado().getText());
         Object retornoInstruccion = null;
-        while (!ruptura && visitPredicado(ctx.predicado())) {
+
+        while (!ruptura) {
+            Boolean resultado = visitPredicado(ctx.predicado());
+            if (resultado == null || !resultado)
+                break;
             System.out.println("[INTERPRETE] visitInstruccion_bucle predicado (" +
                     ctx.predicado().getText() + ") = " +
                     visitPredicado(ctx.predicado()));
@@ -247,9 +255,9 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             }
         }
         //si el predicado es cierto (condicion), entramos a las instrucciones
-        boolean valorPredicado = visitPredicado(ctx.predicado());
+        Boolean valorPredicado = visitPredicado(ctx.predicado());
         System.out.println("[INTERPRETE] visitInstruccion: " + ctx.getText() + " + valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
-        if (valorPredicado)
+        if (valorPredicado != null && valorPredicado)
             //se visitan instrucciones si
             for (Anasint.InstruccionContext instruccion: instruccionesSi) {
                 System.out.println("[INTERPRETE] visitInstruccion: instr si entonces ");
@@ -322,6 +330,38 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         System.out.println("[INTERPRETE] Datos de la memoria " + ctx.getParent().getClass() + " , " + memoria.get(closestInstruccionBlock(ctx)));
         return 1;
     }
+    public Boolean visitInstruccion_aserto_simple (Anasint.Instruccion_aserto_simpleContext ctx) {
+        Boolean resultado = (Boolean) visit(ctx.predicado());
+        if (resultado == null)
+            throw new IllegalStateException("[INTERPRETE] visitInstruccion_aserto_simple: aserto no válido (ha devuelto indefinido) " + ctx.predicado().getText());
+        else
+            resultadosAsertos.put(currentTimeMillis() + "_" + ctx.getText(), resultado);
+        return resultado;
+    }
+    public Object visitInstruccion_aserto_cuantificado (Anasint.Instruccion_aserto_cuantificadoContext ctx) {
+        Map<String, Object> mem = memoria.get(closestInstruccionBlock(ctx));
+        //cargamos valor memoria variable
+        Integer operacionA = (Integer) visit(ctx.operacion(0));
+        Integer operacionB = (Integer) visit(ctx.operacion(1));
+        boolean paratodo = !ctx.cuantificador().getTokens(Anasint.PARATODO).isEmpty();
+        //si paratodo, inicializamos true
+        //caso contrario false
+        Boolean asertoValido = paratodo;
+
+        for (int i = operacionA; i < operacionB; i++) {
+            mem.put(ctx.variable().getText(), i);
+            asertoValido = (Boolean) visit(ctx.predicado());
+            if (asertoValido == null)
+                throw new IllegalStateException("[INTERPRETE] Aserto (" + ctx.getText() + ") con resultado indefinido, aserto no válido!!");
+            else if ((!asertoValido && paratodo) || (asertoValido && !paratodo))
+                break;
+        }
+        if (!asertoValido)
+            throw new IllegalStateException("[INTERPRETE] Aserto (" + ctx.getText() + ") con resultado falso, programa no válido!!");
+        resultadosAsertos.put(currentTimeMillis() + "_" + ctx.getText(), asertoValido);
+        mem.remove(ctx.variable().getText());
+        return null;
+    }
 
     public Boolean visitPredicado (Anasint.PredicadoContext ctx) {
         return (Boolean) super.visit(ctx);
@@ -376,7 +416,14 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Object visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
         List<Object> variable = (List<Object>) visit(ctx.variable());
         Integer indice = (Integer) visit(ctx.operacion());
-        return variable.get(indice);
+        Object res;
+        try {
+            res = variable.get(indice);
+        } catch (Exception e) {
+            System.out.println("[INTERPRETE] visitVariable_acceso: acceso a lista fuera de su rango");
+            res = null;
+        }
+        return res;
     }
 
     public Object visitEvaluacion_variable (Anasint.Evaluacion_variableContext ctx) {

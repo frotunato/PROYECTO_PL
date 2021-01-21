@@ -215,6 +215,30 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitInstruccion_retorno(Anasint.Instruccion_retornoContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code instruccion_aserto_simple}
+	 * labeled alternative in {@link Anasint#instruccion}.
+	 * @param ctx the parse tree
+	 */
+	void enterInstruccion_aserto_simple(Anasint.Instruccion_aserto_simpleContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code instruccion_aserto_simple}
+	 * labeled alternative in {@link Anasint#instruccion}.
+	 * @param ctx the parse tree
+	 */
+	void exitInstruccion_aserto_simple(Anasint.Instruccion_aserto_simpleContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code instruccion_aserto_cuantificado}
+	 * labeled alternative in {@link Anasint#instruccion}.
+	 * @param ctx the parse tree
+	 */
+	void enterInstruccion_aserto_cuantificado(Anasint.Instruccion_aserto_cuantificadoContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code instruccion_aserto_cuantificado}
+	 * labeled alternative in {@link Anasint#instruccion}.
+	 * @param ctx the parse tree
+	 */
+	void exitInstruccion_aserto_cuantificado(Anasint.Instruccion_aserto_cuantificadoContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#evaluaciones_variables}.
 	 * @param ctx the parse tree
 	 */
@@ -530,6 +554,30 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitValor_booleano_false(Anasint.Valor_booleano_falseContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code cuantificador_universal}
+	 * labeled alternative in {@link Anasint#cuantificador}.
+	 * @param ctx the parse tree
+	 */
+	void enterCuantificador_universal(Anasint.Cuantificador_universalContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code cuantificador_universal}
+	 * labeled alternative in {@link Anasint#cuantificador}.
+	 * @param ctx the parse tree
+	 */
+	void exitCuantificador_universal(Anasint.Cuantificador_universalContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code cuantificador_existencial}
+	 * labeled alternative in {@link Anasint#cuantificador}.
+	 * @param ctx the parse tree
+	 */
+	void enterCuantificador_existencial(Anasint.Cuantificador_existencialContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code cuantificador_existencial}
+	 * labeled alternative in {@link Anasint#cuantificador}.
+	 * @param ctx the parse tree
+	 */
+	void exitCuantificador_existencial(Anasint.Cuantificador_existencialContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code subprograma_mostrar}
 	 * labeled alternative in {@link Anasint#subprograma}.

@@ -9,9 +9,23 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     String programa = "";
     boolean variablesPrivadas = false;
     boolean variablesBajoCondicion = false;
-    String variablesCondicion = "";
+    List<String> variablesCondicion = new ArrayList<>();
     ParseTreeProperty<Map<String, String>> scope = new ParseTreeProperty<>();
     Map<String, List<String>> funciones = new OrderedHashMap<>();
+
+    private String genPropagaIndefinicion (Anasint.PredicadoContext ctx, boolean niega, String elmVar) {
+        variablesBajoCondicion = true;
+        String valorPredicado = (String) visit(ctx);
+        if (elmVar != null)
+            variablesCondicion.remove(variablesCondicion.indexOf(elmVar));
+        variablesBajoCondicion = false;
+        String strCondicionNoIndef = "!Arrays.asList(" +
+                String.join(",",variablesCondicion) +
+                ").contains(null)" + " && \n" + (niega ? "!": "") + "(" + valorPredicado + ")";
+        variablesCondicion.clear();
+        return strCondicionNoIndef;
+    }
+
 
     private ParserRuleContext closestBreakBlock (ParserRuleContext ctx) {
         if (//ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class) ||
@@ -78,7 +92,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitBloque_programa(Anasint.Bloque_programaContext ctx) {
         scope.put(ctx, new OrderedHashMap<>());
         variablesPrivadas = false;
-        programa += "import java.util.Arrays;\n public class Test {\n";
+        programa += "import java.util.Arrays;\nimport java.util.stream.IntStream;\n public class Test {\n";
         programa += ultimaPosicion();
         programa += vacia();
         programa += mostrar();
@@ -229,32 +243,39 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
 
     public String visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
+        /*
         variablesBajoCondicion = true;
-        variablesCondicion = "!Arrays.asList(";
         String valorPredicado = (String) visit(ctx.predicado());
         variablesBajoCondicion = false;
-        variablesCondicion = quitaUltimaComa(variablesCondicion) + ").contains(null) && (";
-
-        String res = "while (" + variablesCondicion + valorPredicado + ")) {\n";
+        String strCondicionNoIndef = "!Arrays.asList(" + String.join(",",variablesCondicion) + ").contains(null)";
+        variablesCondicion.clear();
+        */
+        String strPropagaIndef = genPropagaIndefinicion(ctx.predicado(), false,null);
+        String res = "while (" + strPropagaIndef + ") {\n";
         //dividimos las instrucciones en dos partes, si/sino
        for (Anasint.InstruccionContext instruccion: ctx.instruccion())
            res += visit(instruccion);
         res += "}\n";
         //si el predicado es cierto (condicion), entramos a las instrucciones
-        System.out.println("[COMPILADOR] visitInstruccion_bucle: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
+        //System.out.println("[COMPILADOR] visitInstruccion_bucle: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
         return res;
     }
 
     public String visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
+        /*
         variablesBajoCondicion = true;
         variablesCondicion = "!Arrays.asList(";
+        String strCondicionNoIndef = "!Arrays.asList(" + String.join(",",variablesCondicion) + ").contains(null)";
+
         String valorPredicado = (String) visit(ctx.predicado());
         variablesBajoCondicion = false;
         System.out.println("[COMPILADOR] visitInstruccion_control: " + variablesCondicion);
         variablesCondicion = quitaUltimaComa(variablesCondicion) + ").contains(null) && (";
         //for (String variableCondicion: variablesCondicion)
             //precondicion += variablesCondicion.pop() + "!=null"
-        String res = "if (" + variablesCondicion + valorPredicado + ")) {\n";
+        */
+        String strPropagaIndef = genPropagaIndefinicion(ctx.predicado(), false,null);
+        String res = "if (" + strPropagaIndef + ") {\n";
         //dividimos las instrucciones en dos partes, si/sino
         for (ParseTree hijo: ctx.children) {
             if (hijo.equals(ctx.SINO()))
@@ -264,7 +285,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         }
         res += "}\n";
         //si el predicado es cierto (condicion), entramos a las instrucciones
-        System.out.println("[COMPILADOR] visitInstruccion: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
+        //System.out.println("[COMPILADOR] visitInstruccion: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
         return res;
     }
     public String visitInstruccion_ruptura (Anasint.Instruccion_rupturaContext ctx) {
@@ -300,6 +321,23 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitInstruccion_llamada_subprograma (Anasint.Instruccion_llamada_subprogramaContext ctx) {
         return visit(ctx.subprograma()) + ";\n";
     }
+    public String visitInstruccion_aserto_simple (Anasint.Instruccion_aserto_simpleContext ctx) {
+        String strPropagaIndef = genPropagaIndefinicion(ctx.predicado(), false, null);
+        return "if (" + strPropagaIndef + ") {\n" +
+                "throw new IllegalArgumentException(\"Aserto no válido\");\n}\n";
+    }
+    public String visitInstruccion_aserto_cuantificado (Anasint.Instruccion_aserto_cuantificadoContext ctx) {
+        String operacionA = (String) visit(ctx.operacion(0));
+        String operacionB = (String) visit(ctx.operacion(1));
+        String variable = ctx.variable().getText();
+        String[] strPropagaIndef = genPropagaIndefinicion(ctx.predicado(), false, variable).split("&&");
+        String funcionCuantificador = (String) visit(ctx.cuantificador());
+        return "if (" + strPropagaIndef[0] + " && !(IntStream.range(" + operacionA + ", " +
+                operacionB + ")." + funcionCuantificador + "(" + variable + " -> (" + strPropagaIndef[1] + ")))) {\n" +
+                "throw new IllegalArgumentException(\"Aserto no válido\");\n}\n";
+    }
+
+
     public String visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
         String valorPredicado = (String) visit(ctx.predicado());
         //valorPredicado.setValorBooleano(!valorPredicado.getValorBooleano());
@@ -314,10 +352,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitPredicado_rec(Anasint.Predicado_recContext ctx) {
         String predicadoA = (String) visit(ctx.predicado(0));
         String predicadoB = (String) visit (ctx.predicado(1));
-        //System.out.println("predicado rec me llega " + predicadoA  + " " + predicadoB + " " + ctx.getText());
         return predicadoA + " " + ctx.operador_condicion_2_ario().getText() + " " + predicadoB;
-        //return resuelveOperadorCondicion(predicadoA,
-        //        predicadoB, ctx.operador_condicion_2_ario());
     }
 
     public String visitCondicion_base (Anasint.Condicion_baseContext ctx) {
@@ -371,7 +406,12 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitValor_booleano_false (Anasint.Valor_booleano_falseContext ctx) {
         return "false";
     }
-
+    public String visitCuantificador_universal (Anasint.Cuantificador_universalContext ctx) {
+        return "allMatch";
+    }
+    public String visitCuantificador_existencial (Anasint.Cuantificador_existencialContext ctx) {
+        return "anyMatch";
+    }
 
     public String visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
         String res = ctx.IDENT().getText() + "(";
@@ -399,7 +439,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
 
     public String visitVariable (Anasint.VariableContext ctx) {
         if (variablesBajoCondicion)
-            variablesCondicion += ctx.getText() + ",";
+            variablesCondicion.add(ctx.getText());
         return ctx.getText();
     }
 

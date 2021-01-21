@@ -133,6 +133,20 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInstruccion_retorno(Anasint.Instruccion_retornoContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code instruccion_aserto_simple}
+	 * labeled alternative in {@link Anasint#instruccion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstruccion_aserto_simple(Anasint.Instruccion_aserto_simpleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code instruccion_aserto_cuantificado}
+	 * labeled alternative in {@link Anasint#instruccion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstruccion_aserto_cuantificado(Anasint.Instruccion_aserto_cuantificadoContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#evaluaciones_variables}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -317,6 +331,20 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitValor_booleano_false(Anasint.Valor_booleano_falseContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code cuantificador_universal}
+	 * labeled alternative in {@link Anasint#cuantificador}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCuantificador_universal(Anasint.Cuantificador_universalContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code cuantificador_existencial}
+	 * labeled alternative in {@link Anasint#cuantificador}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCuantificador_existencial(Anasint.Cuantificador_existencialContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code subprograma_mostrar}
 	 * labeled alternative in {@link Anasint#subprograma}.

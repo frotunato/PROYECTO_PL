@@ -405,6 +405,23 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
             System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_bucle: PREDICADO NO BOOLEANO/INDEFINIDO " + ctx.predicado().getText());
         return super.visitInstruccion_bucle(ctx);
     }
+    public Object visitInstruccion_aserto_simple (Anasint.Instruccion_aserto_simpleContext ctx) {
+        String resultado = (String) visit(ctx.predicado());
+        if (resultado.equals("Integer"))
+            System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_aserto_simple: PREDICADO NO BOOLEANO/INDEFINIDO " + ctx.predicado().getText());
+        return null;
+    }
+    public Object visitInstruccion_aserto_cuantificado (Anasint.Instruccion_aserto_cuantificadoContext ctx) {
+        getUpperScope(ctx).declaraVariable(new Variable(ctx.variable().getText(), "NUM"));
+        String resultado = (String) visit(ctx.predicado());
+        if (resultado.equals("Integer"))
+            System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_aserto_paratodo: PREDICADO NO BOOLEANO/INDEFINIDO " + ctx.predicado().getText());
+        String operacionA = (String) visit(ctx.operacion(0));
+        String operacionB = (String) visit(ctx.operacion(1));
+        if (!operacionA.equals("Integer") || !operacionB.equals("Integer"))
+            System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_aserto_paratodo: PREDICADO NO BOOLEANO/INDEFINIDO " + ctx.predicado().getText());
+        return null;
+    }
 
     public String visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
         String tipoArgumento;
@@ -515,6 +532,12 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         return "Boolean";
     }
     public String visitValor_booleano_false (Anasint.Valor_booleano_falseContext ctx) {
+        return "Boolean";
+    }
+    public String visitCuantificador_universal (Anasint.Cuantificador_universalContext ctx) {
+        return "Boolean";
+    }
+    public String visitCuantificador_existencial (Anasint.Cuantificador_existencialContext ctx) {
         return "Boolean";
     }
     public String visitOperando_numerico (Anasint.Operando_numericoContext ctx) {

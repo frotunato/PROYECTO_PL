@@ -149,6 +149,20 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitInstruccion_aserto_simple(Anasint.Instruccion_aserto_simpleContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitInstruccion_aserto_cuantificado(Anasint.Instruccion_aserto_cuantificadoContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitEvaluaciones_variables(Anasint.Evaluaciones_variablesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -332,6 +346,20 @@ public class AnasintBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitValor_booleano_false(Anasint.Valor_booleano_falseContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitCuantificador_universal(Anasint.Cuantificador_universalContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitCuantificador_existencial(Anasint.Cuantificador_existencialContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
