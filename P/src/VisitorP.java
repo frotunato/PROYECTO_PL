@@ -90,7 +90,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
 
         scopeGlobal.declaraSubprogramaNativo("vacia", "Funcion");
         scopeGlobal.declaraSubprogramaNativo("ultima_posicion", "Funcion");
-        scopeGlobal.declaraSubprogramaNativo("mostrar", "Procedimieneto");
+        scopeGlobal.declaraSubprogramaNativo("mostrar", "Procedimiento");
 
         raiz = ctx;
         scopeTree.put(ctx, scopeGlobal);
@@ -403,6 +403,18 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         String resultado = (String) visit(ctx.predicado());
         if (resultado.equals("Integer"))
             System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_bucle: PREDICADO NO BOOLEANO/INDEFINIDO " + ctx.predicado().getText());
+        if (ctx.subprograma() != null) {
+            Scope scope = getUpperScope(ctx);
+            Subprograma subprograma = scope.getSubprograma(ctx.subprograma().getChild(0).getText());
+            if (subprograma == null)
+                System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_bucle: la función de avance no existe");
+            else {
+                if (!subprograma.esArgumento())
+                    System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_bucle: la función de avance no es válida como argumento (devuelve más de 1 parámetro)");
+                if (!subprograma.getTiposSalida().get(0).equals("Integer"))
+                    System.out.println("[ANALIZADOR SEMANTICO] visitInstruccion_bucle: la función de avance no es válida, no devuelve un número");
+            }
+        }
         return super.visitInstruccion_bucle(ctx);
     }
     public Object visitInstruccion_aserto_simple (Anasint.Instruccion_aserto_simpleContext ctx) {
@@ -595,7 +607,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         if (!tipoArgumento.contains("ArrayList"))
             throw new IllegalStateException("[ANALIZADOR SEMANTICO] visitUltima_posicion_variable  ultima_posicion solo válido en secuencias");
 
-        return tipoArgumento.replace("ArrayList<", "").replace(">", "");
+        return "Integer";
     }
 
     public String visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {

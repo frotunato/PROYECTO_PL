@@ -1,11 +1,17 @@
 PROGRAMA //memoria global
     VARIABLES
-        a:NUM;
+        a,i,max:NUM;
         global_i, global_j, global_f, global_k:NUM;
         global_s:SEQ(NUM);
         global_error:LOG;
         resultado:NUM;
     SUBPROGRAMAS
+        FUNCION bucle_1_avance(SEQ(NUM) seq, NUM pos) dev (NUM r)
+            VARIABLES
+            INSTRUCCIONES
+                r = ultima_posicion(seq) - pos;
+                dev r;
+        FFUNCION
         /*
 
         FUNCION busca_max(SEQ(NUM) lista, NUM tope) dev (NUM max, NUM max2)
@@ -93,10 +99,21 @@ PROGRAMA //memoria global
         FFUNCION
     INSTRUCCIONES
         a = 11;
-        global_s = [1,2,3,4,5,6,7,6,18];
-        resultado = 0;
+        //global_s = [3,4,2,7,9,0,11];
+        global_s = [100,4,2,7,9,0,11];
+        i=0;
+        max=global_s[i];
+        mientras (i<=ultima_posicion(global_s)) hacer {avance: bucle_1_avance(global_s, i)}
+            si (global_s[i]>max) entonces
+                max=global_s[i];
+            fsi
+            i=i+1;
+        fmientras
+
+
+        //resultado = ultima_posicion(global_s);
         //resultado, a = busca_max(global_s, 2);
-        { PARATODO(p:[0,a],global_s[p]>=resultado) }
+        //{ PARATODO(p:[0,a],global_s[p]>=resultado) }
 
         //a = test3(35);
         //a = test3(test3(23) + 1);

@@ -27,11 +27,14 @@ bloque_variables: VARIABLES declaracion_variable*;
 
 instruccion:
     subprograma PyC #instruccion_llamada_subprograma |
-    MIENTRAS PA predicado PC HACER instruccion+ FMIENTRAS #instruccion_bucle  |
+    MIENTRAS PA predicado PC HACER (LLA AVANCE DP subprograma LLC)? instruccion+ FMIENTRAS #instruccion_bucle  |
     SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)? FSI #instruccion_control  |
     RUPTURA PyC #instruccion_ruptura  |
     lista_variables ASIG evaluaciones_variables PyC #instruccion_asig |
-    RETORNO evaluaciones_variables PyC #instruccion_retorno;
+    RETORNO evaluaciones_variables PyC #instruccion_retorno |
+    LLA predicado LLC #instruccion_aserto_simple |
+    LLA cuantificador PA variable DP CA operacion COMA operacion CC COMA predicado PC LLC #instruccion_aserto_cuantificado
+;
 
 evaluaciones_variables: evaluacion_variable (COMA evaluacion_variable)*;
 
@@ -85,6 +88,9 @@ valor_booleano:
     FALSE #valor_booleano_false
 ;
 
+cuantificador:
+    PARATODO #cuantificador_universal |
+    EXISTE   #cuantificador_existencial;
 subprograma:
     MOSTRAR PA evaluacion_variable PC #subprograma_mostrar |
     UL_POS PA evaluacion_variable PC #subprograma_ultima_posicion |

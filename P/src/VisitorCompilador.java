@@ -12,7 +12,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     List<String> variablesCondicion = new ArrayList<>();
     ParseTreeProperty<Map<String, String>> scope = new ParseTreeProperty<>();
     Map<String, List<String>> funciones = new OrderedHashMap<>();
-
+    int tmpIndex = 0;
     private String genPropagaIndefinicion (Anasint.PredicadoContext ctx, boolean niega, String elmVar) {
         variablesBajoCondicion = true;
         String valorPredicado = (String) visit(ctx);
@@ -28,10 +28,9 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
 
 
     private ParserRuleContext closestBreakBlock (ParserRuleContext ctx) {
-        if (//ctx.getParent().getClass().equals(Anasint.Bloque_funcionContext.class) ||
-                ctx.getParent().getClass().equals(Anasint.Instruccion_controlContext.class) ||
-                        ctx.getParent().getClass().equals(Anasint.Instruccion_bucleContext.class) ||
-                        ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class))
+        if (ctx.getParent().getClass().equals(Anasint.Instruccion_controlContext.class) ||
+                ctx.getParent().getClass().equals(Anasint.Instruccion_bucleContext.class) ||
+                ctx.getParent().getClass().equals(Anasint.Bloque_instruccionesContext.class))
             return ctx.getParent();
         else
             return closestBreakBlock(ctx.getParent());
@@ -62,29 +61,19 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
     private String ultimaPosicion () {
         return
-                "private static Integer ultima_posicion (Integer[] entrada) {\n" +
-                "   return entrada[entrada.length-1];\n" +
-                "}\n" +
-                "private static Boolean ultima_posicion (Boolean[] entrada) {\n" +
-                "   return entrada[entrada.length-1];\n" +
-                "}\n"
-                ;
+                "private static Integer ultima_posicion (Object[] entrada) {\n" +
+                "   return entrada.length - 1;\n" +
+                "}\n";
     }
     private String vacia () {
         return
-                "private static Boolean vacia (Boolean[] entrada) {\n" +
-                "   return entrada.length == 0;\n" +
-                "}\n" +
-                "private static Boolean vacia (Integer[] entrada) {\n" +
+                "private static Boolean vacia (Object[] entrada) {\n" +
                 "   return entrada.length == 0;\n" +
                 "}\n";
     }
     private String mostrar () {
         return
-                "private static void mostrar (Boolean[] entrada) {\n" +
-                "   System.out.println(\"Mostrar: \" + Arrays.toString(entrada));\n" +
-                "}\n" +
-                "private static void mostrar (Integer[] entrada) {\n" +
+                "private static void mostrar (Object[] entrada) {\n" +
                 "   System.out.println(\"Mostrar: \" + Arrays.toString(entrada));\n" +
                 "}\n";
     }
@@ -92,6 +81,8 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitBloque_programa(Anasint.Bloque_programaContext ctx) {
         scope.put(ctx, new OrderedHashMap<>());
         variablesPrivadas = false;
+        funciones.put("ultima_posicion", Arrays.asList("Object[]"));
+        funciones.put("vacia", Arrays.asList("Object[]"));
         programa += "import java.util.Arrays;\nimport java.util.stream.IntStream;\n public class Test {\n";
         programa += ultimaPosicion();
         programa += vacia();
@@ -121,15 +112,12 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         String res = "";
         variablesPrivadas = true;
 
+        //TODO esto deberiamos separarlo y hacerlo secuencial..
         for (Anasint.Bloque_procedimientoContext procedimiento: ctx.bloque_procedimiento())
             res += visit(procedimiento);
         for (Anasint.Bloque_funcionContext funcion: ctx.bloque_funcion())
             res += visit(funcion);
 
-        //for (ParseTree subprograma: ctx.children)
-        //    res+= (String) visit(subprograma);
-            //return (String) super.visitBloque_subprogramas(ctx);
-        //for (ctx.)
         return res;
     }
 
@@ -241,39 +229,36 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
             res += ctx.evaluaciones_variables().evaluacion_variable(0).getText();
         return res + ";\n";
     }
-
     public String visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
-        /*
-        variablesBajoCondicion = true;
-        String valorPredicado = (String) visit(ctx.predicado());
-        variablesBajoCondicion = false;
-        String strCondicionNoIndef = "!Arrays.asList(" + String.join(",",variablesCondicion) + ").contains(null)";
-        variablesCondicion.clear();
-        */
+        String varTmp0, varTmp1, varTmp, subprogramaAvance, compruebaAvance;
+        varTmp0 = varTmp1 = varTmp = compruebaAvance = "";
+        if (ctx.subprograma() != null) {
+            varTmp = "int[] _tmp" + tmpIndex + " = {Integer.MAX_VALUE, 0};\n";
+            varTmp0 = "_tmp" + tmpIndex + "[0]";
+            varTmp1 = "_tmp" + tmpIndex + "[1]";
+
+            subprogramaAvance = (String) visit(ctx.subprograma());
+            compruebaAvance =
+                varTmp1 + " = " + varTmp0 + ";\n" +
+                varTmp0 + " = " + subprogramaAvance + ";\n" +
+                "if (!Arrays.asList(_tmp" + tmpIndex +
+                        ").contains(null) && \n (" +
+                        varTmp0 + " < 0 || " +
+                        varTmp0 + " >= " + varTmp1 + "))\n" +
+                    "throw new IllegalArgumentException(\"Función de avance inválida\");\n";
+
+            tmpIndex++;
+        }
         String strPropagaIndef = genPropagaIndefinicion(ctx.predicado(), false,null);
-        String res = "while (" + strPropagaIndef + ") {\n";
-        //dividimos las instrucciones en dos partes, si/sino
-       for (Anasint.InstruccionContext instruccion: ctx.instruccion())
-           res += visit(instruccion);
-        res += "}\n";
-        //si el predicado es cierto (condicion), entramos a las instrucciones
-        //System.out.println("[COMPILADOR] visitInstruccion_bucle: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
-        return res;
+        String res = varTmp + "while (" + strPropagaIndef + ") {\n";
+
+        res += compruebaAvance;
+
+        for (Anasint.InstruccionContext instruccion: ctx.instruccion())
+            res += visit(instruccion);
+        return res + "}\n";
     }
-
     public String visitInstruccion_control (Anasint.Instruccion_controlContext ctx) {
-        /*
-        variablesBajoCondicion = true;
-        variablesCondicion = "!Arrays.asList(";
-        String strCondicionNoIndef = "!Arrays.asList(" + String.join(",",variablesCondicion) + ").contains(null)";
-
-        String valorPredicado = (String) visit(ctx.predicado());
-        variablesBajoCondicion = false;
-        System.out.println("[COMPILADOR] visitInstruccion_control: " + variablesCondicion);
-        variablesCondicion = quitaUltimaComa(variablesCondicion) + ").contains(null) && (";
-        //for (String variableCondicion: variablesCondicion)
-            //precondicion += variablesCondicion.pop() + "!=null"
-        */
         String strPropagaIndef = genPropagaIndefinicion(ctx.predicado(), false,null);
         String res = "if (" + strPropagaIndef + ") {\n";
         //dividimos las instrucciones en dos partes, si/sino
@@ -283,10 +268,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
             else if (Anasint.InstruccionContext.class.isAssignableFrom(hijo.getClass()))
                 res += visit(hijo);
         }
-        res += "}\n";
-        //si el predicado es cierto (condicion), entramos a las instrucciones
-        //System.out.println("[COMPILADOR] visitInstruccion: valor predicado " + ctx.predicado().getText() + " = " + valorPredicado);
-        return res;
+        return res + "}\n";
     }
     public String visitInstruccion_ruptura (Anasint.Instruccion_rupturaContext ctx) {
         if (closestBreakBlock(ctx).getClass().equals(Anasint.Bloque_instruccionesContext.class))
@@ -337,11 +319,8 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
                 "throw new IllegalArgumentException(\"Aserto no válido\");\n}\n";
     }
 
-
     public String visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
-        String valorPredicado = (String) visit(ctx.predicado());
-        //valorPredicado.setValorBooleano(!valorPredicado.getValorBooleano());
-        return "!" + valorPredicado;
+        return "!" + visit(ctx.predicado());
     }
     public String visitPredicado_envuelto (Anasint.Predicado_envueltoContext ctx) {
         return (String) visit(ctx.predicado());
@@ -372,7 +351,6 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitCondicion_falso (Anasint.Condicion_falsoContext ctx) {
         return "false";
     }
-
 
     public String visitOp_aritmetica_envuelta (Anasint.Op_aritmetica_envueltaContext ctx) {
         return (String) visit(ctx.operacion());
@@ -462,7 +440,6 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
                 res += visit(bool) + ",";
             }
         return quitaUltimaComa(res) + "}";
-        //return "new boolean[]" + ctx.getText().replace("[","{").replace("]", "}");
     }
 
     public String visitDeclaracion_variable (Anasint.Declaracion_variableContext ctx) {

@@ -60,10 +60,6 @@ public class Subprograma {
         return entrada;
     }
 
-    public void addDeclarada (Variable vDeclarada) {
-        declaradas.add(vDeclarada);
-    }
-
     public List<Variable> getDeclaradas () {
         return declaradas;
     }

@@ -199,11 +199,17 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //rupturaBloque.put(closestBreakBlock(ctx), true);
         return 1;
     }
-    // esto no deberia hacerse aqui, solo funciona para bucles!
+    // TODO esto no deberia hacerse aqui, solo funciona para bucles!
     public Object visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         //System.out.println("[INTERPRETE] visitInstruccion_bucle " + ctx.predicado().getText());
         Object retornoInstruccion = null;
-
+        boolean tieneAvance = ctx.subprograma() != null;
+        boolean avanceValido = true;
+        Subprograma subprogramaAvance;
+        Integer valorAvance;
+        Integer nValorAvance = Integer.MAX_VALUE;
+        //if (tieneAvance)
+        //    subprogramaAvance = scopeGlobal.getSubprograma(ctx.subprograma().getChild(0).getText());
         while (!ruptura) {
             Boolean resultado = visitPredicado(ctx.predicado());
             if (resultado == null || !resultado)
@@ -211,6 +217,19 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             System.out.println("[INTERPRETE] visitInstruccion_bucle predicado (" +
                     ctx.predicado().getText() + ") = " +
                     visitPredicado(ctx.predicado()));
+
+            //aqui vamos a ejecutar la funcion de avance
+            if (tieneAvance && avanceValido) {
+                valorAvance = nValorAvance;
+                nValorAvance = (Integer) visit(ctx.subprograma());
+                avanceValido = (nValorAvance < valorAvance) && nValorAvance >= 0;
+                System.out.println("[INTERPRETE] visitInstruccion_bucle: función de avance (" + nValorAvance + " < " + valorAvance + ")");
+                if (!avanceValido) {
+                    System.out.println("[INTERPRETE] visitInstruccion_bucle: función de avance no válida! (" + nValorAvance + " >= " + valorAvance + ")");
+                    break;
+                }
+            }
+
             for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
                 System.out.println("[INTERPRETE] visitInstruccion_bucle: " + instruccion.getText());
                 retornoInstruccion = visit(instruccion);
@@ -221,19 +240,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
                 else if (ruptura) {
                     ruptura = false;
                     break;
-                } /*else
-                if (!instruccion.getTokens(Anasint.RETORNO).isEmpty())
-                    //if (instruccion.instruccion_retorno() != null)
-                    return visit(instruccion);
-                    //return visitInstruccion(instruccion);
-                else if (!instruccion.getTokens(Anasint.RUPTURA).isEmpty()) {
-                    //else if (instruccion.instruccion_ruptura() != null) {
-                    ruptura = true;
-                    break;
-                } else
-                    visit(instruccion);
-                    //visitInstruccion(instruccion);
-                    */
+                }
             }
         }
         return retornoInstruccion;
@@ -490,10 +497,10 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return memoria.get(closestInstruccionBlock(ctx)).get(ctx.getText());
     }
 
-    public Object visitSubprograma_ultima_posicion (Anasint.Subprograma_ultima_posicionContext ctx) {
-        List<Object> ultimoValor = (List<Object>) visit(ctx.evaluacion_variable());
-        System.out.println("visitUltima_posicion es " + ctx.getText() + " = " + ultimoValor);
-        return ultimoValor.get(ultimoValor.size() - 1);
+    public Integer visitSubprograma_ultima_posicion (Anasint.Subprograma_ultima_posicionContext ctx) {
+        Integer pos = ((List<Object>) visit(ctx.evaluacion_variable())).size() - 1;
+        System.out.println("visitUltima_posicion es " + ctx.getText() + " = " + pos);
+        return pos;
     }
     public Boolean visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
         List<Object> res = (List<Object>) visitEvaluacion_variable(ctx.evaluacion_variable());

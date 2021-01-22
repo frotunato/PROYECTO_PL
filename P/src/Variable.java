@@ -19,7 +19,6 @@ public class Variable {
         }
     }
 
-
     public String getNombre() {
         return this.nombre;
     }

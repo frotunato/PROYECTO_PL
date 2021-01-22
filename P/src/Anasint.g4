@@ -27,7 +27,7 @@ bloque_variables: VARIABLES declaracion_variable*;
 
 instruccion:
     subprograma PyC #instruccion_llamada_subprograma |
-    MIENTRAS PA predicado PC HACER instruccion+ FMIENTRAS #instruccion_bucle  |
+    MIENTRAS PA predicado PC HACER (LLA AVANCE DP subprograma LLC)? instruccion+ FMIENTRAS #instruccion_bucle  |
     SI PA predicado PC ENTONCES instruccion+ (SINO instruccion+)? FSI #instruccion_control  |
     RUPTURA PyC #instruccion_ruptura  |
     lista_variables ASIG evaluaciones_variables PyC #instruccion_asig |
