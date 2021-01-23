@@ -9,16 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.System.currentTimeMillis;
-
 public class VisitorInterprete extends AnasintBaseVisitor<Object> {
-    Scope scopeGlobal = new Scope("global");
-
+    Programa programa = new Programa("Main", "Main");
     ParseTreeProperty<Map<String, Object>> memoria = new ParseTreeProperty<>();
     ParseTreeProperty<Object> retornosFuncion = new ParseTreeProperty<>();
     boolean retorno = false;
     boolean ruptura = false;
     Map<String, Boolean> resultadosAsertos = new HashMap<>();
+
     private Boolean resuelveOperadorLogico (Object a, Object b, Anasint.Operador_logico_2_arioContext ctx) {
         String operador = ctx.getText();
         boolean res = false;
@@ -39,7 +37,6 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             return res;
         }
     }
-
     private Integer resuelveOperadorAritmetico (Object a, Object b, String operador) {
         int res = 0;
         switch (operador) {
@@ -84,9 +81,9 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
 
     public Object visitBloque_programa(Anasint.Bloque_programaContext ctx) {
         memoria.put(ctx.bloque_instrucciones(), new OrderedHashMap<>());
-        scopeGlobal.declaraSubprogramaNativo("vacia", "Funcion");
-        scopeGlobal.declaraSubprogramaNativo("ultima_posicion", "Funcion");
-        scopeGlobal.declaraSubprogramaNativo("mostrar", "Procedimieneto");
+        programa.declaraSubprogramaNativo("vacia", "Funcion");
+        programa.declaraSubprogramaNativo("ultima_posicion", "Funcion");
+        programa.declaraSubprogramaNativo("mostrar", "Procedimieneto");
 
         return super.visitBloque_programa(ctx);
     }
@@ -96,8 +93,9 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //en una invocacion de subprograma, se hace antes de invocar
         //no aqui
         Object retornoInstruccion = null;
+        List<Variable> variablesPrograma = programa.getVariables();
         if (ctx.getParent().getClass().equals(Anasint.Bloque_programaContext.class))
-            for (Variable variable: scopeGlobal.getVariables())
+            for (Variable variable: variablesPrograma)
                 memoria.get(ctx).put(variable.getNombre(), null);
         for (Anasint.InstruccionContext instruccion: ctx.instruccion()) {
             retornoInstruccion = visit(instruccion);
@@ -112,13 +110,15 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Object visitBloque_procedimiento (Anasint.Bloque_procedimientoContext ctx) {
         String nombreProcedimiento = ctx.IDENT().getText();
         List<Variable> entrada = new ArrayList<>();
-        List<Variable> declaradas = visitBloque_variables(ctx.bloque_variables());
+        List<Variable> internas = visitBloque_variables(ctx.bloque_variables());
         if (ctx.lista_variables_tipadas() != null)
             entrada.addAll(visitLista_variables_tipadas(ctx.lista_variables_tipadas()));
-        Subprograma procedimiento = new Subprograma(nombreProcedimiento, "Procedimiento", entrada, new ArrayList<>(), declaradas);
+        Programa procedimiento = new Programa(nombreProcedimiento, "Procedimiento");
+        procedimiento.declaraVarsEntrada(entrada);
+        procedimiento.declaraVarsInternas(internas);
         procedimiento.setPuntero(ctx.bloque_instrucciones());
-        if (!scopeGlobal.existeSubprograma(nombreProcedimiento)) {
-            scopeGlobal.declaraSubprograma(procedimiento);
+        if (!programa.existeSubprograma(nombreProcedimiento)) {
+            programa.declaraSubprograma(procedimiento);
         }
         return null;
     }
@@ -128,8 +128,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         List<Anasint.Lista_variables_tipadasContext> variablesEntradaSalida =  ctx.lista_variables_tipadas();
         List<Variable> entrada = new ArrayList<>();
         List<Variable> salida = new ArrayList<>();
-        List<Variable> declaradas = visitBloque_variables(ctx.bloque_variables());
-
+        List<Variable> internas = visitBloque_variables(ctx.bloque_variables());
 
         if (variablesEntradaSalida.size() == 2) {
             entrada.addAll(visitLista_variables_tipadas(variablesEntradaSalida.get(0)));
@@ -137,10 +136,13 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         } else
             salida.addAll(visitLista_variables_tipadas(variablesEntradaSalida.get(0)));
 
-        Subprograma funcion = new Subprograma(nombreFuncion, "Funcion", entrada, salida, declaradas);
+        Programa funcion = new Programa(nombreFuncion, "Funcion");
+        funcion.declaraVarsEntrada(entrada);
+        funcion.declaraVarsSalida(salida);
+        funcion.declaraVarsInternas(internas);
         funcion.setPuntero(ctx.bloque_instrucciones());
-        scopeGlobal.declaraSubprograma(funcion);
-        scopeGlobal.getSubprograma(nombreFuncion).setPuntero(ctx.bloque_instrucciones());
+        programa.declaraSubprograma(funcion);
+        programa.getSubprograma(nombreFuncion).setPuntero(ctx.bloque_instrucciones());
 
         return 1;
     }
@@ -157,7 +159,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             //memoria.put(bloque_instrucciones, new OrderedHashMap<>());
 
         if (ctx.getParent().getClass().equals(Anasint.Bloque_programaContext.class)) {
-            scopeGlobal.declaraVariables(variables);
+            programa.declaraVariables(variables);
         }
         return variables;
     }
@@ -205,7 +207,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         Object retornoInstruccion = null;
         boolean tieneAvance = ctx.subprograma() != null;
         boolean avanceValido = true;
-        Subprograma subprogramaAvance;
+        Programa subprogramaAvance;
         Integer valorAvance;
         Integer nValorAvance = Integer.MAX_VALUE;
         //if (tieneAvance)
@@ -318,7 +320,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
             if (evalr.subprograma() != null && evalr.subprograma().getClass().equals(Anasint.Subprograma_declaradoContext.class)) {
                 nombre = evalr.subprograma().getChild(0).getText();
                 Object retornoFuncion = visitEvaluacion_variable(evalr);
-                if (scopeGlobal.getSubprograma(nombre).getSalida().size() > 1)
+                if (programa.getSubprograma(nombre).getVarsSalida().size() > 1)
                     valores.addAll((List<Object>) retornoFuncion);
                 else
                     valores.add(retornoFuncion);
@@ -341,8 +343,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         Boolean resultado = (Boolean) visit(ctx.predicado());
         if (resultado == null)
             throw new IllegalStateException("[INTERPRETE] visitInstruccion_aserto_simple: aserto no válido (ha devuelto indefinido) " + ctx.predicado().getText());
-        else
-            resultadosAsertos.put(currentTimeMillis() + "_" + ctx.getText(), resultado);
+        //else
+        //    resultadosAsertos.put( + "_" + ctx.getText(), resultado);
         return resultado;
     }
     public Object visitInstruccion_aserto_cuantificado (Anasint.Instruccion_aserto_cuantificadoContext ctx) {
@@ -365,7 +367,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         }
         if (!asertoValido)
             throw new IllegalStateException("[INTERPRETE] Aserto (" + ctx.getText() + ") con resultado falso, programa no válido!!");
-        resultadosAsertos.put(currentTimeMillis() + "_" + ctx.getText(), asertoValido);
+        //resultadosAsertos.put(currentTimeMillis() + "_" + ctx.getText(), asertoValido);
         mem.remove(ctx.variable().getText());
         return null;
     }
@@ -439,14 +441,14 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Object visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
         String nombre = ctx.IDENT().getText();
         //String nombre = ctx.getChild(0).getText();
-        Subprograma subprograma = scopeGlobal.getSubprograma(nombre);
+        Programa subprograma = programa.getSubprograma(nombre);
         System.out.println("Visitando programa " + ctx.getText() + " tiene memoria? " + memoria.get(subprograma.getPuntero()));
 
         // Cada vez que entramos en la funcion, limpiamos los datos del nodo
         //retornosFuncion.removeFrom(subprograma.getPuntero());
         memoria.removeFrom(subprograma.getPuntero());
         Map<String, Object> memoriaGlobal = memoria.get(closestInstruccionBlock(ctx));
-        List<Variable> argumentosDeclarados = subprograma.getEntrada();
+        List<Variable> argumentosDeclarados = subprograma.getVarsEntrada();
         Map<String, Object> memoriaSubprograma = new OrderedHashMap<>();
         List<Object> valoresInvocacionSubprograma = new ArrayList<>();
 
@@ -457,7 +459,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         int i = 0;
 
         //estas son las variables definidas del programa en scope
-        for (Variable variableDeclarada: scopeGlobal.getSubprograma(nombre).getDeclaradas())
+        for (Variable variableDeclarada: programa.getSubprograma(nombre).getVarsInternas())
             memoriaSubprograma.put(variableDeclarada.getNombre(), null);
 
         //hay que cargar tambien los valores de la memoria padre
@@ -480,13 +482,13 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //si tienen mismo nombre que globales
         for (String nombreVariable: memoriaSubprograma.keySet())
             //la variable privada prevalece a la global
-            if (!scopeGlobal.getSubprograma(nombre).existeVariable(nombreVariable) &&
-                scopeGlobal.existeVariable(nombreVariable))
+            if (!programa.getSubprograma(nombre).existeVariable(nombreVariable) &&
+                programa.existeVariable(nombreVariable))
                 memoriaGlobal.put(nombreVariable, memoriaSubprograma.get(nombreVariable));
 
         //si es funcion, analizamos si retorno multiple o no
         if (salidaSubprograma != null && subprograma.esFuncion())
-            if (subprograma.getSalida().size() > 1)
+            if (subprograma.getVarsSalida().size() > 1)
                 return salidaSubprograma;
             else
                 return ((List<Object>) salidaSubprograma).get(0);
@@ -518,8 +520,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
     public List<Integer> visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
         List<Integer> secuencia = new ArrayList<>();
-        for (TerminalNode numero: ctx.NUMERO())
-            secuencia.add(Integer.valueOf(numero.getText()));
+        for (Anasint.OperacionContext operacion: ctx.operacion())
+            secuencia.add((Integer) visit(operacion));
         return secuencia;
     }
     public List<Boolean> visitOperando_secuencia_logica (Anasint.Operando_secuencia_logicaContext ctx) {
@@ -553,5 +555,4 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
                 visitOperacion(ctx.operacion(1)),
                 ctx.getChild(1).getText());
     }
-
 }

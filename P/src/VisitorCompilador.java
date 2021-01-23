@@ -13,6 +13,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     ParseTreeProperty<Map<String, String>> scope = new ParseTreeProperty<>();
     Map<String, List<String>> funciones = new OrderedHashMap<>();
     int tmpIndex = 0;
+
     private String genPropagaIndefinicion (Anasint.PredicadoContext ctx, boolean niega, String elmVar) {
         variablesBajoCondicion = true;
         String valorPredicado = (String) visit(ctx);
@@ -25,8 +26,6 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         variablesCondicion.clear();
         return strCondicionNoIndef;
     }
-
-
     private ParserRuleContext closestBreakBlock (ParserRuleContext ctx) {
         if (ctx.getParent().getClass().equals(Anasint.Instruccion_controlContext.class) ||
                 ctx.getParent().getClass().equals(Anasint.Instruccion_bucleContext.class) ||

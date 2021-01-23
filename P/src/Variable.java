@@ -2,12 +2,28 @@ import java.util.Objects;
 
 public class Variable {
     private String nombre;
-    private String tipo;
+    private String tipo = "Interna";
+    private String scope;
     private boolean inicializada = false;
     private boolean soloLectura = false;
 
+
     public Variable (String nNombre, String nTipo) {
         this.nombre = nNombre;
+        //this.valor = new Object();
+        switch (nTipo) {
+            case "LOG" -> this.tipo = "Boolean";
+            case "NUM" -> this.tipo = "Integer";
+            case "SEQ(NUM)" -> this.tipo = "ArrayList<Integer>";
+            case "SEQ(LOG)" -> this.tipo = "ArrayList<Boolean>";
+            //case "SEQ" -> this.tipo = "ArrayList<>";
+            default -> throw new IllegalStateException("Unexpected value: " + nTipo);
+        }
+    }
+
+    public Variable (String nNombre, String nTipo, String scope) {
+        this.nombre = nNombre;
+        this.scope = scope;
         //this.valor = new Object();
         switch (nTipo) {
             case "LOG" -> this.tipo = "Boolean";
@@ -33,6 +49,14 @@ public class Variable {
 
     public void setSoloLectura () {
         this.soloLectura = true;
+    }
+
+    public void setScope (String scope) {
+        this.scope = scope;
+    }
+
+    public String getScope () {
+        return this.scope;
     }
 
     public boolean isInicializada() {

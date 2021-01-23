@@ -77,7 +77,7 @@ operando_secuencia:
     (CA CC) #operando_secuencia_vacia |
     //(CA evaluacion_variable CC) #operando_secuencia_|
     (CA ((valor_booleano COMA)* valor_booleano) CC) #operando_secuencia_logica |
-    (CA ((NUMERO COMA)* NUMERO) CC) #operando_secuencia_numerica
+    (CA ((operacion COMA)* operacion) CC) #operando_secuencia_numerica
 ;
 
 operador_logico_2_ario: IGUAL | DIGUAL | MAYOR | MENOR | MAIGUAL | MEIGUAL;
