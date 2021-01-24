@@ -22,18 +22,18 @@ public class Principal {
         // Pase 1: análisis semántico
         VisitorP s = new VisitorP();
         s.visit(tree);
-/*
+
         // Pase 2: intérprete
         System.out.println("//////////// INTERPRETE ////////////");
         VisitorInterprete interprete = new VisitorInterprete();
         interprete.visit(tree);
-        // Pase 3: compilador
+   /*     // Pase 3: compilador
         System.out.println("//////////// COMPILADOR ////////////");
         VisitorCompilador compilador = new VisitorCompilador();
         compilador.visit(tree);
+*/
 
 
- */
 
 
 

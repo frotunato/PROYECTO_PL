@@ -64,7 +64,7 @@ public class Variable {
     }
 
     public void inicializaVariable () {
-        inicializada = true;
+        this.inicializada = true;
     }
 
     @Override

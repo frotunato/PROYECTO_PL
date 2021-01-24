@@ -9,22 +9,13 @@ import java.util.stream.Collectors;
 public class Programa {
     private final Map<String, Variable> variables = new OrderedHashMap<>();
     private final Map<String, Programa> subprogramas = new OrderedHashMap<>();
+    private final List<Boolean> retornos = new ArrayList<>();
     private ParserRuleContext puntero = null;
     String tipo, nombre;
-
-    public Programa (String tipo) {
-        this.tipo = tipo;
-        this.puntero = null;
-    }
 
     public Programa (String nombre, String tipo) {
         this.nombre = nombre;
         this.tipo = tipo;
-    }
-
-    public Programa (List<Variable> variables) {
-        for (Variable variable: variables)
-            this.variables.put(variable.getNombre(), variable);
     }
 
     public ParserRuleContext getPuntero () {
@@ -38,11 +29,28 @@ public class Programa {
     public String getTipo () { return this.tipo; }
 
     public boolean esArgumento () {
-        return esFuncion() && getVarsSalida().size() == 1;
+        return esFuncion(null) && getVarsSalida().size() == 1;
     }
 
-    public boolean esFuncion () {
-        return this.tipo.equals("Funcion");
+    public boolean esFuncion (String scope) {
+        if (scope == null)
+            return this.tipo.equals("Funcion");
+        else
+            return subprogramas.get(scope).esFuncion(null);
+    }
+
+    public void addRetorno (String scope, boolean esRetornoValido) {
+        if (scope == null)
+            retornos.add(esRetornoValido);
+        else
+            subprogramas.get(scope).addRetorno(null, esRetornoValido);
+    }
+
+    public boolean existeRetornoValido (String scope) {
+        if (scope == null)
+            return retornos.contains(true);
+        else
+            return subprogramas.get(scope).existeRetornoValido(null);
     }
 
     public List<Variable> getVariables () {
@@ -136,7 +144,6 @@ public class Programa {
     }
 
 
-
     public void declaraVariables (List<Variable> variables) {
        for (Variable variable: variables)
            this.variables.put(variable.getNombre(), variable);
@@ -150,10 +157,11 @@ public class Programa {
     }
 
     public void inicializaVariable (String scope, String nombre) {
-        if (scope == null)
-            variables.get(nombre).inicializaVariable();
-        else
-            subprogramas.get(scope).getVariable(nombre).inicializaVariable();;
+        if (variables.containsKey(nombre))
+            if (scope == null)
+                variables.get(nombre).inicializaVariable();
+            else
+                subprogramas.get(scope).inicializaVariable(null, nombre);;
     }
 
     public void inicializaVariables (String scope, List<String> nombres) {
@@ -192,5 +200,6 @@ public class Programa {
         else
             return subprogramas.get(scope).existeVariable(nombre);
     }
+
 
 }

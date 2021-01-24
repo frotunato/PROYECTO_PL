@@ -1,124 +1,46 @@
-PROGRAMA //memoria global
+PROGRAMA
     VARIABLES
-        a,i,max:NUM;
-        global_i, global_j, global_f, global_k:NUM;
-        global_s:SEQ(NUM);
-        global_error:LOG;
-        resultado:NUM;
+        a,b,c:NUM;
+        d:LOG;
+        seq:SEQ(NUM);
     SUBPROGRAMAS
-        FUNCION bucle_1_avance(SEQ(NUM) seq, NUM pos) dev (NUM r)
+        FUNCION prueba (NUM a) dev (NUM c)
             VARIABLES
             INSTRUCCIONES
-                r = ultima_posicion(seq) - pos;
-                dev r;
-        FFUNCION
-        /*
-
-        FUNCION busca_max(SEQ(NUM) lista, NUM tope) dev (NUM max, NUM max2)
-            VARIABLES
-                i,tmp:NUM;
-            INSTRUCCIONES
-                tmp = 0;
-                i = 0;
-                si ([] == [1,3]) entonces
-                    mostrar([1,2,3]);
-                    i = 1;
-                sino
-                    mostrar([1,1,1]);
-                    i = 2;
-                fsi
-                mientras (i < tope) hacer
-                    si (lista[i] > tmp) entonces
-                        tmp = lista[i];
-                    fsi
-                    i = i + 1;
-                fmientras
-            dev 5, 6;
-        FFUNCION
-        PROCEDIMIENTO test2 (NUM b)
-            VARIABLES
-                a,acum,limite:NUM;
-            INSTRUCCIONES
-                a = b;
-                acum = a + 25;
-                limite = 0;
-
-                mientras (limite < 2) hacer
-                    limite = limite + 1;
-                    a = a * acum;
-                fmientras
-
-                global_j = acum;
-        FPROCEDIMIENTO
-        FUNCION test (NUM a, NUM b) dev (NUM c)
-            VARIABLES
-                global_i2,c2:NUM;
-            INSTRUCCIONES
-                c = 0;
-                si ([] == [1,3]) entonces
-                    mostrar([1,2,3]);
-                    i = 1;
-                sino
-                    mostrar([1,1,1]);
-                    i = 2;
-                fsi
-                si (global_error == T || global_k > global_f) entonces
-                    global_i = 25;
-                    c = global_i + b;
-                fsi
-                dev 2;
-        FFUNCION
-        */
-        FUNCION test3 (NUM a) dev (NUM c)
-            VARIABLES
-                global_i2,c2:NUM;
-            INSTRUCCIONES
-                c = 0;
-                si ([1,3] == [1,3]) entonces
-                    mostrar([1,2,3]);
-                    c = 11;
-                sino
-                    mostrar([1,1,1,1]);
-                    c = 2;
-                fsi
-                { !falso }
-                dev c;
-                /*
-                si (a > 10) entonces
-                    si (a > 15) entonces
-                        dev 15;
+                si (a > 1) entonces //[0,1]
+                    si (a > 2) entonces //[0,1]
+                        dev 1 + T;
+                        dev 2;
                     sino
-                        dev 11;
+                        dev 3;
                     fsi
                 sino
                     c = 25;
-                    //ruptura;
-                    dev 0;
+                    dev 2;
                 fsi
-                */
+                //dev a + 1;
         FFUNCION
+         /*
+         PROCEDIMIENTO p (NUM x)
+            VARIABLES
+                i,j:NUM;
+            INSTRUCCIONES
+                i=1;
+                si (i==1) entonces
+                    j=2;
+                sino
+                    i=1;
+                fsi
+        FPROCEDIMIENTO
+        */
     INSTRUCCIONES
-        a = 11;
-        //global_s = [3,4,2,7,9,0,11];
-        global_s = [100,4,2,7,9,0,11];
-        i=0;
-        max=global_s[i];
-        mientras (i<=ultima_posicion(global_s)) hacer {avance: bucle_1_avance(global_s, i)}
-            si (global_s[i]>max) entonces
-                max=global_s[i];
-            fsi
-            i=i+1;
-        fmientras
+        a = 1;
+        d = T;
+        seq = [1+prueba(a),2,3,2,a];
+        b = 2;
+        si (b > 2) entonces
+            b = b + 3;
+        fsi
 
 
-        //resultado = ultima_posicion(global_s);
-        //resultado, a = busca_max(global_s, 2);
-        //{ PARATODO(p:[0,a],global_s[p]>=resultado) }
-
-        //a = test3(35);
-        //a = test3(test3(23) + 1);
-        //resultado, a, global_i = busca_max(global_s, test(25,27)), test(12,37);
-
-        //test2(25);
-
-        //global_i = 25 + test(global_j,2);
+        c = a + b;

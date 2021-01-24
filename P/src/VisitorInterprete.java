@@ -423,7 +423,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return Integer.valueOf(ctx.NUMERO().getText());
     }
     public Object visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
-        List<Object> variable = (List<Object>) visit(ctx.variable());
+        List<Object> variable = (List<Object>) memoria.get(closestInstruccionBlock(ctx)).get(ctx.getText());;
         Integer indice = (Integer) visit(ctx.operacion());
         Object res;
         try {
@@ -487,7 +487,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
                 memoriaGlobal.put(nombreVariable, memoriaSubprograma.get(nombreVariable));
 
         //si es funcion, analizamos si retorno multiple o no
-        if (salidaSubprograma != null && subprograma.esFuncion())
+        if (salidaSubprograma != null && subprograma.esFuncion(null))
             if (subprograma.getVarsSalida().size() > 1)
                 return salidaSubprograma;
             else
@@ -495,7 +495,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         else
             return null;
     }
-    public Object visitVariable (Anasint.VariableContext ctx) {
+    public Object visitVariable_simple (Anasint.Variable_simpleContext ctx) {
         return memoria.get(closestInstruccionBlock(ctx)).get(ctx.getText());
     }
 
@@ -518,18 +518,18 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     public Object visitOperando_subprograma (Anasint.Operando_subprogramaContext ctx) {
         return visit(ctx.subprograma());
     }
-    public List<Integer> visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
-        List<Integer> secuencia = new ArrayList<>();
+    public List<Object> visitOperando_secuencia_llena (Anasint.Operando_secuencia_llenaContext ctx) {
+        List<Object> secuencia = new ArrayList<>();
         for (Anasint.OperacionContext operacion: ctx.operacion())
-            secuencia.add((Integer) visit(operacion));
+            secuencia.add(visit(operacion));
         return secuencia;
-    }
+    }/*
     public List<Boolean> visitOperando_secuencia_logica (Anasint.Operando_secuencia_logicaContext ctx) {
         List<Boolean> secuencia = new ArrayList<>();
-        for (Anasint.Valor_booleanoContext booleano: ctx.valor_booleano())
+        for (Anasint.OperandoContext booleano: ctx.operando())
             secuencia.add(booleano.getText().equals("T"));
         return secuencia;
-    }
+    }*/
     public Object visitOperando_secuencia_vacia (Anasint.Operando_secuencia_vaciaContext ctx) {
         return new ArrayList<>();
     }

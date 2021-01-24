@@ -51,13 +51,25 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVariable(Anasint.VariableContext ctx) { }
+	@Override public void enterVariable_simple(Anasint.Variable_simpleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVariable(Anasint.VariableContext ctx) { }
+	@Override public void exitVariable_simple(Anasint.Variable_simpleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVariable_acceso(Anasint.Variable_accesoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVariable_acceso(Anasint.Variable_accesoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -471,6 +483,18 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOperando_booleano(Anasint.Operando_booleanoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOperando_booleano(Anasint.Operando_booleanoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterOperando_variable(Anasint.Operando_variableContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -478,18 +502,6 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOperando_variable(Anasint.Operando_variableContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterVariable_acceso(Anasint.Variable_accesoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitVariable_acceso(Anasint.Variable_accesoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -519,25 +531,13 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx) { }
+	@Override public void enterOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOperando_secuencia_numerica(Anasint.Operando_secuencia_numericaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperando_secuencia_numerica(Anasint.Operando_secuencia_numericaContext ctx) { }
+	@Override public void exitOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

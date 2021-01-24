@@ -1,41 +1,19 @@
 PROGRAMA
-    VARIABLES
-        a,b,c:NUM;
-        d:LOG;
-        seq:SEQ(NUM);
-    SUBPROGRAMAS
-        FUNCION prueba (NUM a) dev (NUM c)
-            VARIABLES
-            INSTRUCCIONES
-                si (a > 1) entonces
-                    dev 1;
-                    //dev 2;
-                sino
-                    c = 25;
-                fsi
-                //dev a + 1;
-        FFUNCION
-         /*
-         PROCEDIMIENTO p (NUM x)
-            VARIABLES
-                i,j:NUM;
-            INSTRUCCIONES
-                i=1;
-                si (i==1) entonces
-                    j=2;
-                sino
-                    i=1;
-                fsi
-        FPROCEDIMIENTO
-        */
-    INSTRUCCIONES
-        a = 1;
-        d = T;
-        seq = [1+prueba(a),2,3,54,a];
-        b = 2;
-        si (b > 2) entonces
-            b = b + 3;
-        fsi
-
-
-        c = a + b;
+VARIABLES
+   i,j:NUM;
+   s:SEQ(NUM);
+SUBPROGRAMAS
+INSTRUCCIONES
+   s,i=[3,4,2,7,9,0,11],0;
+   s[i],max=10,s[i];
+   mientras (i<=ultima_posicion(s) || !cierto) hacer
+      si (max<s[i] && i!=10) entonces
+         max=s[i];
+      sino
+         si (max==10) entonces
+            ruptura;
+         fsi
+      fsi
+      i=i+1;
+   fmientras
+   mostrar(max);

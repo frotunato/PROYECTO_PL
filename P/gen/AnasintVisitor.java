@@ -28,11 +28,19 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLista_variables_tipadas(Anasint.Lista_variables_tipadasContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#variable}.
+	 * Visit a parse tree produced by the {@code variable_simple}
+	 * labeled alternative in {@link Anasint#variable}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVariable(Anasint.VariableContext ctx);
+	T visitVariable_simple(Anasint.Variable_simpleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code variable_acceso}
+	 * labeled alternative in {@link Anasint#variable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code tipo_numerico}
 	 * labeled alternative in {@link Anasint#tipo}.
@@ -264,19 +272,19 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperando_numerico(Anasint.Operando_numericoContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code operando_booleano}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperando_booleano(Anasint.Operando_booleanoContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code operando_variable}
 	 * labeled alternative in {@link Anasint#operando}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitOperando_variable(Anasint.Operando_variableContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code variable_acceso}
-	 * labeled alternative in {@link Anasint#operando}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code operando_subprograma}
 	 * labeled alternative in {@link Anasint#operando}.
@@ -292,19 +300,12 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code operando_secuencia_logica}
+	 * Visit a parse tree produced by the {@code operando_secuencia_llena}
 	 * labeled alternative in {@link Anasint#operando_secuencia}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code operando_secuencia_numerica}
-	 * labeled alternative in {@link Anasint#operando_secuencia}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperando_secuencia_numerica(Anasint.Operando_secuencia_numericaContext ctx);
+	T visitOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#operador_logico_2_ario}.
 	 * @param ctx the parse tree

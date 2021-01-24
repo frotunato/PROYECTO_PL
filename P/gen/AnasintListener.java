@@ -37,15 +37,29 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitLista_variables_tipadas(Anasint.Lista_variables_tipadasContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#variable}.
+	 * Enter a parse tree produced by the {@code variable_simple}
+	 * labeled alternative in {@link Anasint#variable}.
 	 * @param ctx the parse tree
 	 */
-	void enterVariable(Anasint.VariableContext ctx);
+	void enterVariable_simple(Anasint.Variable_simpleContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#variable}.
+	 * Exit a parse tree produced by the {@code variable_simple}
+	 * labeled alternative in {@link Anasint#variable}.
 	 * @param ctx the parse tree
 	 */
-	void exitVariable(Anasint.VariableContext ctx);
+	void exitVariable_simple(Anasint.Variable_simpleContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code variable_acceso}
+	 * labeled alternative in {@link Anasint#variable}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariable_acceso(Anasint.Variable_accesoContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code variable_acceso}
+	 * labeled alternative in {@link Anasint#variable}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code tipo_numerico}
 	 * labeled alternative in {@link Anasint#tipo}.
@@ -439,6 +453,18 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitOperando_numerico(Anasint.Operando_numericoContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code operando_booleano}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperando_booleano(Anasint.Operando_booleanoContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code operando_booleano}
+	 * labeled alternative in {@link Anasint#operando}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperando_booleano(Anasint.Operando_booleanoContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code operando_variable}
 	 * labeled alternative in {@link Anasint#operando}.
 	 * @param ctx the parse tree
@@ -450,18 +476,6 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOperando_variable(Anasint.Operando_variableContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code variable_acceso}
-	 * labeled alternative in {@link Anasint#operando}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariable_acceso(Anasint.Variable_accesoContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code variable_acceso}
-	 * labeled alternative in {@link Anasint#operando}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariable_acceso(Anasint.Variable_accesoContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code operando_subprograma}
 	 * labeled alternative in {@link Anasint#operando}.
@@ -487,29 +501,17 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitOperando_secuencia_vacia(Anasint.Operando_secuencia_vaciaContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code operando_secuencia_logica}
+	 * Enter a parse tree produced by the {@code operando_secuencia_llena}
 	 * labeled alternative in {@link Anasint#operando_secuencia}.
 	 * @param ctx the parse tree
 	 */
-	void enterOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx);
+	void enterOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code operando_secuencia_logica}
+	 * Exit a parse tree produced by the {@code operando_secuencia_llena}
 	 * labeled alternative in {@link Anasint#operando_secuencia}.
 	 * @param ctx the parse tree
 	 */
-	void exitOperando_secuencia_logica(Anasint.Operando_secuencia_logicaContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code operando_secuencia_numerica}
-	 * labeled alternative in {@link Anasint#operando_secuencia}.
-	 * @param ctx the parse tree
-	 */
-	void enterOperando_secuencia_numerica(Anasint.Operando_secuencia_numericaContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code operando_secuencia_numerica}
-	 * labeled alternative in {@link Anasint#operando_secuencia}.
-	 * @param ctx the parse tree
-	 */
-	void exitOperando_secuencia_numerica(Anasint.Operando_secuencia_numericaContext ctx);
+	void exitOperando_secuencia_llena(Anasint.Operando_secuencia_llenaContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#operador_logico_2_ario}.
 	 * @param ctx the parse tree

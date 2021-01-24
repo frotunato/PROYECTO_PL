@@ -9,7 +9,9 @@ declaracion_variable: (IDENT COMA)* IDENT DP tipo PyC;
 lista_variables: (variable COMA)* variable;
 lista_variables_tipadas: (tipo IDENT COMA)* tipo IDENT;
 
-variable: IDENT;
+variable:
+    IDENT #variable_simple |
+    IDENT CA operacion CC #variable_acceso;
 
 tipo:
     INTEGER #tipo_numerico |
@@ -68,16 +70,17 @@ operacion:
 
 operando:
     NUMERO #operando_numerico |
+    valor_booleano #operando_booleano |
     variable #operando_variable |
-    variable CA operacion CC #variable_acceso |
+    //variable_acceso #op_variable_acceso |
     subprograma #operando_subprograma
 ;
 
 operando_secuencia:
     (CA CC) #operando_secuencia_vacia |
-    //(CA evaluacion_variable CC) #operando_secuencia_|
-    (CA ((valor_booleano COMA)* valor_booleano) CC) #operando_secuencia_logica |
-    (CA ((NUMERO COMA)* NUMERO) CC) #operando_secuencia_numerica
+    (CA ((operacion COMA)* operacion) CC) #operando_secuencia_llena
+
+    //(CA ((operando | operando COMA)* operando | operando) CC) #operando_secuencia_logica |
 ;
 
 operador_logico_2_ario: IGUAL | DIGUAL | MAYOR | MENOR | MAIGUAL | MEIGUAL;

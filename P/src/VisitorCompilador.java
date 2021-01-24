@@ -9,6 +9,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     String programa = "";
     boolean variablesPrivadas = false;
     boolean variablesBajoCondicion = false;
+    boolean esSecuenciaAnonima = true;
     List<String> variablesCondicion = new ArrayList<>();
     ParseTreeProperty<Map<String, String>> scope = new ParseTreeProperty<>();
     Map<String, List<String>> funciones = new OrderedHashMap<>();
@@ -39,8 +40,10 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         switch (tipoP) {
             case "NUM" -> res = "Integer";
             case "LOG" -> res = "Boolean";
-            case "SEQ(NUM)" -> res = "Integer[]";
-            case "SEQ(LOG)" -> res = "Boolean[]";
+            case "SEQ(NUM)", "SEQ(LOG)" -> res = "Object[]";
+
+            //case "SEQ(NUM)" -> res = "Integer[]";
+            //case "SEQ(LOG)" -> res = "Boolean[]";
         }
         return res;
     }
@@ -141,7 +144,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         if (ctx.lista_variables_tipadas().size() > 1)
             i = 1;
 
-        //la funcion tiene varios args de salida
+        //la funcion tiene varios valores de salida, devolvemos Object[]
         if (ctx.lista_variables_tipadas(i).IDENT().size() > 1) {
             res += "Object[] ";
             tipoSalida = "Object[]";
@@ -152,7 +155,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
                 scopePadre.put(nombre, convierteTipo(tipo.getText()));
             }
         }
-        //funcion solo tiene un arg de salida
+        //funcion solo tiene un valor como salida
         else {
             Anasint.TipoContext tipo = ctx.lista_variables_tipadas(i).tipo(0);
             j = tipo.getParent().children.indexOf(tipo);
@@ -163,8 +166,9 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
             declaracionVariablesSalida += convierteTipo(tipo.getText()) + " " + nombre +";\n";
             scopePadre.put(nombre, convierteTipo(tipo.getText()));
         }
-        //entrada
+        //analizamos las variables de entrada
         res += ctx.IDENT().getText() + " (";
+        //si i > 0, tiene entrada/salida
         if (i > 0) {
             for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas(0).tipo()) {
                 j = tipo.getParent().children.indexOf(tipo);
@@ -174,12 +178,13 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
                 if (tipo.parent.getChild(j+2) != null)
                     res += tipo.parent.getChild(j+2);
             }
+            for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas(1).tipo()) {
+                funciones.get(nombrePrograma).add(convierteTipo(tipo.getText()));
+            }
         }
         res += ") {\n" + declaracionVariablesSalida;
 
-        for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas(1).tipo()) {
-            funciones.get(nombrePrograma).add(convierteTipo(tipo.getText()));
-        }
+
         res += visitBloque_variables(ctx.bloque_variables());
         res += visitBloque_instrucciones(ctx.bloque_instrucciones());
         res += " }\n";
@@ -411,7 +416,9 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
 
     public String visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
-        return visitVariable(ctx.variable()) + "[" + visit(ctx.operacion()) + "]";
+        if (variablesBajoCondicion)
+            variablesCondicion.add(ctx.getText());
+        return ctx.IDENT().getText() + "[" + visit(ctx.operacion()) + "]";
     }
 
     public String visitVariable (Anasint.VariableContext ctx) {
@@ -428,15 +435,17 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitOperando_subprograma (Anasint.Operando_subprogramaContext ctx) {
         return (String) visit(ctx.subprograma());
     }
-
+/*
     public String visitOperando_secuencia_numerica (Anasint.Operando_secuencia_numericaContext ctx) {
         return "new Integer[]" + ctx.getText().replace("[","{").replace("]", "}");
-    }
+    }*/
 
-    public String visitOperando_secuencia_logica (Anasint.Operando_secuencia_logicaContext ctx) {
-        String res = "new Boolean[]{";
-            for (Anasint.Valor_booleanoContext bool: ctx.valor_booleano()) {
-                res += visit(bool) + ",";
+
+
+    public String visitOperando_secuencia_llena (Anasint.Operando_secuencia_llenaContext ctx) {
+        String res = "new Object[]{";
+            for (Anasint.OperacionContext elto: ctx.operacion()) {
+                res += visit(elto) + ",";
             }
         return quitaUltimaComa(res) + "}";
     }
