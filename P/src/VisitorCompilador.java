@@ -1,18 +1,19 @@
-import org.antlr.v4.misc.OrderedHashMap;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
 import java.util.*;
 
 public class VisitorCompilador extends AnasintBaseVisitor<Object>{
-    String programa = "";
+    String codigoPrograma = "";
     boolean variablesPrivadas = false;
     boolean variablesBajoCondicion = false;
-    boolean esSecuenciaAnonima = true;
+    boolean casteoVariables = true;
+    Stack<String> tiposSecuencia = new Stack<>();
+    Programa programa = new Programa("Main", "Main");
+    String scope = null;
+    final String _tmpGlobal = "_" + UUID.randomUUID().toString().replace("-", "");
+
     List<String> variablesCondicion = new ArrayList<>();
-    ParseTreeProperty<Map<String, String>> scope = new ParseTreeProperty<>();
-    Map<String, List<String>> funciones = new OrderedHashMap<>();
     int tmpIndex = 0;
 
     private String genPropagaIndefinicion (Anasint.PredicadoContext ctx, boolean niega, String elmVar) {
@@ -40,10 +41,10 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         switch (tipoP) {
             case "NUM" -> res = "Integer";
             case "LOG" -> res = "Boolean";
-            case "SEQ(NUM)", "SEQ(LOG)" -> res = "Object[]";
+            //case "SEQ(NUM)", "SEQ(LOG)" -> res = "Object[]";
 
-            //case "SEQ(NUM)" -> res = "Integer[]";
-            //case "SEQ(LOG)" -> res = "Boolean[]";
+            case "SEQ(NUM)" -> res = "Integer[]";
+            case "SEQ(LOG)" -> res = "Boolean[]";
         }
         return res;
     }
@@ -53,6 +54,13 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
             return str.substring(0 ,str.lastIndexOf(","));
         else return str;
     }
+    private String getTipoVariable (Anasint.VariableContext ctx) {
+        if (ctx.getClass().equals(Anasint.Variable_simpleContext.class))
+            return programa.getVariable(ctx.getChild(0).getText()).getTipo();
+        else
+            return programa.getVariable(scope, ctx.getChild(0).getText()).getTipo().replace("[]", "");
+    }
+    /*
     private Map<String, String> getUpperScope (ParserRuleContext ctx) {
         if (scope.get(ctx) != null)
             return scope.get(ctx);
@@ -60,7 +68,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         if (ctx.getParent() == null)
             return null;
         return getUpperScope(ctx.getParent());
-    }
+    }*/
     private String ultimaPosicion () {
         return
                 "private static Integer ultima_posicion (Object[] entrada) {\n" +
@@ -81,29 +89,34 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
 
     public String visitBloque_programa(Anasint.Bloque_programaContext ctx) {
-        scope.put(ctx, new OrderedHashMap<>());
+        //scope.put(ctx, new OrderedHashMap<>());
         variablesPrivadas = false;
-        funciones.put("ultima_posicion", Arrays.asList("Object[]"));
-        funciones.put("vacia", Arrays.asList("Object[]"));
-        programa += "import java.util.Arrays;\nimport java.util.stream.IntStream;\n public class Test {\n";
-        programa += ultimaPosicion();
-        programa += vacia();
-        programa += mostrar();
-        programa += visitBloque_variables(ctx.bloque_variables()) + "\n";
-        programa += visitBloque_subprogramas(ctx.bloque_subprogramas()) + "\n";
-        programa += "public static void main(String[] args) throws Exception {\n" + visitBloque_instrucciones(ctx.bloque_instrucciones());
-        programa += "}\n}";
+        programa.declaraSubprogramaNativo("ultima_posicion", "Funcion");
+        programa.declaraSubprogramaNativo("vacia", "Funcion");
+        programa.declaraSubprogramaNativo("mostrar", "Procedimiento");
+
+        //funciones.put("ultima_posicion", Arrays.asList("Object[]"));
+        //funciones.put("vacia", Arrays.asList("Object[]"));
+        codigoPrograma += "import java.util.Arrays;\nimport java.util.stream.IntStream;\n public class Test {\n" + "private static Object[] " + _tmpGlobal + ";\n";
+        codigoPrograma += ultimaPosicion();
+        codigoPrograma += vacia();
+        codigoPrograma += mostrar();
+        codigoPrograma += visitBloque_variables(ctx.bloque_variables()) + "\n";
+        codigoPrograma += visitBloque_subprogramas(ctx.bloque_subprogramas()) + "\n";
+        codigoPrograma += "public static void main(String[] args) throws Exception {\n" + visitBloque_instrucciones(ctx.bloque_instrucciones());
+        codigoPrograma += "}\n}";
         return "";
     }
 
     public String visitBloque_variables(Anasint.Bloque_variablesContext ctx) {
         String res = "";
-        Map<String, String> scopePadre = getUpperScope(ctx);
+        //Map<String, String> scopePadre = getUpperScope(ctx);
+        /*
         if (!ctx.getParent().getClass().equals(Anasint.Bloque_programaContext.class)) {
             Map<String, String> scopeHijo = new OrderedHashMap<>();
             scopeHijo.putAll(scopePadre);
-            scope.put(ctx, scopeHijo);
-        }
+            //scope.put(ctx, scopeHijo);
+        }*/
         for (Anasint.Declaracion_variableContext variable : ctx.declaracion_variable())
             res += (visitDeclaracion_variable(variable));
         return res;
@@ -131,28 +144,32 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
 
     public String visitBloque_funcion (Anasint.Bloque_funcionContext ctx) {
-        Map<String, String> scopePadre = getUpperScope(ctx);
+        //Map<String, String> scopePadre = getUpperScope(ctx);
         String declaracionVariablesSalida = "";
         String nombrePrograma = ctx.IDENT().getText();
+        scope = nombrePrograma;
         String tipoSalida, nombre;
         String res = "";
         res += "private static ";
-        funciones.put(nombrePrograma, new ArrayList<>());
+        //funciones.put(nombrePrograma, new ArrayList<>());
+        Programa subprograma = new Programa(nombrePrograma, "Funcion");
 
         int i = 0;
         int j;
         if (ctx.lista_variables_tipadas().size() > 1)
             i = 1;
 
-        //la funcion tiene varios valores de salida, devolvemos Object[]
+        //la funcion tiene varios valores de salida, los añadimos al scope
         if (ctx.lista_variables_tipadas(i).IDENT().size() > 1) {
             res += "Object[] ";
             tipoSalida = "Object[]";
+            //aqui añadimos el tipo de variables de salida
             for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas(1).tipo()) {
                 j = tipo.getParent().children.indexOf(tipo);
                 nombre = tipo.parent.getChild(j + 1).getText();
                 declaracionVariablesSalida += (convierteTipo(tipo.getText()) + " " + nombre +";\n");
-                scopePadre.put(nombre, convierteTipo(tipo.getText()));
+                subprograma.declaraVariable(null, new Variable(nombre, tipo.getText(), "Salida"));
+                //scopePadre.put(nombre, convierteTipo(tipo.getText()));
             }
         }
         //funcion solo tiene un valor como salida
@@ -164,23 +181,27 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
             tipoSalida = convierteTipo(tipo.getText());
             res += convierteTipo(tipo.getText()) + " ";
             declaracionVariablesSalida += convierteTipo(tipo.getText()) + " " + nombre +";\n";
-            scopePadre.put(nombre, convierteTipo(tipo.getText()));
+            subprograma.declaraVariable(null, new Variable(nombre, tipo.getText(), "Salida"));
+            //scopePadre.put(nombre, convierteTipo(tipo.getText()));
         }
         //analizamos las variables de entrada
         res += ctx.IDENT().getText() + " (";
-        //si i > 0, tiene entrada/salida
+        //si i > 0, tiene entrada/salida, y la entrada esta en indice 0
         if (i > 0) {
             for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas(0).tipo()) {
                 j = tipo.getParent().children.indexOf(tipo);
                 nombre = tipo.parent.getChild(j + 1).getText();
                 res += (convierteTipo(tipo.getText()) + " " + nombre);
-                scopePadre.put(nombre, convierteTipo(tipo.getText()));
+                //scopePadre.put(nombre, convierteTipo(tipo.getText()));
+                subprograma.declaraVariable(null, new Variable(nombre, tipo.getText(), "Entrada"));
                 if (tipo.parent.getChild(j+2) != null)
                     res += tipo.parent.getChild(j+2);
             }
+            /*
             for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas(1).tipo()) {
                 funciones.get(nombrePrograma).add(convierteTipo(tipo.getText()));
             }
+             */
         }
         res += ") {\n" + declaracionVariablesSalida;
 
@@ -188,16 +209,23 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         res += visitBloque_variables(ctx.bloque_variables());
         res += visitBloque_instrucciones(ctx.bloque_instrucciones());
         res += " }\n";
-        if (funciones.get(nombrePrograma).size() > 1)
+        //si devuelve mas de una cosa, devuelve Object[]
+        if (!subprograma.esArgumento())
+        //if (funciones.get(nombrePrograma).size() > 1)
             res += "private static " + tipoSalida + " salida_" + nombrePrograma + ";\n";
+        programa.declaraSubprograma(subprograma);
+        scope = null;
         return res;
     }
 
     public String visitBloque_procedimiento (Anasint.Bloque_procedimientoContext ctx) {
-        Map<String, String> scopePadre = getUpperScope(ctx);
+        //Map<String, String> scopePadre = getUpperScope(ctx);
+
         String nombrePrograma = ctx.IDENT().getText();
+        scope = nombrePrograma;
         String res, nombre;
-        funciones.put(nombrePrograma, new ArrayList<>());
+        Programa subprograma = new Programa(nombrePrograma, "Procedimiento");
+        //funciones.put(nombrePrograma, new ArrayList<>());
         int j;
         res = "private static void " + nombrePrograma + " (";
 
@@ -206,18 +234,22 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
             j = tipo.getParent().children.indexOf(tipo);
             nombre = tipo.parent.getChild(j + 1).getText();
             res += (convierteTipo(tipo.getText()) + " " + nombre);
-            scopePadre.put(nombre, convierteTipo(tipo.getText()));
+            subprograma.declaraVariable(null, new Variable(nombre, tipo.getText(), "Entrada"));
+            //scopePadre.put(nombre, convierteTipo(tipo.getText()));
             if (tipo.parent.getChild(j+2) != null)
                 res += tipo.parent.getChild(j+2);
         }
         res += ") {\n";
-
+        /*
         for (Anasint.TipoContext tipo: ctx.lista_variables_tipadas().tipo()) {
             funciones.get(nombrePrograma).add(convierteTipo(tipo.getText()));
         }
+         */
         res += visitBloque_variables(ctx.bloque_variables());
         res += visitBloque_instrucciones(ctx.bloque_instrucciones());
         res += " }\n";
+        programa.declaraSubprograma(subprograma);
+        scope = null;
         return res;
     }
 
@@ -235,7 +267,7 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
     public String visitInstruccion_bucle (Anasint.Instruccion_bucleContext ctx) {
         String varTmp0, varTmp1, varTmp, subprogramaAvance, compruebaAvance;
-        varTmp0 = varTmp1 = varTmp = compruebaAvance = "";
+        varTmp = compruebaAvance = "";
         if (ctx.subprograma() != null) {
             varTmp = "int[] _tmp" + tmpIndex + " = {Integer.MAX_VALUE, 0};\n";
             varTmp0 = "_tmp" + tmpIndex + "[0]";
@@ -250,7 +282,6 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
                         varTmp0 + " < 0 || " +
                         varTmp0 + " >= " + varTmp1 + "))\n" +
                     "throw new IllegalArgumentException(\"Función de avance inválida\");\n";
-
             tmpIndex++;
         }
         String strPropagaIndef = genPropagaIndefinicion(ctx.predicado(), false,null);
@@ -281,27 +312,106 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
             return "break;\n";
     }
     public String visitInstruccion_asig (Anasint.Instruccion_asigContext ctx) {
-        String str;
         String res = "";
-        Stack<String> pilaVariables = new Stack<>();
-        for (Anasint.VariableContext variable: ctx.lista_variables().variable())
-            pilaVariables.add(variable.getText());
-        Collections.reverse(pilaVariables);
+        List<String> constr = new ArrayList<>();
+        Programa subprograma;
+        //llenamos la pila con las variables de la izq y la invertimos
+        Stack<Anasint.VariableContext> variablesIzq = new Stack<>();
+        variablesIzq.addAll(ctx.lista_variables().variable());
+        Collections.reverse(variablesIzq);
+
+        //asignación multiple
+        if (ctx.lista_variables().variable().size() > 1) {
+            String nombreSubprograma;
+            int i = 0;
+            int k;
+            //reservamos la primera linea para la variable temporal
+            constr.add(null);
+            //vamos rellenando la variable temporal con las evaluaciones
+            String _tmpVar = _tmpGlobal + " = new Object[] {";
+            for (Anasint.Evaluacion_variableContext evalr: ctx.evaluaciones_variables().evaluacion_variable()) {
+                nombreSubprograma = (evalr.subprograma() != null) ? evalr.subprograma().getChild(0).getText() : null;
+                String tipoVariable = "(" + getTipoVariable(variablesIzq.peek()) + ")";
+
+                //si encontramos un subprograma
+                if (evalr.subprograma() != null) {
+                    subprograma = programa.getSubprograma(nombreSubprograma);
+                    //vemos si es un argumento o no (dev > 2)
+                    if (!subprograma.esArgumento()) {
+                        //si no es argumento, calculamos los subindices
+                        //ej: i = _tmp[1][0];
+                        //    j = _tmp[1][1];
+                        //  ... = _tmp[i][k];
+                        k = 0;
+                        List<String> tiposSalida = subprograma.getTiposSalida();
+                        for (int j = 0; j < tiposSalida.size(); j++) {
+                            tipoVariable = "(" + getTipoVariable(variablesIzq.peek()) + ")";
+                            constr.add(visit(variablesIzq.pop()) + " = " + tipoVariable +  " ((Object[]) " + _tmpGlobal + "[" + i + "])[" + k + "];\n");
+                            k++;
+                        }
+                    } else {
+                        if (evalr.operando_secuencia() != null)
+                            tiposSecuencia.push(getTipoVariable(variablesIzq.peek()));
+                        //si vale como argumento, se añade normalmente
+                        constr.add(visit(variablesIzq.pop()) + " = " + tipoVariable + " " + _tmpGlobal + "[" + i + "];\n");
+                    }
+                } else {
+                    if (evalr.operando_secuencia() != null)
+                        tiposSecuencia.push(getTipoVariable(variablesIzq.peek()));
+                    //si no es subprograma, se añade normal
+                    constr.add(visit(variablesIzq.pop()) + " = " + tipoVariable + " " + _tmpGlobal + "[" + i + "];\n");
+                }
+                //seguimos construyendo el array temporal
+                _tmpVar += visitEvaluacion_variable(evalr) + ",";
+                i++;
+            }
+            //ponemos como primera asignación la del array temporal
+            _tmpVar = quitaUltimaComa(_tmpVar) + "};\n";
+            constr.set(0, _tmpVar);
+            //cuando acabamos, juntamos el array 'constr' en un string
+            res = String.join("", constr);
+        } else {
+            //asignación simple
+            if (ctx.evaluaciones_variables().evaluacion_variable(0).operando_secuencia() != null)
+                tiposSecuencia.push(getTipoVariable(variablesIzq.peek()));
+            res += visit(variablesIzq.pop()) + " = " + visit(ctx.evaluaciones_variables().evaluacion_variable(0)) + ";\n";
+            /*
+            for (Anasint.VariableContext variable: ctx.lista_variables().variable()) {
+                pilaVariables.add(variable.getText());
+                //System.out.println(variable.getText() + " " + getUpperScope(ctx).get(variable.getChild(0).getText()));
+                //si la variable es de asignacion, añadimos al stack la info
+                if (variable.getClass().equals(Anasint.Variable_simpleContext.class) &&
+                        programa.getVariable(scope, variable.getChild(0).getText()).getTipo().contains("[]"))
+                    tiposSecuencia.push(programa.getVariable(scope, variable.getChild(0).getText()).getTipo());
+
+                //scope.get(variable.getChild(0).getText()).contains("[]"))
+                //tiposSecuencia.push(scope.get(variable.getChild(0).getText()));
+            }
+            Collections.reverse(pilaVariables);
+        }
+
+        //casteoVariables = true;
         for (Anasint.Evaluacion_variableContext valor: ctx.evaluaciones_variables().evaluacion_variable()) {
+            //si es funcion, (y devuelve mas de 1) hay que usar el array temporal de la funcion
             if (valor.subprograma() != null) {
                 str = valor.subprograma().getText();
                 str = str.substring(0, str.indexOf("("));
-                if (funciones.get(str).size() > 1) {
+                subprograma = programa.getSubprograma(str);
+                //si tiene mas de un valor de salida
+                if (!subprograma.esArgumento()) {
+                //if (funciones.get(str).size() > 1) {
                     res += ("salida_" + str + "=" + visitEvaluacion_variable(valor) + ";\n");
-                    for (int i = 0; i < funciones.get(str).size(); i++) {
-                        res += (pilaVariables.pop() + "= (" + funciones.get(str).get(i) + ") salida_" + str + "[" + i + "];\n");
-                    }
+                for (int i = 0; i < subprograma.getTiposSalida().size(); i++) {
+                    res += (pilaVariables.pop() + "= (" + subprograma.getTiposSalida().get(i) + ") salida_" + str + "[" + i + "];\n");
                 }
+            }
                 else
                     res += (pilaVariables.pop() + "=" + visitEvaluacion_variable(valor) + ";\n");
             } else
                 res += (pilaVariables.pop() + "=" + visitEvaluacion_variable(valor) + ";\n");
+        */
         }
+
         return res;
     }
     public String visitInstruccion_llamada_subprograma (Anasint.Instruccion_llamada_subprogramaContext ctx) {
@@ -321,6 +431,13 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
         return "if (" + strPropagaIndef[0] + " && !(IntStream.range(" + operacionA + ", " +
                 operacionB + ")." + funcionCuantificador + "(" + variable + " -> (" + strPropagaIndef[1] + ")))) {\n" +
                 "throw new IllegalArgumentException(\"Aserto no válido\");\n}\n";
+    }
+
+    public List<String> visitEvaluaciones_variables (Anasint.Evaluaciones_variablesContext ctx) {
+        List<String> res = new ArrayList<>();
+        for (Anasint.Evaluacion_variableContext evalVar: ctx.evaluacion_variable())
+            res.add((String) visit(evalVar));
+        return res;
     }
 
     public String visitPredicado_negado (Anasint.Predicado_negadoContext ctx) {
@@ -397,8 +514,15 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
 
     public String visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
         String res = ctx.IDENT().getText() + "(";
+        Programa subprograma = programa.getSubprograma(ctx.IDENT().getText());
+        int i = 0;
         for (Anasint.Evaluacion_variableContext parametro: ctx.evaluacion_variable()) {
+            if (parametro.operando_secuencia() != null) {
+                tiposSecuencia.push(subprograma.getTiposEntrada().get(i));
+            }
             res += visit(parametro) + ",";
+            i++;
+
         }
         return quitaUltimaComa(res) + ")";
     }
@@ -418,10 +542,14 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     public String visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
         if (variablesBajoCondicion)
             variablesCondicion.add(ctx.getText());
+        //if (casteoVariables) {
+        //    System.out.println(getUpperScope(ctx).get(ctx.IDENT().getText()));
+        //}
+
         return ctx.IDENT().getText() + "[" + visit(ctx.operacion()) + "]";
     }
 
-    public String visitVariable (Anasint.VariableContext ctx) {
+    public String visitVariable_simple (Anasint.Variable_simpleContext ctx) {
         if (variablesBajoCondicion)
             variablesCondicion.add(ctx.getText());
         return ctx.getText();
@@ -443,7 +571,8 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
 
 
     public String visitOperando_secuencia_llena (Anasint.Operando_secuencia_llenaContext ctx) {
-        String res = "new Object[]{";
+        String res = "new " + tiposSecuencia.pop() + "{";
+        //String res = "new Object[]{";
             for (Anasint.OperacionContext elto: ctx.operacion()) {
                 res += visit(elto) + ",";
             }
@@ -451,15 +580,16 @@ public class VisitorCompilador extends AnasintBaseVisitor<Object>{
     }
 
     public String visitDeclaracion_variable (Anasint.Declaracion_variableContext ctx) {
-            String tipo = ctx.tipo().getText();
+            String tipo = convierteTipo(ctx.tipo().getText());
             String res = "";
-            Map<String, String> scope = getUpperScope(ctx);
+            //Map<String, String> scope = getUpperScope(ctx);
             if (!variablesPrivadas)
                 res += "private static ";
-            res += convierteTipo(tipo) + " ";
+            res += tipo + " ";
             for (ParseTree nombreVariable: ctx.IDENT()) {
                 res += (nombreVariable + ",");
-                scope.put(nombreVariable.getText(), convierteTipo(tipo));
+                programa.declaraVariable(scope, new Variable(nombreVariable.getText(), ctx.tipo().getText()));
+                //scope.put(nombreVariable.getText(), convierteTipo(tipo));
             }
             res = quitaUltimaComa(res);
             res += ";\n";

@@ -248,13 +248,13 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         for (Anasint.OperacionContext elemento: ctx.operacion()) {
             tipo = (String) visit(elemento);
             if (tipo.equals("Indefinido"))
-                return "ArrayList<>";
+                return "Object[]";
             else
                 tipos.add(tipo);
         }
         if (tipos.stream().allMatch(x -> x.equals("Integer")) ||
                 tipos.stream().allMatch(x -> x.equals("Boolean")))
-            return "ArrayList<" + tipos.get(0) + ">";
+            return "[]" + tipos.get(0);
         else
             return "Indefinido";
     }
@@ -335,7 +335,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         //Comprobación del tipo de la expresión y su variable asociada
         for (int i = 0; i < arrTiposIzq.size(); i++) {
             //System.out.println(arrTiposIzq.size() + " " + arrTiposIzq.get(i));
-            if (arrTiposIzq.get(i).contains("ArrayList") && arrTiposDer.get(i).equals("ArrayList<>")) {
+            if (arrTiposIzq.get(i).contains("[]") && arrTiposDer.get(i).equals("Object[]")) {
                 a.informa("Asignando secuencia vacia (" + ctx.getText() + ")");
             } else if (!arrTiposIzq.get(i).equals(arrTiposDer.get(i))) {
                 a.informa("Asignación no valida... Izq: " + arrTiposIzq.toString() +
@@ -629,11 +629,11 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         else if (!tipoAcceso.equals("Integer")) {
             a.informa("Indice de acceso a secuencia no numérico");
         }
-        else if (!tipoVariable.contains("ArrayList")) {
+        else if (!tipoVariable.contains("[]")) {
             a.informa("La variable " + ctx.IDENT().getText() + " no es de tipo secuencia");
         }
 
-        return tipoAcceso.replace("ArrayList<", "").replace(">", "");
+        return tipoAcceso.replace("[]", "");
     }
 
     public String visitVariable_simple (Anasint.Variable_simpleContext ctx) {
@@ -662,7 +662,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
                 !tipoArgumento.contains("Integer")))
             a.informa("Ultima_posicion_variable no se admiten secuencias sin tipo (" + tipoArgumento + ")");
 
-        if (!tipoArgumento.contains("ArrayList"))
+        if (!tipoArgumento.contains("[]"))
             a.informa("Ultima_posicion_variable  ultima_posicion solo válido en secuencias");
 
         return "Integer";
@@ -671,7 +671,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
     public String visitSubprograma_vacia (Anasint.Subprograma_vaciaContext ctx) {
         //System.out.println("visitVacia " + ctx.getText());
         String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
-        if (!tipoArgumento.contains("ArrayList"))
+        if (!tipoArgumento.contains("[]"))
             a.informa("Operador vacia solo válido en secuencias");
         return "Boolean";
     }
@@ -680,7 +680,7 @@ public class VisitorP extends AnasintBaseVisitor<Object> {
         String tipoArgumento = visitEvaluacion_variable(ctx.evaluacion_variable());
         if (ctx.getParent().getClass().equals(Anasint.Evaluacion_variableContext.class))
             a.informa("Procedimiento mostrar no válido como evaluación");
-        if (!tipoArgumento.contains("ArrayList"))
+        if (!tipoArgumento.contains("[]"))
             a.informa("Operador mostrar solo válido en secuencias");
         return null;
     }

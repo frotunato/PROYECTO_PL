@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     Programa programa = new Programa("Main", "Main");
+    String scope = null;
     ParseTreeProperty<Map<String, Object>> memoria = new ParseTreeProperty<>();
     ParseTreeProperty<Object> retornosFuncion = new ParseTreeProperty<>();
     boolean retorno = false;
@@ -316,6 +317,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         //lo enchufamos al bloque padre (instruccion)
         int i = 0;
 
+        //por cada eval. de variable, añadimos su valor al arr
         for (Anasint.Evaluacion_variableContext evalr: ctx.evaluaciones_variables().evaluacion_variable()) {
             if (evalr.subprograma() != null && evalr.subprograma().getClass().equals(Anasint.Subprograma_declaradoContext.class)) {
                 nombre = evalr.subprograma().getChild(0).getText();
@@ -330,9 +332,18 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         }
 
         //acceder caso especial funcion ??
+        //ahora vamos variable por variable y asignamos; si es un acceso
+        //a lista tenemos que modificar solo el elemento indicado
         for (Anasint.VariableContext variable: ctx.lista_variables().variable()) {
-            String nombreVariable = variable.getText();
-            memoria.get(closestInstruccionBlock(variable)).put(nombreVariable, valores.get(i));
+            String nombreVariable = variable.getChild(0).getText();
+            if (variable.getClass().equals(Anasint.Variable_accesoContext.class)) {
+                Integer selectorSecuencia = (Integer) visit(variable.getChild(2));
+                //memoria.get(closestInstruccionBlock(variable)).put(nombreVariable, valores.get(i));
+                List<Object> secuencia = (List<Object>) memoria.get(closestInstruccionBlock(variable)).get(nombreVariable);
+                secuencia.set(selectorSecuencia, valores.get(i));
+                memoria.get(closestInstruccionBlock(variable)).put(nombreVariable, secuencia);
+            } else
+                memoria.get(closestInstruccionBlock(variable)).put(nombreVariable, valores.get(i));
             i++;
         }
 
@@ -423,7 +434,8 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
         return Integer.valueOf(ctx.NUMERO().getText());
     }
     public Object visitVariable_acceso (Anasint.Variable_accesoContext ctx) {
-        List<Object> variable = (List<Object>) memoria.get(closestInstruccionBlock(ctx)).get(ctx.getText());;
+        System.out.println(ctx.getText());
+        List<Object> variable = (List<Object>) memoria.get(closestInstruccionBlock(ctx)).get(ctx.getChild(0).getText());;
         Integer indice = (Integer) visit(ctx.operacion());
         Object res;
         try {
@@ -440,6 +452,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
     }
     public Object visitSubprograma_declarado (Anasint.Subprograma_declaradoContext ctx) {
         String nombre = ctx.IDENT().getText();
+        scope = nombre;
         //String nombre = ctx.getChild(0).getText();
         Programa subprograma = programa.getSubprograma(nombre);
         System.out.println("Visitando programa " + ctx.getText() + " tiene memoria? " + memoria.get(subprograma.getPuntero()));
@@ -487,6 +500,7 @@ public class VisitorInterprete extends AnasintBaseVisitor<Object> {
                 memoriaGlobal.put(nombreVariable, memoriaSubprograma.get(nombreVariable));
 
         //si es funcion, analizamos si retorno multiple o no
+        scope = null;
         if (salidaSubprograma != null && subprograma.esFuncion(null))
             if (subprograma.getVarsSalida().size() > 1)
                 return salidaSubprograma;

@@ -1,11 +1,35 @@
 PROGRAMA
 VARIABLES
-   i,j:NUM;
+   i,j,m,n:NUM;
+   jj,nn:LOG;
    s:SEQ(NUM);
+   max:NUM;
 SUBPROGRAMAS
+    FUNCION asd (NUM a) dev (NUM ab, LOG cd)
+        VARIABLES
+        INSTRUCCIONES
+            dev 2, T;
+    FFUNCION
+    FUNCION asd2 (NUM a) dev (NUM ab)
+        VARIABLES
+        INSTRUCCIONES
+            dev 2*a;
+    FFUNCION
 INSTRUCCIONES
+    i = 0;
+    j = 1;
+    m = 2;
+    n = 3;
+    i, j, n, m = n + m, i - n, m - n, j - i;
+    //s = [asd2(25), asd2(1), asd2(5)];
+    //s[i], jj, m, nn, i = asd(1), asd(2), asd2(1);
+
+/*
    s,i=[3,4,2,7,9,0,11],0;
    s[i],max=10,s[i];
+   asd([1,2,3]);
+   */
+/*
    mientras (i<=ultima_posicion(s) || !cierto) hacer
       si (max<s[i] && i!=10) entonces
          max=s[i];
@@ -16,4 +40,5 @@ INSTRUCCIONES
       fsi
       i=i+1;
    fmientras
-   mostrar(max);
+   mostrar(s);
+*/

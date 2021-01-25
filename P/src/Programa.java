@@ -181,7 +181,6 @@ public class Programa {
         subprogramas.put(subprograma.getNombre(), subprograma);
         System.out.println("[SCOPE, declaraSubprograma]: " + subprograma.getNombre());
     }
-
     public boolean existeSubprograma (String nombre) { return subprogramas.containsKey(nombre); }
 
     public boolean existeFuncion (String nombre) {

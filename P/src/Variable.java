@@ -2,8 +2,8 @@ import java.util.Objects;
 
 public class Variable {
     private String nombre;
-    private String tipo = "Interna";
-    private String scope;
+    private String tipo;
+    private String scope = "Interna";
     private boolean inicializada = false;
     private boolean soloLectura = false;
 
@@ -14,8 +14,8 @@ public class Variable {
         switch (nTipo) {
             case "LOG" -> this.tipo = "Boolean";
             case "NUM" -> this.tipo = "Integer";
-            case "SEQ(NUM)" -> this.tipo = "ArrayList<Integer>";
-            case "SEQ(LOG)" -> this.tipo = "ArrayList<Boolean>";
+            case "SEQ(NUM)" -> this.tipo = "Integer[]";
+            case "SEQ(LOG)" -> this.tipo = "Boolean[]";
             //case "SEQ" -> this.tipo = "ArrayList<>";
             default -> throw new IllegalStateException("Unexpected value: " + nTipo);
         }
@@ -23,16 +23,16 @@ public class Variable {
 
     public Variable (String nNombre, String nTipo, String scope) {
         this.nombre = nNombre;
-        this.scope = scope;
         //this.valor = new Object();
         switch (nTipo) {
             case "LOG" -> this.tipo = "Boolean";
             case "NUM" -> this.tipo = "Integer";
-            case "SEQ(NUM)" -> this.tipo = "ArrayList<Integer>";
-            case "SEQ(LOG)" -> this.tipo = "ArrayList<Boolean>";
+            case "SEQ(NUM)" -> this.tipo = "Integer[]";
+            case "SEQ(LOG)" -> this.tipo = "Boolean[]";
             //case "SEQ" -> this.tipo = "ArrayList<>";
             default -> throw new IllegalStateException("Unexpected value: " + nTipo);
         }
+        this.scope = scope;
     }
 
     public String getNombre() {
